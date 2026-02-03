@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Import - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Import from Spreadsheet</h1>
+
+{% if result %}
+<div class="flash">
+    Imported {{ result.added }} miniature(s). {{ result.skipped }} row(s) skipped.
+</div>
+{% endif %}
+
+{% if error %}
+<div class="flash error">
+    Error: {{ error }}
+</div>
+{% endif %}
+
+<form method="post" action="/import" enctype="multipart/form-data">
+    <label for="file">Upload Excel File (.xlsx)</label>
+    <input type="file" id="file" name="file" accept=".xlsx,.xls">
+    <button type="submit">Import</button>
+</form>
+
+<h2>Expected Columns</h2>
+<p>The importer will try to match your column names. Recognized columns:</p>
+<table>
+    <thead>
+        <tr><th>Your Column</th><th>Maps To</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>name, mini name, miniature</td><td>Name (required)</td></tr>
+        <tr><td>creature type, type</td><td>Creature Type</td></tr>
+        <tr><td>manufacturer, brand</td><td>Manufacturer</td></tr>
+        <tr><td>product line, line</td><td>Product Line</td></tr>
+        <tr><td>set name, set</td><td>Set Name</td></tr>
+        <tr><td>status</td><td>Status (Unpainted, In Progress, Done, Pre-painted)</td></tr>
+        <tr><td>quantity, qty, count</td><td>Quantity</td></tr>
+        <tr><td>completion date, date completed</td><td>Completion Date</td></tr>
+        <tr><td>notes</td><td>Notes</td></tr>
+    </tbody>
+</table>
+{% endblock %}
