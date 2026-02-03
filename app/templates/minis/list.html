@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Collection - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>My Collection</h1>
+
+<form class="search-form" method="get" action="/minis">
+    <div>
+        <label for="search">Name</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Search by name...">
+    </div>
+    <div>
+        <label for="creature_type">Creature Type</label>
+        <input type="text" id="creature_type" name="creature_type" value="{{ creature_type or '' }}" placeholder="e.g. Dragon">
+    </div>
+    <div>
+        <label for="manufacturer">Manufacturer</label>
+        <input type="text" id="manufacturer" name="manufacturer" value="{{ manufacturer or '' }}" placeholder="e.g. Wizkids">
+    </div>
+    <div>
+        <label for="status">Status</label>
+        <select id="status" name="status">
+            <option value="">All</option>
+            <option value="Unpainted" {{ 'selected' if status == 'Unpainted' }}>Unpainted</option>
+            <option value="In Progress" {{ 'selected' if status == 'In Progress' }}>In Progress</option>
+            <option value="Done" {{ 'selected' if status == 'Done' }}>Done</option>
+            <option value="Pre-painted" {{ 'selected' if status == 'Pre-painted' }}>Pre-painted</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<p><a href="/minis/new" class="btn btn-success">+ Add Mini</a></p>
+
+{% if minis %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Creature Type</th>
+            <th>Manufacturer</th>
+            <th>Product Line</th>
+            <th>Set</th>
+            <th>Status</th>
+            <th>Qty</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mini in minis %}
+        <tr>
+            <td><a href="/minis/{{ mini.id }}">{{ mini.name }}</a></td>
+            <td>{{ mini.creature_type or '' }}</td>
+            <td>{{ mini.manufacturer or '' }}</td>
+            <td>{{ mini.product_line or '' }}</td>
+            <td>{{ mini.set_name or '' }}</td>
+            <td>
+                <span class="status-badge status-{{ mini.status.value | lower | replace(' ', '-') }}">
+                    {{ mini.status.value }}
+                </span>
+            </td>
+            <td>{{ mini.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No miniatures found. <a href="/minis/new">Add your first one!</a></p>
+{% endif %}
+{% endblock %}

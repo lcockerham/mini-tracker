@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}{{ mini.name }} - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>{{ mini.name }}</h1>
+<p><a href="/minis">&larr; Back to Collection</a></p>
+
+<div class="form-row">
+    <div>
+        <h2>Details</h2>
+        <form method="post" action="/minis/{{ mini.id }}/edit">
+            <div class="form-row">
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="{{ mini.name }}" required>
+                </div>
+                <div>
+                    <label for="creature_type">Creature Type</label>
+                    <input type="text" id="creature_type" name="creature_type" value="{{ mini.creature_type or '' }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="manufacturer">Manufacturer</label>
+                    <input type="text" id="manufacturer" name="manufacturer" value="{{ mini.manufacturer or '' }}">
+                </div>
+                <div>
+                    <label for="product_line">Product Line</label>
+                    <input type="text" id="product_line" name="product_line" value="{{ mini.product_line or '' }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="set_name">Set Name</label>
+                    <input type="text" id="set_name" name="set_name" value="{{ mini.set_name or '' }}">
+                </div>
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="Unpainted" {{ 'selected' if mini.status.value == 'Unpainted' }}>Unpainted</option>
+                        <option value="In Progress" {{ 'selected' if mini.status.value == 'In Progress' }}>In Progress</option>
+                        <option value="Done" {{ 'selected' if mini.status.value == 'Done' }}>Done</option>
+                        <option value="Pre-painted" {{ 'selected' if mini.status.value == 'Pre-painted' }}>Pre-painted</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" value="{{ mini.quantity }}" min="1">
+                </div>
+                <div>
+                    <label for="completion_date">Completion Date</label>
+                    <input type="date" id="completion_date" name="completion_date" value="{{ mini.completion_date or '' }}">
+                </div>
+            </div>
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes">{{ mini.notes or '' }}</textarea>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<hr style="margin: 24px 0;">
+
+<h2>Photos</h2>
+{% if mini.photos %}
+<div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+    {% for photo in mini.photos %}
+    <div style="background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <a href="{{ photo.url }}" target="_blank">{{ photo.url | truncate(50) }}</a>
+        <form method="post" action="/minis/{{ mini.id }}/photos/{{ photo.id }}/delete" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
+            <button type="submit" class="btn-danger" style="padding: 2px 8px; font-size: 12px;">X</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No photos yet.</p>
+{% endif %}
+
+<form method="post" action="/minis/{{ mini.id }}/photos" style="display: flex; gap: 12px; align-items: end;">
+    <div style="flex: 1;">
+        <label for="photo_url">Add Photo URL (Google Drive link)</label>
+        <input type="url" id="photo_url" name="url" placeholder="https://drive.google.com/..." style="margin-bottom: 0;">
+    </div>
+    <button type="submit">Add Photo</button>
+</form>
+
+<hr style="margin: 24px 0;">
+
+<h2>Paints Used</h2>
+{% if mini.paints %}
+<table>
+    <thead>
+        <tr>
+            <th>Brand</th>
+            <th>Name</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paint in mini.paints %}
+        <tr>
+            <td>{{ paint.brand }}</td>
+            <td>{{ paint.name }}</td>
+            <td>
+                <form method="post" action="/minis/{{ mini.id }}/paints/{{ paint.id }}/remove" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
+                    <button type="submit" class="btn-danger" style="padding: 2px 8px; font-size: 12px;">X</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No paints recorded.</p>
+{% endif %}
+
+<form method="post" action="/minis/{{ mini.id }}/paints" style="display: flex; gap: 12px; align-items: end;">
+    <div style="flex: 1;">
+        <label for="paint_id">Add Paint</label>
+        <select id="paint_id" name="paint_id" style="margin-bottom: 0;">
+            {% for paint in all_paints %}
+            <option value="{{ paint.id }}">{{ paint.brand }} - {{ paint.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit">Add Paint</button>
+</form>
+{% endblock %}
