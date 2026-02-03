@@ -14,6 +14,8 @@ class MiniCreate(BaseModel):
     manufacturer: Optional[str] = None
     product_line: Optional[str] = None
     set_name: Optional[str] = None
+    mini_number: Optional[str] = None
+    size: Optional[str] = None
     status: MiniStatus = MiniStatus.UNPAINTED
     quantity: int = 1
     completion_date: Optional[date] = None
@@ -26,6 +28,8 @@ class MiniUpdate(BaseModel):
     manufacturer: Optional[str] = None
     product_line: Optional[str] = None
     set_name: Optional[str] = None
+    mini_number: Optional[str] = None
+    size: Optional[str] = None
     status: Optional[MiniStatus] = None
     quantity: Optional[int] = None
     completion_date: Optional[date] = None
@@ -39,6 +43,8 @@ class MiniResponse(BaseModel):
     manufacturer: Optional[str]
     product_line: Optional[str]
     set_name: Optional[str]
+    mini_number: Optional[str]
+    size: Optional[str]
     status: MiniStatus
     quantity: int
     completion_date: Optional[date]

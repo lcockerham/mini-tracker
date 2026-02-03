@@ -32,6 +32,8 @@ class Mini(Base):
     manufacturer: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     product_line: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     set_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    mini_number: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    size: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     status: Mapped[MiniStatus] = mapped_column(
         Enum(MiniStatus), default=MiniStatus.UNPAINTED
     )

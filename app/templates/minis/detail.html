@@ -35,6 +35,23 @@
                     <input type="text" id="set_name" name="set_name" value="{{ mini.set_name or '' }}">
                 </div>
                 <div>
+                    <label for="mini_number">Mini Number</label>
+                    <input type="text" id="mini_number" name="mini_number" value="{{ mini.mini_number or '' }}" placeholder="e.g. 77001 or 1/80">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="size">Size</label>
+                    <select id="size" name="size">
+                        <option value="">--</option>
+                        <option value="Small" {{ 'selected' if mini.size == 'Small' }}>Small</option>
+                        <option value="Medium" {{ 'selected' if mini.size == 'Medium' }}>Medium</option>
+                        <option value="Large" {{ 'selected' if mini.size == 'Large' }}>Large</option>
+                        <option value="Huge" {{ 'selected' if mini.size == 'Huge' }}>Huge</option>
+                        <option value="Gargantuan" {{ 'selected' if mini.size == 'Gargantuan' }}>Gargantuan</option>
+                    </select>
+                </div>
+                <div>
                     <label for="status">Status</label>
                     <select id="status" name="status">
                         <option value="Unpainted" {{ 'selected' if mini.status.value == 'Unpainted' }}>Unpainted</option>

@@ -44,6 +44,8 @@
             <th>Manufacturer</th>
             <th>Product Line</th>
             <th>Set</th>
+            <th>#</th>
+            <th>Size</th>
             <th>Status</th>
             <th>Qty</th>
         </tr>
@@ -56,6 +58,8 @@
             <td>{{ mini.manufacturer or '' }}</td>
             <td>{{ mini.product_line or '' }}</td>
             <td>{{ mini.set_name or '' }}</td>
+            <td>{{ mini.mini_number or '' }}</td>
+            <td>{{ mini.size or '' }}</td>
             <td>
                 <span class="status-badge status-{{ mini.status.value | lower | replace(' ', '-') }}">
                     {{ mini.status.value }}

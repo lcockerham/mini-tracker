@@ -57,6 +57,8 @@ def create_mini(
     manufacturer: Optional[str] = Form(None),
     product_line: Optional[str] = Form(None),
     set_name: Optional[str] = Form(None),
+    mini_number: Optional[str] = Form(None),
+    size: Optional[str] = Form(None),
     status: str = Form("Unpainted"),
     quantity: int = Form(1),
     completion_date: Optional[str] = Form(None),
@@ -69,6 +71,8 @@ def create_mini(
         manufacturer=manufacturer or None,
         product_line=product_line or None,
         set_name=set_name or None,
+        mini_number=mini_number or None,
+        size=size or None,
         status=MiniStatus(status),
         quantity=quantity,
         completion_date=date.fromisoformat(completion_date) if completion_date else None,
@@ -98,6 +102,8 @@ def update_mini(
     manufacturer: Optional[str] = Form(None),
     product_line: Optional[str] = Form(None),
     set_name: Optional[str] = Form(None),
+    mini_number: Optional[str] = Form(None),
+    size: Optional[str] = Form(None),
     status: str = Form("Unpainted"),
     quantity: int = Form(1),
     completion_date: Optional[str] = Form(None),
@@ -110,6 +116,8 @@ def update_mini(
     mini.manufacturer = manufacturer or None
     mini.product_line = product_line or None
     mini.set_name = set_name or None
+    mini.mini_number = mini_number or None
+    mini.size = size or None
     mini.status = MiniStatus(status)
     mini.quantity = quantity
     mini.completion_date = date.fromisoformat(completion_date) if completion_date else None
