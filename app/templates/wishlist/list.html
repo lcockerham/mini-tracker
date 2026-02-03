@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Wishlist - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Wishlist</h1>
+
+<h2>Add to Wishlist</h2>
+<form method="post" action="/wishlist">
+    <div class="form-row">
+        <div>
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required placeholder="Mini name">
+        </div>
+        <div>
+            <label for="manufacturer">Manufacturer</label>
+            <input type="text" id="manufacturer" name="manufacturer" placeholder="e.g. Wizkids">
+        </div>
+    </div>
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes" placeholder="Any notes..."></textarea>
+    <button type="submit" class="btn-success">Add to Wishlist</button>
+</form>
+
+{% if items %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Manufacturer</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.manufacturer or '' }}</td>
+            <td>{{ item.notes or '' }}</td>
+            <td style="white-space: nowrap;">
+                <form method="post" action="/wishlist/{{ item.id }}/purchase" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
+                    <input type="number" name="quantity" value="1" min="1" style="width: 60px; margin: 0; display: inline-block;">
+                    <button type="submit" class="btn-success" style="padding: 4px 8px; font-size: 12px;">Purchased</button>
+                </form>
+                <form method="post" action="/wishlist/{{ item.id }}/delete" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
+                    <button type="submit" class="btn-danger" style="padding: 4px 8px; font-size: 12px;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Wishlist is empty.</p>
+{% endif %}
+{% endblock %}
