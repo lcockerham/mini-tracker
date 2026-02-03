@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 36px; font-weight: bold; color: #2c3e50;">{{ total }}</div>
+        <div style="color: #666;">Total Minis</div>
+    </div>
+    {% for status, count in status_counts.items() %}
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 36px; font-weight: bold; color: #2c3e50;">{{ count }}</div>
+        <div style="color: #666;">{{ status }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h2>Status Breakdown</h2>
+        <canvas id="statusChart"></canvas>
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h2>By Manufacturer</h2>
+        <canvas id="manufacturerChart"></canvas>
+    </div>
+</div>
+
+{% if timeline %}
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 24px;">
+    <h2>Painting Timeline</h2>
+    <canvas id="timelineChart"></canvas>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const statusColors = {
+        'Unpainted': '#95a5a6',
+        'In Progress': '#f39c12',
+        'Done': '#27ae60',
+        'Pre-painted': '#8e44ad'
+    };
+
+    // Status pie chart
+    const statusData = {{ status_counts | tojson }};
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(statusData),
+            datasets: [{
+                data: Object.values(statusData),
+                backgroundColor: Object.keys(statusData).map(s => statusColors[s] || '#3498db'),
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // Manufacturer bar chart
+    const mfgData = {{ manufacturers | tojson }};
+    new Chart(document.getElementById('manufacturerChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(mfgData),
+            datasets: [{
+                label: 'Minis',
+                data: Object.values(mfgData),
+                backgroundColor: '#3498db',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+
+    // Timeline chart
+    {% if timeline %}
+    const timelineData = {{ timeline | tojson }};
+    new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(timelineData),
+            datasets: [{
+                label: 'Minis Completed',
+                data: Object.values(timelineData),
+                borderColor: '#27ae60',
+                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}
