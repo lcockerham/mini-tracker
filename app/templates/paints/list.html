@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Paints - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Paint Inventory</h1>
+
+<h2>Add New Paint</h2>
+<form method="post" action="/paints">
+    <div class="form-row">
+        <div>
+            <label for="brand">Brand *</label>
+            <input type="text" id="brand" name="brand" required placeholder="e.g. Citadel, Vallejo">
+        </div>
+        <div>
+            <label for="name">Paint Name *</label>
+            <input type="text" id="name" name="name" required placeholder="e.g. Nuln Oil">
+        </div>
+        <div>
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="0">
+        </div>
+        <div>
+            <label>&nbsp;</label>
+            <button type="submit" class="btn-success">Add Paint</button>
+        </div>
+    </div>
+</form>
+
+{% if paints %}
+<table>
+    <thead>
+        <tr>
+            <th>Brand</th>
+            <th>Name</th>
+            <th>Qty</th>
+            <th>Used On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paint in paints %}
+        <tr>
+            <td>{{ paint.brand }}</td>
+            <td>{{ paint.name }}</td>
+            <td>{{ paint.quantity }}</td>
+            <td>
+                {% for mini in paint.minis %}
+                <a href="/minis/{{ mini.id }}">{{ mini.name }}</a>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <button onclick="document.getElementById('edit-{{ paint.id }}').style.display='table-row'; this.parentElement.parentElement.style.display='none';" class="btn-secondary" style="padding: 4px 8px; font-size: 12px;">Edit</button>
+            </td>
+        </tr>
+        <tr id="edit-{{ paint.id }}" style="display: none;">
+            <td colspan="5">
+                <form method="post" action="/paints/{{ paint.id }}/edit" style="display: flex; gap: 12px; align-items: end; padding: 0; background: none; box-shadow: none; margin: 0;">
+                    <div>
+                        <label>Brand</label>
+                        <input type="text" name="brand" value="{{ paint.brand }}" required style="margin: 0;">
+                    </div>
+                    <div>
+                        <label>Name</label>
+                        <input type="text" name="name" value="{{ paint.name }}" required style="margin: 0;">
+                    </div>
+                    <div>
+                        <label>Qty</label>
+                        <input type="number" name="quantity" value="{{ paint.quantity }}" min="0" style="margin: 0; width: 80px;">
+                    </div>
+                    <button type="submit" style="margin-bottom: 0;">Save</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No paints in inventory yet.</p>
+{% endif %}
+{% endblock %}
