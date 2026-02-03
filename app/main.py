@@ -4,12 +4,13 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
 from app.database import engine, Base
-from app.routers import minis, paints, wishlist
+from app.routers import minis, paints, wishlist, photos
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
 app.include_router(minis.router)
 app.include_router(paints.router)
 app.include_router(wishlist.router)
+app.include_router(photos.router)
 
 app_dir = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=app_dir / "static"), name="static")
