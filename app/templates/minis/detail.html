@@ -44,6 +44,7 @@
                     <label for="size">Size</label>
                     <select id="size" name="size">
                         <option value="">--</option>
+                        <option value="Tiny" {{ 'selected' if mini.size == 'Tiny' }}>Tiny</option>
                         <option value="Small" {{ 'selected' if mini.size == 'Small' }}>Small</option>
                         <option value="Medium" {{ 'selected' if mini.size == 'Medium' }}>Medium</option>
                         <option value="Large" {{ 'selected' if mini.size == 'Large' }}>Large</option>
@@ -51,6 +52,12 @@
                         <option value="Gargantuan" {{ 'selected' if mini.size == 'Gargantuan' }}>Gargantuan</option>
                     </select>
                 </div>
+                <div>
+                    <label for="rarity">Rarity</label>
+                    <input type="text" id="rarity" value="{{ mini.rarity or '' }}" readonly style="background: #f5f5f5; cursor: not-allowed;">
+                </div>
+            </div>
+            <div class="form-row">
                 <div>
                     <label for="status">Status</label>
                     <select id="status" name="status">

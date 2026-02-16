@@ -2,7 +2,9 @@ import enum
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import String, Integer, Text, Date, Enum, ForeignKey, Table, Column
+from sqlalchemy import (
+    String, Integer, Text, Date, Enum, ForeignKey, Table, Column
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -28,20 +30,35 @@ class Mini(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
-    creature_type: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    manufacturer: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    product_line: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    set_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    mini_number: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    creature_type: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    manufacturer: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    product_line: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    set_name: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    mini_number: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True
+    )
     size: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    rarity: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     status: Mapped[MiniStatus] = mapped_column(
         Enum(MiniStatus), default=MiniStatus.UNPAINTED
     )
     quantity: Mapped[int] = mapped_column(Integer, default=1)
-    completion_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    completion_date: Mapped[Optional[date]] = mapped_column(
+        Date, nullable=True
+    )
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
-    photos: Mapped[list["Photo"]] = relationship(back_populates="mini", cascade="all, delete-orphan")
+    photos: Mapped[list["Photo"]] = relationship(
+        back_populates="mini", cascade="all, delete-orphan"
+    )
     paints: Mapped[list["Paint"]] = relationship(
         secondary=mini_paint_association, back_populates="minis"
     )
@@ -75,5 +92,9 @@ class WishlistItem(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
-    manufacturer: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    manufacturer: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    notes: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True
+    )

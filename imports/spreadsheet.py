@@ -33,6 +33,7 @@ COLUMN_MAP = {
     "completion_date": "completion_date",
     "completion date": "completion_date",
     "date completed": "completion_date",
+    "rarity": "rarity",
 }
 
 STATUS_MAP = {
@@ -46,6 +47,17 @@ STATUS_MAP = {
     "pre-painted": MiniStatus.PRE_PAINTED,
     "prepainted": MiniStatus.PRE_PAINTED,
     "pre painted": MiniStatus.PRE_PAINTED,
+}
+
+SIZE_MAP = {
+    "tiny": "Tiny",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "huge": "Huge",
+    "gargantuan": "Gargantuan",
+    "humongous": "Gargantuan",
+    "colossal": "Gargantuan",
 }
 
 
@@ -64,7 +76,8 @@ def import_spreadsheet(file_path: str, db: Session) -> dict:
 
     if "name" not in mapped.values():
         raise ValueError(
-            f"Could not find a 'name' column. Found columns: {list(df.columns)}"
+            f"Could not find a 'name' column. "
+            f"Found columns: {list(df.columns)}"
         )
 
     added = 0
@@ -88,7 +101,8 @@ def import_spreadsheet(file_path: str, db: Session) -> dict:
         # Parse status
         status = MiniStatus.UNPAINTED
         if data.get("status"):
-            status = STATUS_MAP.get(data["status"].lower(), MiniStatus.UNPAINTED)
+            status_key = data["status"].lower()
+            status = STATUS_MAP.get(status_key, MiniStatus.UNPAINTED)
 
         # Parse quantity
         quantity = 1
@@ -102,9 +116,15 @@ def import_spreadsheet(file_path: str, db: Session) -> dict:
         completion_date = None
         if data.get("completion_date"):
             try:
-                completion_date = pd.to_datetime(data["completion_date"]).date()
+                parsed = pd.to_datetime(data["completion_date"])
+                completion_date = parsed.date()
             except (ValueError, TypeError):
                 completion_date = None
+
+        # Normalize size
+        size = None
+        if data.get("size"):
+            size = SIZE_MAP.get(data["size"].lower(), data["size"])
 
         mini = Mini(
             name=name,
@@ -113,7 +133,8 @@ def import_spreadsheet(file_path: str, db: Session) -> dict:
             product_line=data.get("product_line"),
             set_name=data.get("set_name"),
             mini_number=data.get("mini_number"),
-            size=data.get("size"),
+            size=size,
+            rarity=data.get("rarity"),
             status=status,
             quantity=quantity,
             completion_date=completion_date,
