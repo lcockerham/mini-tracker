@@ -78,6 +78,8 @@ mini gallery for wotc and wizkids dnd minis: https://www.minisgallery.com/index.
 | manufacturer | string | Wizkids, Reaper, Dwarven Forge, etc. |
 | product_line | string | e.g., "Icons of the Realms", "Bones" |
 | set_name | string | nullable, e.g., "Angelfire", "Spelljammer", "Waterdeep", "Bones 2" |
+| mini_number | string | nullable, SKU (e.g., "77001") or set number (e.g., "1/80") |
+| size | string | nullable, Small/Medium/Large/Huge/Gargantuan |
 | status | enum | Unpainted, In Progress, Done, Pre-painted |
 | quantity | int | default 1 |
 | completion_date | date | nullable |
@@ -135,17 +137,20 @@ mini-tracker/
 │   │   ├── minis.py          # Mini CRUD + search
 │   │   ├── paints.py         # Paint inventory CRUD
 │   │   ├── wishlist.py       # Wishlist CRUD + convert to mini
-│   │   └── photos.py         # Photo link management
+│   │   ├── photos.py         # Photo link management
+│   │   └── dashboard.py      # Dashboard visualizations
 │   ├── templates/
 │   │   ├── base.html         # Layout
 │   │   ├── minis/
 │   │   │   ├── list.html     # Collection view + search
-│   │   │   └── detail.html   # Individual mini view
+│   │   │   ├── detail.html   # Individual mini view
+│   │   │   └── create.html   # Add new mini form
 │   │   ├── paints/
 │   │   │   └── list.html     # Paint inventory
 │   │   ├── wishlist/
 │   │   │   └── list.html     # Wishlist view
-│   │   └── dashboard.html    # Visualizations
+│   │   ├── dashboard.html    # Visualizations
+│   │   └── import.html       # Spreadsheet import
 │   └── static/
 │       └── css/
 ├── imports/                   # Spreadsheet import utilities
@@ -164,23 +169,34 @@ mini-tracker/
 - `POST /minis/{id}/photos` - add photo link
 - `GET /dashboard` - visualizations
 
-## Requirements discussion                                        
-  1. The collector story is missing the "SO THAT" clause - what's the benefit of supporting multiple formats? FIXED                                                                       
-  2. The DM search story - what would you search by? (creature type, size, painted status, name?)
-  FIXED                                                                                                          
-  - Adding minis to collection - How do you want to add them? Manual entry, barcode/SKU lookup, import from your Excel file?
-  Added story                                                        
-  - Organization - Do you want categories, tags, or folders? (e.g., "monsters", "NPCs", "terrain")                                                     Not in the MVP                        
-  - Paint inventory - Do you want to track paints you own, or just record what you used on each mini?                                                          I want to track paints I own, the number, and what minis I used them on.       
-  - Painting status workflow - Beyond painted/unpainted, do you need states like "primed", "in progress", "based"?    
-  Unpainted, In progress, and Done. We also need to be able to differentiate minatures that come prepainted.                                                              
-  - Wishlist - Track minis you want to buy?        
-  Yes - anything in the inventory sheets should be tracked.                                                       
-  Questions:                                                     1. For searching as a DM - what attributes matter most? (creature type, size, setting, painted status?)                                                       
-  creature name and type
-  2. When tracking paints used, do you also want to track techniques or color recipes (e.g., "base coat X, wash Y, drybrush Z")?                  
-  Just free form notes for the MVP                                  
-  3. The Excel file in downloads - is that your current collection you'd want to import?                      
+## Implementation Status
 
-  No thats a blank example file - the real one with current collection is in my google drive
+### Completed (MVP)
+- [x] Project scaffolding (FastAPI, SQLAlchemy, Jinja2)
+- [x] Database models and Pydantic schemas
+- [x] Mini CRUD with search/filter (name, creature type, manufacturer, status)
+- [x] Mini detail view with edit form
+- [x] Paint inventory CRUD with inline editing
+- [x] Link paints to minis (many-to-many)
+- [x] Wishlist with purchase-to-collection flow
+- [x] Photo URL management (Google Drive links)
+- [x] Spreadsheet import with flexible column mapping
+- [x] Dashboard with Chart.js visualizations (status breakdown, manufacturer chart, painting timeline)
+
+### To Run
+```bash
+cd /Users/lucascockerham/Developer/mini-tracker
+source .venv/bin/activate
+uvicorn app.main:app --reload
+```
+Open http://localhost:8000
+
+### GitHub
+https://github.com/lcockerham/mini-tracker
+
+## Future Enhancements (Not in MVP)
+- Organization via categories/tags/folders
+- Alembic migrations (currently delete DB to reset)
+- Direct Google Drive integration for photo upload
+- Mobile-optimized UI
   
