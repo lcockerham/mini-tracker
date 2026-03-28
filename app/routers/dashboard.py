@@ -52,8 +52,7 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
     )
     timeline = {month: count for month, count in timeline_rows}
 
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "dashboard.html", {
         "total": total,
         "status_counts": status_counts,
         "manufacturers": manufacturers,

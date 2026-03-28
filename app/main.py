@@ -32,7 +32,7 @@ def index():
 
 @app.get("/import")
 def import_form(request: Request):
-    return templates.TemplateResponse("import.html", {"request": request})
+    return templates.TemplateResponse(request, "import.html", {})
 
 
 @app.post("/import")
@@ -51,14 +51,12 @@ async def import_spreadsheet_route(request: Request, file: UploadFile = File(...
         db = SessionLocal()
         try:
             result = import_spreadsheet(tmp_path, db)
-            return templates.TemplateResponse("import.html", {
-                "request": request,
+            return templates.TemplateResponse(request, "import.html", {
                 "result": result,
             })
         finally:
             db.close()
     except Exception as e:
-        return templates.TemplateResponse("import.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "import.html", {
             "error": str(e),
         })
