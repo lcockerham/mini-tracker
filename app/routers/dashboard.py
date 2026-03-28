@@ -17,15 +17,17 @@ router = APIRouter()
 def dashboard(request: Request, db: Session = Depends(get_db)):
     total = db.query(func.sum(Mini.quantity)).scalar() or 0
 
-    # Status breakdown
+    # Painting breakdown (excludes pre-painted)
+    painting_statuses = [MiniStatus.UNPAINTED, MiniStatus.IN_PROGRESS, MiniStatus.DONE]
     status_counts = {}
-    for status in MiniStatus:
+    for status in painting_statuses:
         count = (
             db.query(func.sum(Mini.quantity))
             .filter(Mini.status == status)
             .scalar() or 0
         )
-        status_counts[status.value] = count
+        label = "Painted" if status == MiniStatus.DONE else status.value
+        status_counts[label] = count
 
     # Manufacturer breakdown
     manufacturer_rows = (
