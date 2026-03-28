@@ -2,9 +2,7 @@ import enum
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import (
-    String, Integer, Text, Date, Enum, ForeignKey, Table, Column
-)
+from sqlalchemy import Column, Date, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base

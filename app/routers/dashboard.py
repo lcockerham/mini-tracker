@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from pathlib import Path
 
 from app.database import get_db
 from app.models import Mini, MiniStatus
