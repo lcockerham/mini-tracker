@@ -17,8 +17,7 @@ router = APIRouter()
 @router.get("/paints")
 def list_paints(request: Request, db: Session = Depends(get_db)):
     paints = db.query(Paint).order_by(Paint.brand, Paint.name).all()
-    return templates.TemplateResponse("paints/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "paints/list.html", {
         "paints": paints,
     })
 

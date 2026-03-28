@@ -35,8 +35,7 @@ def list_minis(
         query = query.filter(Mini.status == MiniStatus(status))
 
     minis = query.order_by(Mini.name).all()
-    return templates.TemplateResponse("minis/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "minis/list.html", {
         "minis": minis,
         "search": search,
         "creature_type": creature_type,
@@ -47,7 +46,7 @@ def list_minis(
 
 @router.get("/minis/new")
 def create_mini_form(request: Request):
-    return templates.TemplateResponse("minis/create.html", {"request": request})
+    return templates.TemplateResponse(request, "minis/create.html", {})
 
 
 @router.post("/minis/new")
@@ -87,8 +86,7 @@ def create_mini(
 def get_mini(request: Request, mini_id: int, db: Session = Depends(get_db)):
     mini = db.query(Mini).get(mini_id)
     all_paints = db.query(Paint).order_by(Paint.brand, Paint.name).all()
-    return templates.TemplateResponse("minis/detail.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "minis/detail.html", {
         "mini": mini,
         "all_paints": all_paints,
     })

@@ -17,8 +17,7 @@ router = APIRouter()
 @router.get("/wishlist")
 def list_wishlist(request: Request, db: Session = Depends(get_db)):
     items = db.query(WishlistItem).order_by(WishlistItem.name).all()
-    return templates.TemplateResponse("wishlist/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "wishlist/list.html", {
         "items": items,
     })
 
