@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 from app.models import MiniStatus
 
-
 # --- Mini ---
 
 class MiniCreate(BaseModel):

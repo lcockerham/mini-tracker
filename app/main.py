@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Request, File, UploadFile
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from app.database import engine, Base
-from app.routers import minis, paints, wishlist, photos, dashboard
+from fastapi import FastAPI, File, Request, UploadFile
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+from app.database import Base, engine
+from app.routers import dashboard, minis, paints, photos, wishlist
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
 app.include_router(minis.router)
@@ -37,8 +38,9 @@ def import_form(request: Request):
 @app.post("/import")
 async def import_spreadsheet_route(request: Request, file: UploadFile = File(...)):
     import tempfile
-    from imports.spreadsheet import import_spreadsheet
+
     from app.database import SessionLocal
+    from imports.spreadsheet import import_spreadsheet
 
     try:
         with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:

@@ -168,6 +168,7 @@ button:hover, .btn:hover {
     font-size: 12px;
     font-weight: 500;
     color: white;
+    white-space: nowrap;
 }
 
 .status-unpainted { background: #95a5a6; }

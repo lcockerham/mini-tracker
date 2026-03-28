@@ -1,10 +1,10 @@
-from typing import Optional
 
-from fastapi import APIRouter, Depends, Request, Form
+from pathlib import Path
+
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from pathlib import Path
 
 from app.database import get_db
 from app.models import Paint
