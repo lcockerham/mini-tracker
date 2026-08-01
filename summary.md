@@ -182,6 +182,12 @@ mini-tracker/
 - [x] Photo URL management (Google Drive links)
 - [x] Spreadsheet import with flexible column mapping
 - [x] Dashboard with Chart.js visualizations (status breakdown, manufacturer chart, painting timeline)
+- [x] Status badge `white-space: nowrap` fix (pre-painted was wrapping across two lines)
+- [x] Ruff linter + GitHub Actions CI (lint and test workflows on every PR)
+- [x] Pytest test suite (25 tests: mini CRUD/search/filter, wishlist purchase flow, paint inventory, paint-mini linking)
+- [x] Updated to Starlette 1.0 `TemplateResponse` API (request as first arg)
+- [x] Dashboard "Painting Breakdown" — renamed from "Status Breakdown", excludes pre-painted, "Done" → "Painted", percent tooltips on pie chart
+- [x] Normalized manufacturer data (WizKids → Wizkids via SQL)
 
 ### To Run
 ```bash

@@ -11,3 +11,4 @@ venv/
 .vscode/
 *.sqlite3
 .playwright-mcp/
+*.xlsx
