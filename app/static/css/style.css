@@ -162,6 +162,12 @@ button:hover, .btn:hover {
     min-width: 150px;
 }
 
+.search-form input,
+.search-form select,
+.search-form button {
+    height: 38px;
+}
+
 .status-badge {
     padding: 4px 8px;
     border-radius: 12px;
