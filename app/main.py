@@ -4,8 +4,9 @@ from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.database import Base, engine
-from app.routers import dashboard, minis, paints, photos, wishlist
+from app.database import Base, SessionLocal, engine
+from app.models import GameSystem
+from app.routers import books, dashboard, minis, paints, photos, wishlist
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
 app.include_router(minis.router)
@@ -13,6 +14,16 @@ app.include_router(paints.router)
 app.include_router(wishlist.router)
 app.include_router(photos.router)
 app.include_router(dashboard.router)
+app.include_router(books.router)
+
+DEFAULT_GAME_SYSTEMS = [
+    "D&D 5e",
+    "Pathfinder 2e",
+    "Call of Cthulhu",
+    "Savage Worlds",
+    "System-agnostic",
+    "Other",
+]
 
 app_dir = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=app_dir / "static"), name="static")
@@ -22,6 +33,15 @@ templates = Jinja2Templates(directory=app_dir / "templates")
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        existing = {name for (name,) in db.query(GameSystem.name).all()}
+        for name in DEFAULT_GAME_SYSTEMS:
+            if name not in existing:
+                db.add(GameSystem(name=name))
+        db.commit()
+    finally:
+        db.close()
 
 
 @app.get("/")

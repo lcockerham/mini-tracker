@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
-from app.main import app
+from app.main import DEFAULT_GAME_SYSTEMS, app
+from app.models import GameSystem
 
 
 @pytest.fixture()
@@ -17,6 +18,12 @@ def client():
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(bind=engine)
+
+    seed_db = TestingSessionLocal()
+    for name in DEFAULT_GAME_SYSTEMS:
+        seed_db.add(GameSystem(name=name))
+    seed_db.commit()
+    seed_db.close()
 
     def override_get_db():
         db = TestingSessionLocal()

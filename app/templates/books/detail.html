@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>{{ book.title }}</h1>
+<p><a href="/books">&larr; Back to Books</a></p>
+
+<form method="post" action="/books/{{ book.id }}/edit">
+    <div class="form-row">
+        <div>
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="{{ book.title }}" required>
+        </div>
+        <div>
+            <label for="game_system_id">Game System</label>
+            <select id="game_system_id" name="game_system_id">
+                <option value="">--</option>
+                {% for gs in game_systems %}
+                <option value="{{ gs.id }}" {{ 'selected' if book.game_system_id == gs.id }}>{{ gs.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="publisher">Publisher</label>
+            <input type="text" id="publisher" name="publisher" value="{{ book.publisher or '' }}">
+        </div>
+        <div>
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category" value="{{ book.category or '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="owns_physical">
+                <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;" {{ 'checked' if book.owns_physical }}>
+                Own Physical Copy
+            </label>
+        </div>
+        <div>
+            <label for="owns_digital">
+                <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;" {{ 'checked' if book.owns_digital }}>
+                Own Digital Copy
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="physical_location">Physical Location</label>
+            <input type="text" id="physical_location" name="physical_location" value="{{ book.physical_location or '' }}">
+        </div>
+        <div>
+            <label for="pdf_url">Digital File / PDF URL</label>
+            <input type="url" id="pdf_url" name="pdf_url" value="{{ book.pdf_url or '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="drivethrurpg_url">DriveThruRPG URL</label>
+            <input type="url" id="drivethrurpg_url" name="drivethrurpg_url" value="{{ book.drivethrurpg_url or '' }}">
+        </div>
+        <div>
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn" value="{{ book.isbn or '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="acquired_date">Acquired Date</label>
+            <input type="date" id="acquired_date" name="acquired_date" value="{{ book.acquired_date or '' }}">
+        </div>
+    </div>
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes">{{ book.notes or '' }}</textarea>
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<form method="post" action="/books/{{ book.id }}/delete" style="margin-top: 12px;">
+    <button type="submit" class="btn-danger">Delete Book</button>
+</form>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Add Book - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Add New Book</h1>
+<p><a href="/books">&larr; Back to Books</a></p>
+
+<form method="post" action="/books/new">
+    <div class="form-row">
+        <div>
+            <label for="title">Title *</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div>
+            <label for="game_system_id">Game System</label>
+            <select id="game_system_id" name="game_system_id">
+                <option value="">--</option>
+                {% for gs in game_systems %}
+                <option value="{{ gs.id }}">{{ gs.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="publisher">Publisher</label>
+            <input type="text" id="publisher" name="publisher">
+        </div>
+        <div>
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category" placeholder="e.g. Core Rulebook, Adventure, Sourcebook">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="owns_physical">
+                <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;">
+                Own Physical Copy
+            </label>
+        </div>
+        <div>
+            <label for="owns_digital">
+                <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;">
+                Own Digital Copy
+            </label>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="physical_location">Physical Location</label>
+            <input type="text" id="physical_location" name="physical_location" placeholder="e.g. Shelf 2">
+        </div>
+        <div>
+            <label for="pdf_url">Digital File / PDF URL</label>
+            <input type="url" id="pdf_url" name="pdf_url">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="drivethrurpg_url">DriveThruRPG URL</label>
+            <input type="url" id="drivethrurpg_url" name="drivethrurpg_url" placeholder="https://www.drivethrurpg.com/...">
+        </div>
+        <div>
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="acquired_date">Acquired Date</label>
+            <input type="date" id="acquired_date" name="acquired_date">
+        </div>
+    </div>
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes"></textarea>
+
+    <button type="submit" class="btn-success">Add Book</button>
+</form>
+{% endblock %}

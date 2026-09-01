@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Import Book Catalog - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Import Book Catalog</h1>
+<p><a href="/books">&larr; Back to Books</a></p>
+
+{% if result %}
+<div class="flash">
+    Imported {{ result.added }} book(s). {{ result.skipped }} row(s) skipped (missing title or already catalogued).
+</div>
+{% endif %}
+
+{% if error %}
+<div class="flash error">
+    Error: {{ error }}
+</div>
+{% endif %}
+
+<form method="post" action="/books/import-catalog" enctype="multipart/form-data">
+    <label for="file">Upload Catalog CSV</label>
+    <input type="file" id="file" name="file" accept=".csv">
+    <button type="submit">Import</button>
+</form>
+
+<p>Unlike the DriveThruRPG import, ownership is read from the CSV itself &mdash; leave owns_physical/owns_digital blank to catalogue a book without marking it as owned. Expected columns: title, game_system, category, publisher, owns_physical, owns_digital, notes. Unrecognized game_system names are created automatically.</p>
+{% endblock %}

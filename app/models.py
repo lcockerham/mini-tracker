@@ -96,3 +96,38 @@ class WishlistItem(Base):
     notes: Mapped[Optional[str]] = mapped_column(
         Text, nullable=True
     )
+
+
+class GameSystem(Base):
+    __tablename__ = "game_systems"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
+
+    books: Mapped[list["Book"]] = relationship(back_populates="game_system")
+
+
+class Book(Base):
+    __tablename__ = "books"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(255))
+    game_system_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("game_systems.id"), nullable=True
+    )
+    publisher: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    owns_physical: Mapped[bool] = mapped_column(default=False)
+    owns_digital: Mapped[bool] = mapped_column(default=False)
+    physical_location: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    pdf_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    drivethrurpg_url: Mapped[Optional[str]] = mapped_column(
+        String(500), nullable=True
+    )
+    isbn: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    acquired_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    game_system: Mapped[Optional["GameSystem"]] = relationship(back_populates="books")

@@ -111,3 +111,53 @@ class WishlistResponse(BaseModel):
 
 class WishlistPurchase(BaseModel):
     quantity: int = 1
+
+
+# --- Book ---
+
+class BookCreate(BaseModel):
+    title: str
+    game_system_id: Optional[int] = None
+    publisher: Optional[str] = None
+    category: Optional[str] = None
+    owns_physical: bool = False
+    owns_digital: bool = False
+    physical_location: Optional[str] = None
+    pdf_url: Optional[str] = None
+    drivethrurpg_url: Optional[str] = None
+    isbn: Optional[str] = None
+    acquired_date: Optional[date] = None
+    notes: Optional[str] = None
+
+
+class BookUpdate(BaseModel):
+    title: Optional[str] = None
+    game_system_id: Optional[int] = None
+    publisher: Optional[str] = None
+    category: Optional[str] = None
+    owns_physical: Optional[bool] = None
+    owns_digital: Optional[bool] = None
+    physical_location: Optional[str] = None
+    pdf_url: Optional[str] = None
+    drivethrurpg_url: Optional[str] = None
+    isbn: Optional[str] = None
+    acquired_date: Optional[date] = None
+    notes: Optional[str] = None
+
+
+class BookResponse(BaseModel):
+    id: int
+    title: str
+    game_system_id: Optional[int]
+    publisher: Optional[str]
+    category: Optional[str]
+    owns_physical: bool
+    owns_digital: bool
+    physical_location: Optional[str]
+    pdf_url: Optional[str]
+    drivethrurpg_url: Optional[str]
+    isbn: Optional[str]
+    acquired_date: Optional[date]
+    notes: Optional[str]
+
+    model_config = {"from_attributes": True}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Books - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>My Books</h1>
+
+<form class="search-form" method="get" action="/books">
+    <div>
+        <label for="search">Title</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Search by title...">
+    </div>
+    <div>
+        <label for="game_system_id">Game System</label>
+        <select id="game_system_id" name="game_system_id">
+            <option value="">All</option>
+            {% for gs in game_systems %}
+            <option value="{{ gs.id }}" {{ 'selected' if game_system_id == gs.id }}>{{ gs.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="ownership">Ownership</label>
+        <select id="ownership" name="ownership">
+            <option value="">All</option>
+            <option value="physical" {{ 'selected' if ownership == 'physical' }}>Physical</option>
+            <option value="digital" {{ 'selected' if ownership == 'digital' }}>Digital</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a href="/books/new" class="btn btn-success">+ Add Book</a>
+    <a href="/books/import" class="btn">Import from DriveThruRPG</a>
+    <a href="/books/import-catalog" class="btn">Import Book Catalog</a>
+</p>
+
+{% if books %}
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Game System</th>
+            <th>Publisher</th>
+            <th>Category</th>
+            <th>Physical</th>
+            <th>Digital</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td><a href="/books/{{ book.id }}">{{ book.title }}</a></td>
+            <td>{{ book.game_system.name if book.game_system else '' }}</td>
+            <td>{{ book.publisher or '' }}</td>
+            <td>{{ book.category or '' }}</td>
+            <td>{{ '✓' if book.owns_physical else '' }}</td>
+            <td>{{ '✓' if book.owns_digital else '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No books found. <a href="/books/new">Add your first one!</a></p>
+{% endif %}
+{% endblock %}
