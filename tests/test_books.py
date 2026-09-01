@@ -18,6 +18,19 @@ class TestBooks:
         response = client.get("/books")
         assert "Monster Manual" in response.text
 
+    def test_search_with_blank_dropdown_params(self, client):
+        # The list.html form always submits game_system_id and ownership,
+        # even when their "All" option (empty string) is selected.
+        create_book(client, title="Curse of Strahd")
+        create_book(client, title="Tomb of Horrors")
+        response = client.get(
+            "/books",
+            params={"search": "Curse of Strahd", "game_system_id": "", "ownership": ""},
+        )
+        assert response.status_code == 200
+        assert "Curse of Strahd" in response.text
+        assert "Tomb of Horrors" not in response.text
+
     def test_add_book_physical_and_digital(self, client):
         create_book(
             client,

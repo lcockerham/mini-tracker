@@ -19,15 +19,17 @@ router = APIRouter()
 def list_books(
     request: Request,
     search: Optional[str] = None,
-    game_system_id: Optional[int] = None,
+    game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
+    game_system_id_int = int(game_system_id) if game_system_id else None
+
     query = db.query(Book)
     if search:
         query = query.filter(Book.title.ilike(f"%{search}%"))
-    if game_system_id:
-        query = query.filter(Book.game_system_id == game_system_id)
+    if game_system_id_int:
+        query = query.filter(Book.game_system_id == game_system_id_int)
     if ownership == "physical":
         query = query.filter(Book.owns_physical.is_(True))
     elif ownership == "digital":
@@ -39,7 +41,7 @@ def list_books(
         "books": books,
         "game_systems": game_systems,
         "search": search,
-        "game_system_id": game_system_id,
+        "game_system_id": game_system_id_int,
         "ownership": ownership,
     })
 
