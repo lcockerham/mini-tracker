@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Import Books - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Import from DriveThruRPG</h1>
+<p><a href="/books">&larr; Back to Books</a></p>
+
+{% if result %}
+<div class="flash">
+    Imported {{ result.added }} book(s). {{ result.skipped }} row(s) skipped (missing title or already in your library).
+</div>
+{% endif %}
+
+{% if error %}
+<div class="flash error">
+    Error: {{ error }}
+</div>
+{% endif %}
+
+<form method="post" action="/books/import" enctype="multipart/form-data">
+    <label for="file">Upload DriveThruRPG Order History / Library CSV</label>
+    <input type="file" id="file" name="file" accept=".csv">
+    <button type="submit">Import</button>
+</form>
+
+<p>Imported books are marked as owned digitally. Recognized columns: title/product name, publisher, order date, product URL. Column names may vary depending on your export — check the result above and adjust the file's headers if titles are skipped unexpectedly.</p>
+{% endblock %}
