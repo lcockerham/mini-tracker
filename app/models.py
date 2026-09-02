@@ -1,8 +1,21 @@
 import enum
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Optional
 
-from sqlalchemy import Column, Date, Enum, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Table,
+    Text,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -131,3 +144,73 @@ class Book(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     game_system: Mapped[Optional["GameSystem"]] = relationship(back_populates="books")
+    image_links: Mapped[list["BookImage"]] = relationship(
+        back_populates="book",
+        cascade="all, delete-orphan",
+        order_by="BookImage.sort_order",
+    )
+
+    @property
+    def primary_image(self) -> Optional["BookImage"]:
+        return next((link for link in self.image_links if link.is_primary), None)
+
+
+class ImageAsset(Base):
+    __tablename__ = "image_assets"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    local_path: Mapped[str] = mapped_column(String(500))
+    remote_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    thumbnail_path: Mapped[str] = mapped_column(String(500))
+    detail_path: Mapped[str] = mapped_column(String(500))
+    sha256: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    mime_type: Mapped[str] = mapped_column(String(100))
+    width: Mapped[int] = mapped_column(Integer)
+    height: Mapped[int] = mapped_column(Integer)
+    byte_size: Mapped[int] = mapped_column(Integer)
+    provider: Mapped[str] = mapped_column(String(50))
+    provider_identifier: Mapped[Optional[str]] = mapped_column(
+        String(500), nullable=True
+    )
+    source_page_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    source_file_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    creator: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    attribution_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    license_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    license_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    rights_status: Mapped[str] = mapped_column(String(50), default="unknown")
+    fetched_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    last_checked_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    book_links: Mapped[list["BookImage"]] = relationship(
+        back_populates="image_asset",
+        cascade="all, delete-orphan",
+    )
+
+
+class BookImage(Base):
+    __tablename__ = "book_images"
+    __table_args__ = (
+        Index(
+            "uq_book_images_primary",
+            "book_id",
+            unique=True,
+            sqlite_where=text("is_primary = 1"),
+        ),
+    )
+
+    book_id: Mapped[int] = mapped_column(
+        ForeignKey("books.id", ondelete="CASCADE"), primary_key=True
+    )
+    image_asset_id: Mapped[int] = mapped_column(
+        ForeignKey("image_assets.id", ondelete="CASCADE"), primary_key=True
+    )
+    is_primary: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    book: Mapped["Book"] = relationship(back_populates="image_links")
+    image_asset: Mapped["ImageAsset"] = relationship(back_populates="book_links")

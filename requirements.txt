@@ -6,3 +6,4 @@ pydantic
 python-multipart
 openpyxl
 pandas
+pillow
