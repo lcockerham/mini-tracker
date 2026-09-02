@@ -14,3 +14,4 @@ venv/
 *.xlsx
 imports/*.csv
 backups/
+*.heic

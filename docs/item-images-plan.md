@@ -7,6 +7,12 @@ other tracked items. The implementation should keep personal data and image file
 of Git, avoid scraping provider websites, respect licensing and attribution, and make
 external requests only through explicit user actions or controlled background jobs.
 
+The current collection shapes the priorities. Of 955 books, none has an ISBN,
+DriveThruRPG URL, or PDF URL, and about half are TSR-era products whose covers are
+copyrighted and therefore absent from free-license sources. Automatic providers will
+find few covers until identifiers are populated, so manual upload is where nearly all
+of the value is. Provider work in later PRs is speculative and sized accordingly.
+
 The repository can remain public. Application code will be kept separate from private
 collection data, downloaded covers, uploads, credentials, and provider caches. Making
 the repository private may reduce accidental exposure, but it does not grant image
@@ -38,8 +44,9 @@ Use a **public code, private data** model:
 
 - Keep source code, templates, tests, and schema definitions in Git.
 - Store user media under a dedicated `media/` directory outside `app/static/`.
-- Add `media/`, `imports/*.csv`, `*.heic`, and other private import artifacts to
-  `.gitignore` before implementing image support.
+- Add `media/`, `*.heic`, and other private import artifacts to `.gitignore` now,
+  before implementing image support. `imports/*.csv` is already ignored. An
+  untracked `.heic` currently sits in the repository root and must be moved out.
 - Continue ignoring SQLite databases, backups, spreadsheets, `.env`, and credentials.
 - Never place provider keys in templates, URLs, logs, CI variables, or committed files.
 - Do not include downloaded covers in releases, test fixtures, Docker images, CI
@@ -67,9 +74,15 @@ Manual upload is the universal fallback and the first provider to implement.
 
 ### 2. Open Library
 
-Use Open Library as the primary automatic source for books with an exact ISBN.
+Use Open Library as the primary automatic source for books.
 
-- Look up only exact ISBNs for automatic matching.
+- Exact ISBN is the only automatic match. No book currently has an ISBN, so PR 2
+  must include a way to populate ISBNs (manual entry on the edit form at minimum)
+  or it will enrich nothing.
+- Also support Open Library search by title plus publisher. Treat results as
+  candidates requiring confirmation, consistent with the matching rules below.
+- Cache selected covers locally. The acceptance criterion that books work offline
+  rules out provider-hosted display.
 - Store the Open Library identifier, source page, and cover URL.
 - Follow Open Library's documented cover-display guidance.
 - Do not crawl its cover repository or use the API as a bulk-data backend.
@@ -83,7 +96,9 @@ Documentation: <https://openlibrary.org/dev/docs/api/covers>
 
 ### 3. Wikimedia Commons
 
-Use Wikimedia Commons only as a freely licensed fallback.
+Use Wikimedia Commons only as a freely licensed fallback. Expect near-zero coverage
+for this collection: TSR and Wizards of the Coast covers are copyrighted and are not
+hosted under free licenses.
 
 - Search for title, publisher, and game system together.
 - Restrict PageImages results to `pilicense=free`.
@@ -113,6 +128,8 @@ Treat DM's Guild and DriveThruRPG as a separate integration phase.
 
 - Do not scrape product pages or parse their HTML.
 - Extract an exact numeric product identifier from an existing marketplace URL.
+  No book currently has a `drivethrurpg_url`, so this provider is idle until URLs
+  are entered.
 - Investigate the account Application Key interface using a dedicated test key.
 - Contact provider support to confirm whether third-party personal catalog apps may
   retrieve or display product-cover thumbnails and what request limits apply.
@@ -141,9 +158,8 @@ Suggested fields:
 | Field | Purpose |
 | --- | --- |
 | `id` | Primary key |
-| `storage_kind` | `local`, `provider`, or `cached_provider` |
 | `local_path` | Relative path for locally stored media |
-| `remote_url` | Provider-hosted display URL when applicable |
+| `remote_url` | Original provider URL, kept for provenance |
 | `thumbnail_path` | Locally generated thumbnail path when applicable |
 | `sha256` | Deduplication and integrity check |
 | `mime_type` | Validated media type |
@@ -157,24 +173,38 @@ Suggested fields:
 | `attribution_text` | Display-ready credit |
 | `license_name` | License or rights label |
 | `license_url` | Link to license terms |
-| `rights_status` | `user_owned`, `licensed`, `provider_embedded`, or `unknown` |
+| `rights_status` | `user_owned`, `licensed`, or `unknown` |
 | `fetched_at` | When the file or metadata was obtained |
 | `last_checked_at` | When provider metadata was last checked |
+
+All stored images are local files. `provider` and `rights_status` carry the
+remaining distinctions, so there is no separate `storage_kind` column.
 
 ### Typed Associations
 
 Use typed association models to preserve database foreign keys:
 
-- `book_images`: `book_id`, `image_asset_id`, `role`, `is_primary`, `sort_order`
-- Later `mini_images`: `mini_id`, `image_asset_id`, `role`, `is_primary`, `sort_order`
+- `book_images`: `book_id`, `image_asset_id`, `is_primary`, `sort_order`
+- Later `mini_images`: `mini_id`, `image_asset_id`, `is_primary`, `sort_order`
 - Add equivalent tables for other item types only when needed.
+- Enforce one primary image per item with a partial unique index, e.g.
+  `CREATE UNIQUE INDEX ... ON book_images (book_id) WHERE is_primary`, not only
+  in application code.
 
 Avoid a generic `owner_type + owner_id` table because SQLite cannot enforce that the
 referenced owner exists. Typed associations also make cascading deletion and ORM
 relationships clearer.
 
-The existing mini-only `Photo` model can be migrated to `ImageAsset` and `MiniImage`
-after the book implementation proves the design.
+The existing mini-only `Photo` model has zero rows. It can be dropped and replaced by
+`MiniImage` whenever convenient; no data migration is needed.
+
+## Dependencies
+
+- Pillow for validation, orientation correction, and thumbnails.
+- httpx for provider requests.
+
+Both are already installed in the virtual environment but missing from
+`requirements.txt`. Add them in PR 1 and PR 2 respectively.
 
 ## Storage and Image Processing
 
@@ -250,8 +280,7 @@ External lookups must never run during normal list or detail rendering.
 - Honor `Retry-After` and provider caching headers.
 - Use exponential backoff for 429 and 503 responses.
 - Retry no more than three times.
-- Record request count, last request time, response status, and failure reason.
-- Pause a provider automatically after repeated failures.
+- Record last request time, response status, and failure reason.
 
 For Wikimedia background work:
 
@@ -275,18 +304,18 @@ Wikimedia etiquette:
 
 ### Book List
 
+- Paginate the list first. It currently renders all 955 books on one page, and
+  thumbnails make that untenable. This is a standalone change, done before images.
 - Add a small cover thumbnail or placeholder.
-- Paginate the list so a single page does not load the whole collection.
 - Lazy-load thumbnails.
 - Keep the table usable when no image exists.
 
 ### Bulk Enrichment
 
 - Add a “Find missing covers” administration screen.
-- Default to a dry-run preview.
+- Run synchronously: dry-run preview, then apply. No background job state.
 - Process at most 25 books in one run.
 - Show matched, needs-review, not-found, skipped, and failed counts.
-- Allow pause and resume.
 - Require confirmation before saving uncertain matches.
 - Never use bulk enrichment for DM's Guild until provider permission and limits are
   confirmed.
@@ -303,17 +332,19 @@ Before any schema migration or bulk image association:
 6. Add media-directory backup guidance because database backups will contain metadata
    but not the image files themselves.
 
-Introduce Alembic before migrating existing `Photo` rows or making destructive schema
-changes. The initial additive tables can be created safely, but future image migrations
-need repeatable, versioned database changes.
+The app creates tables with `create_all`, so additive tables need no migration
+tooling. Introduce Alembic only when a destructive change to populated tables is
+actually required.
 
 ## Delivery Sequence
 
-Implement after the book-tracking PR is merged.
+Book tracking is merged (PR #4). Add the `.gitignore` rules and move the stray
+`.heic` before any of the PRs below.
 
 ### PR 1: Image Foundation and Manual Uploads
 
-- Add ignore rules and media mount.
+- Paginate the book list.
+- Add Pillow to requirements and the media mount.
 - Add `ImageAsset` and `BookImage` models.
 - Add upload validation and thumbnail generation.
 - Add book detail and list image UI.
@@ -322,18 +353,17 @@ Implement after the book-tracking PR is merged.
 
 ### PR 2: Open Library and Wikimedia Providers
 
-- Add the provider interface and shared image service.
-- Add exact-ISBN Open Library lookup.
+- Add httpx to requirements, the provider interface, and the shared image service.
+- Add exact-ISBN Open Library lookup plus title-and-publisher candidate search.
+- Ensure ISBN can be entered on the book edit form.
 - Add free-only Wikimedia Commons candidate search.
 - Add provenance, licensing, caching, throttling, and retry handling.
 - Add candidate review UI and mocked provider tests.
 
 ### PR 3: Controlled Bulk Enrichment
 
-- Add dry-run and review workflow.
-- Add persistent job state and request counters.
-- Enforce per-provider budgets and serial execution.
-- Add pause/resume and failure reporting.
+- Add dry-run and review workflow, 25 books per run, serial execution.
+- Add failure reporting.
 
 ### PR 4: DM's Guild / DriveThruRPG Provider
 
@@ -346,7 +376,7 @@ Implement after the book-tracking PR is merged.
 ### PR 5: Generalize to Other Tracked Items
 
 - Add `MiniImage` and other typed associations as needed.
-- Migrate existing mini `Photo` records.
+- Drop the empty `Photo` model and its router.
 - Reuse upload, gallery, attribution, and primary-image UI.
 - Extend backup/restore coverage to the media directory.
 
@@ -400,8 +430,6 @@ Implement after the book-tracking PR is merged.
 
 ## Remaining Decisions
 
-- Whether Open Library images should remain provider-hosted or be cached locally for
-  offline use. Default to the provider's documented display guidance.
 - The maximum upload size and decoded-pixel limit.
 - Exact thumbnail dimensions and list-page size.
 - The contact identity to use in provider `User-Agent` headers.
