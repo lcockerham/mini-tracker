@@ -18,3 +18,14 @@ Keep at most 3 backups. After creating a new one, delete the oldest until only 3
 (Use `/bin/ls`, not the `eza`-aliased `ls` — `ls -1t` isn't valid eza syntax and errors out.)
 
 Routine single-record edits through the app's normal CRUD routes don't need a backup — this is for anything that could clobber or corrupt a meaningful chunk of the collection in one shot.
+
+## Media backups
+
+Book images live in the gitignored `media/` directory. Database backups preserve
+image metadata and associations, but they do not preserve the image files. Back up
+`mini_tracker.db` and the entire `media/` directory together to a private location,
+and label both with the same timestamp. Restore both parts of the same snapshot so
+database paths and content-addressed files stay in sync.
+
+Do not commit media backups. Treat them as private collection data and keep them out
+of CI artifacts, releases, screenshots, and documentation.

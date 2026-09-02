@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import Base, SessionLocal, engine
+from app.image_service import MEDIA_ROOT, ensure_media_directories
 from app.models import GameSystem
 from app.routers import books, dashboard, minis, paints, photos, wishlist
 
@@ -27,6 +28,8 @@ DEFAULT_GAME_SYSTEMS = [
 
 app_dir = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=app_dir / "static"), name="static")
+ensure_media_directories()
+app.mount("/media", StaticFiles(directory=MEDIA_ROOT), name="media")
 templates = Jinja2Templates(directory=app_dir / "templates")
 
 
