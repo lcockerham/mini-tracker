@@ -14,5 +14,4 @@ venv/
 *.xlsx
 imports/*.csv
 backups/
-*.heic
-media/
+app/static/images/books/

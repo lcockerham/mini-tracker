@@ -39,13 +39,9 @@
 </p>
 
 {% if books %}
-<p class="pagination-summary">
-    Showing {{ page_start }}&ndash;{{ page_end }} of {{ total_books }} books
-</p>
 <table>
     <thead>
         <tr>
-            <th class="cover-column">Cover</th>
             <th>Title</th>
             <th>Game System</th>
             <th>Publisher</th>
@@ -57,24 +53,7 @@
     <tbody>
         {% for book in books %}
         <tr>
-            <td class="cover-cell">
-                {% if book.primary_image %}
-                <img
-                    class="book-cover-list"
-                    src="/media/{{ book.primary_image.image_asset.thumbnail_path }}"
-                    alt="Cover of {{ book.title }}"
-                    width="72"
-                    height="99"
-                    loading="lazy"
-                    decoding="async"
-                >
-                {% else %}
-                <div class="book-cover-placeholder book-cover-placeholder-list" aria-label="No cover">
-                    <span>No cover</span>
-                </div>
-                {% endif %}
-            </td>
-            <td><a href="/books/{{ book.id }}">{{ book.title }}</a></td>
+            <td><a href="/books/{{ book.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}">{{ book.title }}</a></td>
             <td>{{ book.game_system.name if book.game_system else '' }}</td>
             <td>{{ book.publisher or '' }}</td>
             <td>{{ book.category or '' }}</td>
@@ -84,17 +63,6 @@
         {% endfor %}
     </tbody>
 </table>
-{% if total_pages > 1 %}
-<nav class="pagination" aria-label="Book list pages">
-    {% if page > 1 %}
-    <a class="btn btn-secondary" href="{{ previous_url }}">&larr; Previous</a>
-    {% endif %}
-    <span>Page {{ page }} of {{ total_pages }}</span>
-    {% if page < total_pages %}
-    <a class="btn btn-secondary" href="{{ next_url }}">Next &rarr;</a>
-    {% endif %}
-</nav>
-{% endif %}
 {% else %}
 <p>No books found. <a href="/books/new">Add your first one!</a></p>
 {% endif %}
