@@ -14,3 +14,4 @@ venv/
 *.xlsx
 imports/*.csv
 backups/
+app/static/images/books/

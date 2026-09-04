@@ -196,3 +196,75 @@ button:hover, .btn:hover {
     color: #721c24;
     border-color: #f5c6cb;
 }
+
+.book-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.book-navigation a {
+    margin-right: 0;
+}
+
+.book-navigation-pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.book-navigation-position,
+.book-navigation-disabled {
+    color: #bdc3c7;
+    white-space: nowrap;
+}
+
+.book-navigation-position {
+    color: #ecf0f1;
+    font-size: 14px;
+}
+
+.book-detail-layout.has-cover {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    gap: 24px;
+    align-items: start;
+}
+
+.book-cover-panel {
+    position: sticky;
+    top: 20px;
+}
+
+.book-cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 800px) {
+    .book-navigation {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .book-navigation-pager {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .book-detail-layout.has-cover {
+        grid-template-columns: 1fr;
+    }
+
+    .book-cover-panel {
+        position: static;
+        grid-row: 1;
+        width: min(100%, 360px);
+    }
+}
