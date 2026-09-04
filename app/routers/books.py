@@ -2,42 +2,17 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.image_service import (
-    MAX_UPLOAD_BYTES,
-    ImageValidationError,
-    attach_uploaded_image,
-    delete_book_with_images,
-    remove_book_image,
-    set_primary_image,
-)
-from app.models import Book, BookImage, GameSystem
+from app.models import Book, GameSystem
 
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
 
 router = APIRouter()
-BOOKS_PER_PAGE = 50
-
-
-def _get_book_or_404(db: Session, book_id: int) -> Book:
-    book = db.get(Book, book_id)
-    if book is None:
-        raise HTTPException(status_code=404, detail="Book not found")
-    return book
-
-
-def _detail_context(db: Session, book: Book, **extra):
-    context = {
-        "book": book,
-        "game_systems": db.query(GameSystem).order_by(GameSystem.name).all(),
-    }
-    context.update(extra)
-    return context
 
 
 @router.get("/books")
@@ -46,7 +21,6 @@ def list_books(
     search: Optional[str] = None,
     game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
-    page: int = Query(1, ge=1),
     db: Session = Depends(get_db),
 ):
     game_system_id_int = int(game_system_id) if game_system_id else None
@@ -61,18 +35,7 @@ def list_books(
     elif ownership == "digital":
         query = query.filter(Book.owns_digital.is_(True))
 
-    total_books = query.count()
-    total_pages = max(1, (total_books + BOOKS_PER_PAGE - 1) // BOOKS_PER_PAGE)
-    page = min(page, total_pages)
-    books = (
-        query.options(
-            selectinload(Book.image_links).selectinload(BookImage.image_asset)
-        )
-        .order_by(Book.title)
-        .offset((page - 1) * BOOKS_PER_PAGE)
-        .limit(BOOKS_PER_PAGE)
-        .all()
-    )
+    books = query.order_by(Book.title).all()
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
     return templates.TemplateResponse(request, "books/list.html", {
         "books": books,
@@ -80,13 +43,6 @@ def list_books(
         "search": search,
         "game_system_id": game_system_id_int,
         "ownership": ownership,
-        "page": page,
-        "total_pages": total_pages,
-        "total_books": total_books,
-        "page_start": (page - 1) * BOOKS_PER_PAGE + 1 if total_books else 0,
-        "page_end": min(page * BOOKS_PER_PAGE, total_books),
-        "previous_url": str(request.url.include_query_params(page=page - 1)),
-        "next_url": str(request.url.include_query_params(page=page + 1)),
     })
 
 
@@ -197,12 +153,12 @@ async def import_book_catalog_route(
 
 @router.get("/books/{book_id}")
 def get_book(request: Request, book_id: int, db: Session = Depends(get_db)):
-    book = _get_book_or_404(db, book_id)
-    return templates.TemplateResponse(
-        request,
-        "books/detail.html",
-        _detail_context(db, book),
-    )
+    book = db.query(Book).get(book_id)
+    game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
+    return templates.TemplateResponse(request, "books/detail.html", {
+        "book": book,
+        "game_systems": game_systems,
+    })
 
 
 @router.post("/books/{book_id}/edit")
@@ -222,7 +178,7 @@ def update_book(
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
-    book = _get_book_or_404(db, book_id)
+    book = db.query(Book).get(book_id)
     book.title = title
     book.game_system_id = int(game_system_id) if game_system_id else None
     book.publisher = publisher or None
@@ -241,78 +197,7 @@ def update_book(
 
 @router.post("/books/{book_id}/delete")
 def delete_book(book_id: int, db: Session = Depends(get_db)):
-    book = _get_book_or_404(db, book_id)
-    delete_book_with_images(db, book)
+    book = db.query(Book).get(book_id)
+    db.delete(book)
+    db.commit()
     return RedirectResponse(url="/books", status_code=303)
-
-
-@router.post("/books/{book_id}/images")
-async def upload_book_image(
-    request: Request,
-    book_id: int,
-    image: UploadFile = File(...),
-    make_primary: Optional[str] = Form(None),
-    creator: Optional[str] = Form(None),
-    attribution_text: Optional[str] = Form(None),
-    license_name: Optional[str] = Form(None),
-    license_url: Optional[str] = Form(None),
-    source_page_url: Optional[str] = Form(None),
-    rights_status: str = Form("user_owned"),
-    db: Session = Depends(get_db),
-):
-    book = _get_book_or_404(db, book_id)
-    if rights_status not in {"user_owned", "licensed", "unknown"}:
-        raise HTTPException(status_code=400, detail="Invalid rights status")
-
-    contents = await image.read(MAX_UPLOAD_BYTES + 1)
-    try:
-        attach_uploaded_image(
-            db,
-            book,
-            contents,
-            image.content_type,
-            make_primary=bool(make_primary) or not book.image_links,
-            creator=creator,
-            attribution_text=attribution_text,
-            license_name=license_name,
-            license_url=license_url,
-            source_page_url=source_page_url,
-            rights_status=rights_status,
-        )
-    except ImageValidationError as exc:
-        db.rollback()
-        return templates.TemplateResponse(
-            request,
-            "books/detail.html",
-            _detail_context(db, book, image_error=str(exc)),
-            status_code=400,
-        )
-    return RedirectResponse(url=f"/books/{book_id}", status_code=303)
-
-
-@router.post("/books/{book_id}/images/{image_asset_id}/primary")
-def make_book_image_primary(
-    book_id: int,
-    image_asset_id: int,
-    db: Session = Depends(get_db),
-):
-    book = _get_book_or_404(db, book_id)
-    link = db.get(BookImage, (book_id, image_asset_id))
-    if link is None:
-        raise HTTPException(status_code=404, detail="Book image not found")
-    set_primary_image(db, book, link)
-    return RedirectResponse(url=f"/books/{book_id}", status_code=303)
-
-
-@router.post("/books/{book_id}/images/{image_asset_id}/remove")
-def remove_image_from_book(
-    book_id: int,
-    image_asset_id: int,
-    db: Session = Depends(get_db),
-):
-    book = _get_book_or_404(db, book_id)
-    link = db.get(BookImage, (book_id, image_asset_id))
-    if link is None:
-        raise HTTPException(status_code=404, detail="Book image not found")
-    remove_book_image(db, book, link)
-    return RedirectResponse(url=f"/books/{book_id}", status_code=303)
