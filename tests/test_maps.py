@@ -35,13 +35,13 @@ class TestMaps:
             client,
             name="Ruined Town",
             source="D&D Tactical Maps Reincarnated",
-            size="Full Poster",
+            size="21x30",
         )
         list_resp = client.get("/maps")
         map_id = map_id_for_name(list_resp.text, "Ruined Town")
         detail = client.get(f"/maps/{map_id}")
         assert "D&amp;D Tactical Maps Reincarnated" in detail.text
-        assert "Full Poster" in detail.text
+        assert "21x30" in detail.text
 
     def test_add_map_physical_and_digital(self, client):
         create_map(
