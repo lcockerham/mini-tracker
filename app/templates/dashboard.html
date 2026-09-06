@@ -4,33 +4,33 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center;">
-        <div style="font-size: 36px; font-weight: bold; color: #2c3e50;">{{ total }}</div>
-        <div style="color: #666;">Total Minis</div>
+<div class="stats-grid">
+    <div class="card stat-card">
+        <div class="stat-value">{{ total }}</div>
+        <div class="stat-label">Total Minis</div>
     </div>
     {% for status, count in status_counts.items() %}
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center;">
-        <div style="font-size: 36px; font-weight: bold; color: #2c3e50;">{{ count }}</div>
-        <div style="color: #666;">{{ status }}</div>
+    <div class="card stat-card">
+        <div class="stat-value">{{ count }}</div>
+        <div class="stat-label">{{ status }}</div>
     </div>
     {% endfor %}
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+<div class="charts-grid">
+    <div class="card">
         <h2>Painting Breakdown</h2>
         <canvas id="statusChart"></canvas>
     </div>
 
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div class="card">
         <h2>By Manufacturer</h2>
         <canvas id="manufacturerChart"></canvas>
     </div>
 </div>
 
 {% if timeline %}
-<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 24px;">
+<div class="card" style="margin-top: 24px;">
     <h2>Painting Timeline</h2>
     <canvas id="timelineChart"></canvas>
 </div>
@@ -41,10 +41,13 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    Chart.defaults.color = '#9aa3b2';
+    Chart.defaults.borderColor = '#2d3340';
+
     const statusColors = {
-        'Unpainted': '#95a5a6',
-        'In Progress': '#f39c12',
-        'Painted': '#27ae60',
+        'Unpainted': '#52586a',
+        'In Progress': '#c17d1f',
+        'Painted': '#1f9d6c',
     };
 
     // Painting breakdown pie chart
@@ -55,7 +58,8 @@
             labels: Object.keys(statusData),
             datasets: [{
                 data: Object.values(statusData),
-                backgroundColor: Object.keys(statusData).map(s => statusColors[s] || '#3498db'),
+                backgroundColor: Object.keys(statusData).map(s => statusColors[s] || '#e2a33d'),
+                borderColor: '#1b1f27',
             }]
         },
         options: {
@@ -84,7 +88,7 @@
             datasets: [{
                 label: 'Minis',
                 data: Object.values(mfgData),
-                backgroundColor: '#3498db',
+                backgroundColor: '#e2a33d',
             }]
         },
         options: {
@@ -104,8 +108,8 @@
             datasets: [{
                 label: 'Minis Completed',
                 data: Object.values(timelineData),
-                borderColor: '#27ae60',
-                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                borderColor: '#1f9d6c',
+                backgroundColor: 'rgba(31, 157, 108, 0.15)',
                 fill: true,
                 tension: 0.3,
             }]
