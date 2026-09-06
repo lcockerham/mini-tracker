@@ -22,8 +22,8 @@
     </div>
 </nav>
 
-<div class="book-detail-layout{{ ' has-cover' if cover_image_url }}">
-<div class="book-detail-info">
+<div class="detail-layout{{ ' has-cover' if cover_image_url }}">
+<div class="detail-info">
 <form method="post" action="/books/{{ book.id }}/edit{% if navigation_query %}?{{ navigation_query }}{% endif %}">
     <div class="form-row">
         <div>
@@ -92,7 +92,7 @@
 </div>
 
 {% if cover_image_url %}
-<aside class="book-cover-panel">
+<aside class="cover-panel">
     <img class="book-cover" src="{{ cover_image_url }}" alt="{{ book.title }} cover">
 </aside>
 {% endif %}

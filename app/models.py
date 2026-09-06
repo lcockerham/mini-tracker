@@ -129,3 +129,14 @@ class Book(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     game_system: Mapped[Optional["GameSystem"]] = relationship(back_populates="books")
+
+
+class Map(Base):
+    __tablename__ = "maps"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(255))
+    source: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    size: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    owns_physical: Mapped[bool] = mapped_column(default=False)
+    owns_digital: Mapped[bool] = mapped_column(default=False)

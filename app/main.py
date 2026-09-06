@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.database import Base, SessionLocal, engine
 from app.models import GameSystem
-from app.routers import books, dashboard, minis, paints, photos, wishlist
+from app.routers import books, dashboard, maps, minis, paints, photos, wishlist
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
 app.include_router(minis.router)
@@ -15,6 +15,7 @@ app.include_router(wishlist.router)
 app.include_router(photos.router)
 app.include_router(dashboard.router)
 app.include_router(books.router)
+app.include_router(maps.router)
 
 DEFAULT_GAME_SYSTEMS = [
     "D&D Basic",

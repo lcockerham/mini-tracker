@@ -155,3 +155,32 @@ class BookResponse(BaseModel):
     notes: Optional[str]
 
     model_config = {"from_attributes": True}
+
+
+# --- Map ---
+
+class MapCreate(BaseModel):
+    name: str
+    source: Optional[str] = None
+    size: Optional[str] = None
+    owns_physical: bool = False
+    owns_digital: bool = False
+
+
+class MapUpdate(BaseModel):
+    name: Optional[str] = None
+    source: Optional[str] = None
+    size: Optional[str] = None
+    owns_physical: Optional[bool] = None
+    owns_digital: Optional[bool] = None
+
+
+class MapResponse(BaseModel):
+    id: int
+    name: str
+    source: Optional[str]
+    size: Optional[str]
+    owns_physical: bool
+    owns_digital: bool
+
+    model_config = {"from_attributes": True}

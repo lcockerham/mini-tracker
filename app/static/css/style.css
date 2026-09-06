@@ -381,14 +381,14 @@ button:hover, .btn:hover {
     font-size: 14px;
 }
 
-.book-detail-layout.has-cover {
+.detail-layout.has-cover {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
     gap: 24px;
     align-items: start;
 }
 
-.book-cover-panel {
+.cover-panel {
     position: sticky;
     top: 20px;
 }
@@ -413,11 +413,11 @@ button:hover, .btn:hover {
         width: 100%;
     }
 
-    .book-detail-layout.has-cover {
+    .detail-layout.has-cover {
         grid-template-columns: 1fr;
     }
 
-    .book-cover-panel {
+    .cover-panel {
         position: static;
         grid-row: 1;
         width: min(100%, 360px);
