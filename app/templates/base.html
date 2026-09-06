@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mini-Tracker{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/style.css?v=5">
 </head>
 <body>
     <nav>
-        <a href="/minis">Collection</a>
-        <a href="/books">Books</a>
-        <a href="/paints">Paints</a>
-        <a href="/wishlist">Wishlist</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/import">Import</a>
+        <a href="/minis" class="{{ 'active' if request.url.path.startswith('/minis') }}">Miniatures</a>
+        <a href="/books" class="{{ 'active' if request.url.path.startswith('/books') }}">Books</a>
+        <a href="/paints" class="{{ 'active' if request.url.path.startswith('/paints') }}">Paints</a>
+        <a href="/wishlist" class="{{ 'active' if request.url.path.startswith('/wishlist') }}">Wishlist</a>
+        <a href="/dashboard" class="{{ 'active' if request.url.path.startswith('/dashboard') }}">Dashboard</a>
+        <a href="/import" class="{{ 'active' if request.url.path.startswith('/import') }}">Import</a>
     </nav>
 
     {% block content %}{% endblock %}

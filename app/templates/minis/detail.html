@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>{{ mini.name }}</h1>
-<p><a href="/minis">&larr; Back to Collection</a></p>
+<p><a href="/minis">&larr; Back to Miniatures</a></p>
 
 <div class="form-row">
     <div>
@@ -54,7 +54,7 @@
                 </div>
                 <div>
                     <label for="rarity">Rarity</label>
-                    <input type="text" id="rarity" value="{{ mini.rarity or '' }}" readonly style="background: #f5f5f5; cursor: not-allowed;">
+                    <input type="text" id="rarity" value="{{ mini.rarity or '' }}" readonly>
                 </div>
             </div>
             <div class="form-row">
@@ -90,9 +90,9 @@
 
 <h2>Photos</h2>
 {% if mini.photos %}
-<div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+<div class="photo-grid">
     {% for photo in mini.photos %}
-    <div style="background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div class="photo-item">
         <a href="{{ photo.url }}" target="_blank">{{ photo.url | truncate(50) }}</a>
         <form method="post" action="/minis/{{ mini.id }}/photos/{{ photo.id }}/delete" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
             <button type="submit" class="btn-danger" style="padding: 2px 8px; font-size: 12px;">X</button>
