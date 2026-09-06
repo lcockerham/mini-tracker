@@ -122,11 +122,9 @@ class Book(Base):
     physical_location: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True
     )
-    pdf_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     drivethrurpg_url: Mapped[Optional[str]] = mapped_column(
         String(500), nullable=True
     )
-    isbn: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     acquired_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 

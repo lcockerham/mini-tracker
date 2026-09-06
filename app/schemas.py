@@ -123,9 +123,7 @@ class BookCreate(BaseModel):
     owns_physical: bool = False
     owns_digital: bool = False
     physical_location: Optional[str] = None
-    pdf_url: Optional[str] = None
     drivethrurpg_url: Optional[str] = None
-    isbn: Optional[str] = None
     acquired_date: Optional[date] = None
     notes: Optional[str] = None
 
@@ -138,9 +136,7 @@ class BookUpdate(BaseModel):
     owns_physical: Optional[bool] = None
     owns_digital: Optional[bool] = None
     physical_location: Optional[str] = None
-    pdf_url: Optional[str] = None
     drivethrurpg_url: Optional[str] = None
-    isbn: Optional[str] = None
     acquired_date: Optional[date] = None
     notes: Optional[str] = None
 
@@ -154,9 +150,7 @@ class BookResponse(BaseModel):
     owns_physical: bool
     owns_digital: bool
     physical_location: Optional[str]
-    pdf_url: Optional[str]
     drivethrurpg_url: Optional[str]
-    isbn: Optional[str]
     acquired_date: Optional[date]
     notes: Optional[str]
 

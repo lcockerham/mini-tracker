@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -108,9 +108,7 @@ def create_book(
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
     physical_location: Optional[str] = Form(None),
-    pdf_url: Optional[str] = Form(None),
     drivethrurpg_url: Optional[str] = Form(None),
-    isbn: Optional[str] = Form(None),
     acquired_date: Optional[str] = Form(None),
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
@@ -123,77 +121,13 @@ def create_book(
         owns_physical=bool(owns_physical),
         owns_digital=bool(owns_digital),
         physical_location=physical_location or None,
-        pdf_url=pdf_url or None,
         drivethrurpg_url=drivethrurpg_url or None,
-        isbn=isbn or None,
         acquired_date=date.fromisoformat(acquired_date) if acquired_date else None,
         notes=notes or None,
     )
     db.add(book)
     db.commit()
     return RedirectResponse(url=f"/books/{book.id}", status_code=303)
-
-
-@router.get("/books/import")
-def import_books_form(request: Request):
-    return templates.TemplateResponse(request, "books/import.html", {})
-
-
-@router.post("/books/import")
-async def import_books(
-    request: Request,
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-):
-    import tempfile
-
-    from imports.drivethrurpg import import_drivethrurpg_csv
-
-    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-        contents = await file.read()
-        tmp.write(contents)
-        tmp_path = tmp.name
-
-    try:
-        result = import_drivethrurpg_csv(tmp_path, db)
-        return templates.TemplateResponse(request, "books/import.html", {
-            "result": result,
-        })
-    except Exception as e:
-        return templates.TemplateResponse(request, "books/import.html", {
-            "error": str(e),
-        })
-
-
-@router.get("/books/import-catalog")
-def import_book_catalog_form(request: Request):
-    return templates.TemplateResponse(request, "books/import_catalog.html", {})
-
-
-@router.post("/books/import-catalog")
-async def import_book_catalog_route(
-    request: Request,
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-):
-    import tempfile
-
-    from imports.book_catalog import import_book_catalog
-
-    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-        contents = await file.read()
-        tmp.write(contents)
-        tmp_path = tmp.name
-
-    try:
-        result = import_book_catalog(tmp_path, db)
-        return templates.TemplateResponse(request, "books/import_catalog.html", {
-            "result": result,
-        })
-    except Exception as e:
-        return templates.TemplateResponse(request, "books/import_catalog.html", {
-            "error": str(e),
-        })
 
 
 @router.get("/books/{book_id}")
@@ -250,9 +184,7 @@ def update_book(
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
     physical_location: Optional[str] = Form(None),
-    pdf_url: Optional[str] = Form(None),
     drivethrurpg_url: Optional[str] = Form(None),
-    isbn: Optional[str] = Form(None),
     acquired_date: Optional[str] = Form(None),
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
@@ -265,9 +197,7 @@ def update_book(
     book.owns_physical = bool(owns_physical)
     book.owns_digital = bool(owns_digital)
     book.physical_location = physical_location or None
-    book.pdf_url = pdf_url or None
     book.drivethrurpg_url = drivethrurpg_url or None
-    book.isbn = isbn or None
     book.acquired_date = date.fromisoformat(acquired_date) if acquired_date else None
     book.notes = notes or None
     db.commit()
