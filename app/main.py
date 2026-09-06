@@ -17,6 +17,8 @@ app.include_router(dashboard.router)
 app.include_router(books.router)
 
 DEFAULT_GAME_SYSTEMS = [
+    "D&D Basic",
+    "D&D Expert",
     "D&D 5e",
     "Pathfinder 2e",
     "Call of Cthulhu",

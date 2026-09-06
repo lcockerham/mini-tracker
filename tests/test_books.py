@@ -79,6 +79,18 @@ class TestBooks:
         assert "Kobold Press" in detail.text
         assert "drivethrurpg.com/product/12345" in detail.text
 
+    def test_book_forms_exclude_removed_fields(self, client):
+        create_form = client.get("/books/new")
+        assert 'name="isbn"' not in create_form.text
+        assert 'name="pdf_url"' not in create_form.text
+
+        create_book(client, title="Field Check")
+        list_response = client.get("/books")
+        book_id = book_id_for_title(list_response.text, "Field Check")
+        detail = client.get(f"/books/{book_id}")
+        assert 'name="isbn"' not in detail.text
+        assert 'name="pdf_url"' not in detail.text
+
     def test_book_detail_shows_convention_based_cover(self, client, tmp_path, monkeypatch):
         create_book(client, title="Dark Sun Boxed Set")
         list_resp = client.get("/books")
@@ -211,9 +223,17 @@ class TestBooks:
 
     def test_game_systems_seeded(self, client):
         response = client.get("/books/new")
+        assert "D&amp;D Basic" in response.text
+        assert "D&amp;D Expert" in response.text
         assert "D&amp;D 5e" in response.text
         assert "Pathfinder 2e" in response.text
 
-    def test_import_route_not_shadowed_by_book_id(self, client):
-        response = client.get("/books/import")
-        assert response.status_code == 200
+    def test_book_import_features_are_unavailable(self, client):
+        list_response = client.get("/books")
+        assert "/books/import" not in list_response.text
+
+        registered_paths = {
+            route.path for route in client.app.routes if hasattr(route, "path")
+        }
+        assert "/books/import" not in registered_paths
+        assert "/books/import-catalog" not in registered_paths
