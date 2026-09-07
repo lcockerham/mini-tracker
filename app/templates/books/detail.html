@@ -3,21 +3,21 @@
 
 {% block content %}
 <h1>{{ book.title }}</h1>
-<nav class="book-navigation" aria-label="Book navigation">
-    <a href="{{ books_url }}" class="book-navigation-back">&larr; Back to Books</a>
-    <div class="book-navigation-pager">
+<nav class="item-navigation" aria-label="Book navigation">
+    <a href="{{ books_url }}" class="item-navigation-back">&larr; Back to Books</a>
+    <div class="item-navigation-pager">
         {% if previous_book %}
         <a href="/books/{{ previous_book.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="prev" title="{{ previous_book.title }}">&larr; Previous Book</a>
         {% else %}
-        <span class="book-navigation-disabled">&larr; Previous Book</span>
+        <span class="item-navigation-disabled">&larr; Previous Book</span>
         {% endif %}
         {% if book_position %}
-        <span class="book-navigation-position">{{ book_position }} of {{ book_count }}</span>
+        <span class="item-navigation-position">{{ book_position }} of {{ book_count }}</span>
         {% endif %}
         {% if next_book %}
         <a href="/books/{{ next_book.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="next" title="{{ next_book.title }}">Next Book &rarr;</a>
         {% else %}
-        <span class="book-navigation-disabled">Next Book &rarr;</span>
+        <span class="item-navigation-disabled">Next Book &rarr;</span>
         {% endif %}
     </div>
 </nav>
@@ -93,7 +93,7 @@
 
 {% if cover_image_url %}
 <aside class="cover-panel">
-    <img class="book-cover" src="{{ cover_image_url }}" alt="{{ book.title }} cover">
+    <img class="cover-image" src="{{ cover_image_url }}" alt="{{ book.title }} cover">
 </aside>
 {% endif %}
 </div>

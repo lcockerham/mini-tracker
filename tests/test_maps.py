@@ -13,7 +13,7 @@ def create_map(client, name="Green Valley", **kwargs):
 
 def map_id_for_name(response_text, name):
     match = re.search(
-        rf'href="/maps/(\d+)">{re.escape(html.escape(name))}</a>',
+        rf'href="/maps/(\d+)[^"]*">{re.escape(html.escape(name))}</a>',
         response_text,
     )
     assert match is not None
@@ -102,3 +102,57 @@ class TestMaps:
     def test_maps_nav_link_present(self, client):
         response = client.get("/minis")
         assert 'href="/maps"' in response.text
+
+    def test_map_detail_navigates_in_name_order(self, client):
+        create_map(client, name="Charlie")
+        create_map(client, name="Alpha")
+        create_map(client, name="Bravo")
+        list_response = client.get("/maps")
+        alpha_id = map_id_for_name(list_response.text, "Alpha")
+        bravo_id = map_id_for_name(list_response.text, "Bravo")
+        charlie_id = map_id_for_name(list_response.text, "Charlie")
+
+        detail = client.get(f"/maps/{bravo_id}")
+
+        assert f'href="/maps/{alpha_id}" rel="prev"' in detail.text
+        assert f'href="/maps/{charlie_id}" rel="next"' in detail.text
+        assert '<span class="item-navigation-position">2 of 3</span>' in detail.text
+
+    def test_map_navigation_preserves_filtered_list(self, client):
+        create_map(client, name="Alpha Quest", owns_physical="on")
+        create_map(client, name="Beta Quest", owns_physical="on")
+        create_map(client, name="Gamma Quest", owns_digital="on")
+        create_map(client, name="Delta Item", owns_physical="on")
+        params = {"search": "Quest", "ownership": "physical"}
+        navigation_query = "search=Quest&amp;ownership=physical"
+        list_response = client.get("/maps", params=params)
+        alpha_id = map_id_for_name(list_response.text, "Alpha Quest")
+        beta_id = map_id_for_name(list_response.text, "Beta Quest")
+
+        assert "Gamma Quest" not in list_response.text
+        assert "Delta Item" not in list_response.text
+        assert f'href="/maps/{alpha_id}?{navigation_query}"' in list_response.text
+
+        first_detail = client.get(f"/maps/{alpha_id}", params=params)
+        assert f'href="/maps/{beta_id}?{navigation_query}" rel="next"' in first_detail.text
+        assert '<span class="item-navigation-position">1 of 2</span>' in first_detail.text
+        assert f'href="/maps?{navigation_query}"' in first_detail.text
+
+        second_detail = client.get(f"/maps/{beta_id}", params=params)
+        assert f'href="/maps/{alpha_id}?{navigation_query}" rel="prev"' in second_detail.text
+        assert '<span class="item-navigation-position">2 of 2</span>' in second_detail.text
+
+    def test_edit_keeps_map_navigation_filters(self, client):
+        create_map(client, name="Filtered Map", owns_physical="on")
+        list_response = client.get("/maps")
+        map_id = map_id_for_name(list_response.text, "Filtered Map")
+        query = "search=Filtered&ownership=physical"
+
+        response = client.post(
+            f"/maps/{map_id}/edit?{query}",
+            data={"name": "Filtered Map", "owns_physical": "on"},
+        )
+
+        assert response.url.path == f"/maps/{map_id}"
+        assert response.url.query.decode() == query
+        assert '<span class="item-navigation-position">1 of 1</span>' in response.text

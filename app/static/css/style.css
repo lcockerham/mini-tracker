@@ -351,7 +351,7 @@ button:hover, .btn:hover {
     border-radius: 6px;
 }
 
-.book-navigation {
+.item-navigation {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -359,24 +359,24 @@ button:hover, .btn:hover {
     margin-bottom: 24px;
 }
 
-.book-navigation a {
+.item-navigation a {
     margin-right: 0;
 }
 
-.book-navigation-pager {
+.item-navigation-pager {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
 }
 
-.book-navigation-position,
-.book-navigation-disabled {
+.item-navigation-position,
+.item-navigation-disabled {
     color: var(--text-muted);
     white-space: nowrap;
 }
 
-.book-navigation-position {
+.item-navigation-position {
     color: var(--text-secondary);
     font-size: 14px;
 }
@@ -393,7 +393,7 @@ button:hover, .btn:hover {
     top: 20px;
 }
 
-.book-cover {
+.cover-image {
     display: block;
     width: 100%;
     height: auto;
@@ -403,12 +403,12 @@ button:hover, .btn:hover {
 }
 
 @media (max-width: 800px) {
-    .book-navigation {
+    .item-navigation {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .book-navigation-pager {
+    .item-navigation-pager {
         justify-content: space-between;
         width: 100%;
     }

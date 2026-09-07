@@ -41,7 +41,7 @@
     <tbody>
         {% for map in maps %}
         <tr>
-            <td><a href="/maps/{{ map.id }}">{{ map.name }}</a></td>
+            <td><a href="/maps/{{ map.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}">{{ map.name }}</a></td>
             <td>{{ map.source or '' }}</td>
             <td>{{ map.size or '' }}</td>
             <td>{{ '✓' if map.owns_physical else '' }}</td>
