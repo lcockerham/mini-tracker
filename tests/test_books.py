@@ -116,7 +116,7 @@ class TestBooks:
 
         assert f'href="/books/{alpha_id}" rel="prev"' in detail.text
         assert f'href="/books/{charlie_id}" rel="next"' in detail.text
-        assert '<span class="book-navigation-position">2 of 3</span>' in detail.text
+        assert '<span class="item-navigation-position">2 of 3</span>' in detail.text
 
     def test_book_navigation_preserves_filtered_list(self, client):
         dnd_id = game_system_id_for_name(client, "D&D 5e")
@@ -165,12 +165,12 @@ class TestBooks:
 
         first_detail = client.get(f"/books/{alpha_id}", params=params)
         assert f'href="/books/{beta_id}?{navigation_query}" rel="next"' in first_detail.text
-        assert '<span class="book-navigation-position">1 of 2</span>' in first_detail.text
+        assert '<span class="item-navigation-position">1 of 2</span>' in first_detail.text
         assert f'href="/books?{navigation_query}"' in first_detail.text
 
         second_detail = client.get(f"/books/{beta_id}", params=params)
         assert f'href="/books/{alpha_id}?{navigation_query}" rel="prev"' in second_detail.text
-        assert '<span class="book-navigation-position">2 of 2</span>' in second_detail.text
+        assert '<span class="item-navigation-position">2 of 2</span>' in second_detail.text
 
     def test_edit_keeps_book_navigation_filters(self, client):
         dnd_id = game_system_id_for_name(client, "D&D 5e")
@@ -195,7 +195,7 @@ class TestBooks:
 
         assert response.url.path == f"/books/{book_id}"
         assert response.url.query.decode() == query
-        assert '<span class="book-navigation-position">1 of 1</span>' in response.text
+        assert '<span class="item-navigation-position">1 of 1</span>' in response.text
 
     def test_edit_book(self, client):
         create_book(client, title="Old Title")

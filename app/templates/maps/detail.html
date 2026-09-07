@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ map.name }} - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>{{ map.name }}</h1>
+<nav class="item-navigation" aria-label="Map navigation">
+    <a href="{{ maps_url }}" class="item-navigation-back">&larr; Back to Maps</a>
+    <div class="item-navigation-pager">
+        {% if previous_map %}
+        <a href="/maps/{{ previous_map.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="prev" title="{{ previous_map.name }}">&larr; Previous Map</a>
+        {% else %}
+        <span class="item-navigation-disabled">&larr; Previous Map</span>
+        {% endif %}
+        {% if map_position %}
+        <span class="item-navigation-position">{{ map_position }} of {{ map_count }}</span>
+        {% endif %}
+        {% if next_map %}
+        <a href="/maps/{{ next_map.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="next" title="{{ next_map.name }}">Next Map &rarr;</a>
+        {% else %}
+        <span class="item-navigation-disabled">Next Map &rarr;</span>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="detail-layout{{ ' has-cover' if image_url }}">
+<div class="detail-info">
+<form method="post" action="/maps/{{ map.id }}/edit">
+    <div class="form-row">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="{{ map.name }}" required>
+        </div>
+        <div>
+            <label for="source">Source</label>
+            <input type="text" id="source" name="source" value="{{ map.source or '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="size">Size</label>
+            <input type="text" id="size" name="size" value="{{ map.size or '' }}">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="owns_physical">
+                <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;" {{ 'checked' if map.owns_physical }}>
+                Own Physical Copy
+            </label>
+        </div>
+        <div>
+            <label for="owns_digital">
+                <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;" {{ 'checked' if map.owns_digital }}>
+                Own Digital Copy
+            </label>
+        </div>
+    </div>
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<form method="post" action="/maps/{{ map.id }}/delete" style="margin-top: 12px;">
+    <button type="submit" class="btn-danger">Delete Map</button>
+</form>
+</div>
+
+{% if image_url %}
+<aside class="cover-panel">
+    <img class="cover-image" src="{{ image_url }}" alt="{{ map.name }} image">
+</aside>
+{% endif %}
+</div>
+{% endblock %}

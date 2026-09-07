@@ -15,4 +15,5 @@ venv/
 imports/*.csv
 backups/
 app/static/images/books/
+app/static/images/maps/
 media/

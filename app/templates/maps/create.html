@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Add Map - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Add New Map</h1>
+<p><a href="/maps">&larr; Back to Maps</a></p>
+
+<form method="post" action="/maps/new">
+    <div class="form-row">
+        <div>
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="source">Source</label>
+            <input type="text" id="source" name="source" placeholder="e.g. D&D Tactical Maps Reincarnated">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="size">Size</label>
+            <input type="text" id="size" name="size" placeholder="e.g. 21x30 (5ft tiles, WxH)">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="owns_physical">
+                <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;">
+                Own Physical Copy
+            </label>
+        </div>
+        <div>
+            <label for="owns_digital">
+                <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;">
+                Own Digital Copy
+            </label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-success">Add Map</button>
+</form>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Maps - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>My Maps</h1>
+
+<form class="search-form" method="get" action="/maps">
+    <div>
+        <label for="search">Name</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Search by name...">
+    </div>
+    <div>
+        <label for="ownership">Ownership</label>
+        <select id="ownership" name="ownership">
+            <option value="">All</option>
+            <option value="physical" {{ 'selected' if ownership == 'physical' }}>Physical</option>
+            <option value="digital" {{ 'selected' if ownership == 'digital' }}>Digital</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a href="/maps/new" class="btn btn-success">+ Add Map</a>
+</p>
+
+{% if maps %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Source</th>
+            <th>Size</th>
+            <th>Physical</th>
+            <th>Digital</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for map in maps %}
+        <tr>
+            <td><a href="/maps/{{ map.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}">{{ map.name }}</a></td>
+            <td>{{ map.source or '' }}</td>
+            <td>{{ map.size or '' }}</td>
+            <td>{{ '✓' if map.owns_physical else '' }}</td>
+            <td>{{ '✓' if map.owns_digital else '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No maps found. <a href="/maps/new">Add your first one!</a></p>
+{% endif %}
+{% endblock %}
