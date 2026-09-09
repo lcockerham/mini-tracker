@@ -338,9 +338,9 @@ button:hover, .btn:hover {
 }
 
 .photo-grid {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
     margin-bottom: 16px;
 }
 
@@ -425,5 +425,45 @@ button:hover, .btn:hover {
 
     .charts-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+.mini-thumbnail-cell {
+    width: 72px;
+}
+
+.mini-thumbnail {
+    display: block;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.photo-item img {
+    display: block;
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+}
+
+.mini-detail-photo-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.mini-detail-photo-grid .photo-item img {
+    max-height: 720px;
+}
+
+.detail-layout.mini-detail-layout.has-cover {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 500px);
+}
+
+@media (max-width: 800px) {
+    .detail-layout.mini-detail-layout.has-cover {
+        grid-template-columns: 1fr;
+    }
+
+    .mini-photo-panel {
+        width: min(100%, 500px);
     }
 }

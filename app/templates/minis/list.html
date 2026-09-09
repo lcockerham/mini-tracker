@@ -39,6 +39,7 @@
 <table>
     <thead>
         <tr>
+            <th>Image</th>
             <th>Name</th>
             <th style="white-space: nowrap">Creature Type</th>
             <th>Manufacturer</th>
@@ -53,7 +54,12 @@
     <tbody>
         {% for mini in minis %}
         <tr>
-            <td><a href="/minis/{{ mini.id }}">{{ mini.name }}</a></td>
+            <td class="mini-thumbnail-cell">
+                {% if mini.photos %}
+                <a href="/minis/{{ mini.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}"><img class="mini-thumbnail" src="{{ mini.photos[0].url }}" alt="{{ mini.name }}" loading="lazy"></a>
+                {% endif %}
+            </td>
+            <td><a href="/minis/{{ mini.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}">{{ mini.name }}</a></td>
             <td>{{ mini.creature_type or '' }}</td>
             <td>{{ mini.manufacturer or '' }}</td>
             <td>{{ mini.product_line or '' }}</td>
