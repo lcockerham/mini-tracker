@@ -11,6 +11,8 @@ enriched with a DMsGuild URL and local cover. None displayed the
 edition conflicts, five are components without a standalone product listing,
 and 15 had no matching product in the DMsGuild search results.
 
+## Open (25)
+
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
 | 808 | Adventures in Faerun | Listing unavailable | Exact-title and official Roll20 searches returned only third-party battlemap supplements. | Confirm whether an official product listing exists or leave the record without a cover and URL. | Open |
@@ -38,5 +40,9 @@ and 15 had no matching product in the DMsGuild search results.
 | 878 | The Deck of Many Things | Listing unavailable | Exact-title and simplified searches returned third-party deck products, but no official boxed-set listing. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open |
 | 895 | Mordenkainen's Tome of Foes | Listing unavailable | Searches returned supplements and the replacement Monsters of the Multiverse product, but no official Tome of Foes listing. | Confirm whether a delisted product should remain without a cover and URL. | Open |
 | 897 | Volo's Guide to Monsters | Listing unavailable | Searches returned supplements referencing the book, but no official Volo's Guide product. | Confirm whether a delisted product should remain without a cover and URL. | Open |
+
+## Resolved (0)
+
+None yet.
 
 Only unresolved or materially noteworthy exceptions belong in this table.

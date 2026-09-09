@@ -3,12 +3,29 @@
 
 {% block content %}
 <h1>{{ mini.name }}</h1>
-<p><a href="/minis">&larr; Back to Miniatures</a></p>
+<nav class="item-navigation" aria-label="Miniature navigation">
+    <a href="{{ minis_url }}" class="item-navigation-back">&larr; Back to Miniatures</a>
+    <div class="item-navigation-pager">
+        {% if previous_mini %}
+        <a href="/minis/{{ previous_mini.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="prev" title="{{ previous_mini.name }}">&larr; Previous Mini</a>
+        {% else %}
+        <span class="item-navigation-disabled">&larr; Previous Mini</span>
+        {% endif %}
+        {% if mini_position %}
+        <span class="item-navigation-position">{{ mini_position }} of {{ mini_count }}</span>
+        {% endif %}
+        {% if next_mini %}
+        <a href="/minis/{{ next_mini.id }}{% if navigation_query %}?{{ navigation_query }}{% endif %}" rel="next" title="{{ next_mini.name }}">Next Mini &rarr;</a>
+        {% else %}
+        <span class="item-navigation-disabled">Next Mini &rarr;</span>
+        {% endif %}
+    </div>
+</nav>
 
-<div class="form-row">
-    <div>
+<div class="detail-layout mini-detail-layout{{ ' has-cover' if mini.photos }}">
+    <div class="detail-info">
         <h2>Details</h2>
-        <form method="post" action="/minis/{{ mini.id }}/edit">
+        <form method="post" action="/minis/{{ mini.id }}/edit{% if navigation_query %}?{{ navigation_query }}{% endif %}">
             <div class="form-row">
                 <div>
                     <label for="name">Name</label>
@@ -84,30 +101,35 @@
             <button type="submit">Save Changes</button>
         </form>
     </div>
+
+    {% if mini.photos %}
+    <aside class="cover-panel mini-photo-panel">
+        <div class="photo-grid mini-detail-photo-grid">
+            {% for photo in mini.photos %}
+            <div class="photo-item">
+                <a href="{{ photo.url }}" target="_blank" rel="noopener">
+                    <img src="{{ photo.url }}" alt="{{ mini.name }}" loading="lazy">
+                </a>
+                <form method="post" action="/minis/{{ mini.id }}/photos/{{ photo.id }}/delete" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
+                    <button type="submit" class="btn-danger" style="padding: 2px 8px; font-size: 12px;">X</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+    {% endif %}
 </div>
 
 <hr style="margin: 24px 0;">
 
-<h2>Photos</h2>
-{% if mini.photos %}
-<div class="photo-grid">
-    {% for photo in mini.photos %}
-    <div class="photo-item">
-        <a href="{{ photo.url }}" target="_blank">{{ photo.url | truncate(50) }}</a>
-        <form method="post" action="/minis/{{ mini.id }}/photos/{{ photo.id }}/delete" style="display: inline; padding: 0; background: none; box-shadow: none; margin: 0;">
-            <button type="submit" class="btn-danger" style="padding: 2px 8px; font-size: 12px;">X</button>
-        </form>
-    </div>
-    {% endfor %}
-</div>
-{% else %}
+{% if not mini.photos %}
 <p>No photos yet.</p>
 {% endif %}
 
 <form method="post" action="/minis/{{ mini.id }}/photos" style="display: flex; gap: 12px; align-items: end;">
     <div style="flex: 1;">
-        <label for="photo_url">Add Photo URL (Google Drive link)</label>
-        <input type="url" id="photo_url" name="url" placeholder="https://drive.google.com/..." style="margin-bottom: 0;">
+        <label for="photo_url">Add Photo URL</label>
+        <input type="url" id="photo_url" name="url" placeholder="https://example.com/mini.jpg" style="margin-bottom: 0;">
     </div>
     <button type="submit">Add Photo</button>
 </form>

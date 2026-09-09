@@ -13,6 +13,8 @@ published only as part of a Dungeon issue, rulebook, or boxed kit, the
 official containing product and its cover were used. Thirteen records remain
 unresolved below.
 
+## Open (13)
+
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
 | 696 | Beneath the Dust | Listing unavailable | Exact and simplified signed-in DMsGuild searches returned no relevant product. | Recheck if the containing Dungeon issue is identified or indexed later. | Open |
@@ -28,5 +30,9 @@ unresolved below.
 | 771 | The Kroten Campaign Guide | Metadata conflict | No relevant DMsGuild product was found. | Confirm the intended publisher and edition. | Open |
 | 772 | The Lendore Isle Companion | Metadata conflict | No 4e result was found; search instead surfaced a 1e Lendore Isle adventure. | Confirm the intended publisher and edition. | Open |
 | 921 | The Grand History of the Realms | Metadata conflict | The matching official listing is explicitly `Grand History of the Realms (3.5)`, product 51644. | Move the record to D&D 3.5e before enriching it. | Open |
+
+## Resolved (0)
+
+None yet.
 
 Only unresolved or materially noteworthy exceptions belong in this table.
