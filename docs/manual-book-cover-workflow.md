@@ -3,8 +3,8 @@
 ## Purpose
 
 Use this procedure to enrich an existing AD&D 2e book record with its canonical
-DMsGuild product URL, signed-in digital-ownership status, and full-size cover.
-The procedure does not add image metadata or alter the database schema.
+DMsGuild product URL, signed-in digital-ownership status, format availability,
+and full-size cover.
 
 ## Preconditions
 
@@ -46,17 +46,30 @@ an exception when the evidence is missing, ambiguous, or contradictory.
 4. Set **Own Digital Copy** when the banner is visible. Leave the flag unchecked
    when the banner is absent. Search-card labels and cart state are supporting
    clues only; the product-page banner is authoritative.
-5. Click the product cover to open the full-size image. Accept only a resolved
+5. Record **Format Availability** independently of ownership: **Physical and
+   digital**, **Physical only**, **Digital only**, or **Unknown**. Ownership says
+   what is in this collection; availability says which editions can be acquired.
+6. Click the product cover to open the full-size image. Accept only a resolved
    non-thumbnail, non-placeholder image. If the dialog uses a lazy or malformed
    source, verify the main product image's resolved source after the click.
-6. Save that image under `app/static/images/books/` using the collection's
+7. Save that image under `app/static/images/books/` using the collection's
    numeric ID and the source image's supported extension, for example
    `951.webp`.
-7. Open the local book detail page and save the URL and ownership flag.
-8. Verify the saved page shows the correct URL and ownership state. Confirm the
+8. Open the local book detail page and save the URL, ownership flag, and format
+   availability.
+9. Verify the saved page shows the correct URL, ownership state, and format
+   availability. Confirm the
    cover is in the right column beside the editable information on desktop and
    moves above the form at narrow widths.
-9. Confirm the database values and that the saved cover is a valid image.
+10. Confirm the database values and that the saved cover is a valid image.
+
+## Lankhmar exception
+
+The licensed TSR Lankhmar/Nehwon titles have no collectible digital editions.
+Mark them **Physical only**, leave **Own Digital Copy** unchecked, and do not
+search DMsGuild for a substitute listing. Search English Wikipedia for the exact
+title and use its cover image when one exists. If Wikipedia has no cover for that
+title, leave the cover empty rather than using art from a different product.
 
 The detail route recognizes `.webp`, `.jpg`, `.jpeg`, and `.png` files named for
 the book ID. A correctly named file is sufficient to display the cover.
@@ -64,8 +77,9 @@ the book ID. A correctly named file is sufficient to display the cover.
 ## Batch controls
 
 - Process records in small batches and verify each batch before continuing.
-- Preserve existing collection data other than the three fields in scope:
-  **DriveThruRPG URL**, **Own Digital Copy**, and the convention-based cover.
+- Preserve existing collection data other than the fields in scope:
+  **DriveThruRPG URL**, **Own Digital Copy**, **Format Availability**, and the
+  convention-based cover.
 - Use the exception log for every record that cannot be completed exactly.
 - An exception must include the collection ID, title, category, evidence, and
   the next action required. Do not guess past an exception.

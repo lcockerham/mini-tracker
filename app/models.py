@@ -117,6 +117,9 @@ class Book(Base):
     )
     publisher: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    format_availability: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )
     owns_physical: Mapped[bool] = mapped_column(default=False)
     owns_digital: Mapped[bool] = mapped_column(default=False)
     physical_location: Mapped[Optional[str]] = mapped_column(

@@ -3,6 +3,13 @@
 
 {% block content %}
 <h1>{{ book.title }}</h1>
+{% if book.format_availability %}
+<p class="book-availability">
+    <span class="status-badge availability-{{ book.format_availability }}">
+        Format availability: {{ availability_labels[book.format_availability] }}
+    </span>
+</p>
+{% endif %}
 <nav class="item-navigation" aria-label="Book navigation">
     <a href="{{ books_url }}" class="item-navigation-back">&larr; Back to Books</a>
     <div class="item-navigation-pager">
@@ -42,6 +49,17 @@
     </div>
     <div class="form-row">
         <div>
+            <label for="format_availability">Format Availability</label>
+            <select id="format_availability" name="format_availability">
+                <option value="">Unknown</option>
+                {% for value, label in availability_labels.items() %}
+                <option value="{{ value }}" {{ 'selected' if book.format_availability == value }}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
             <label for="publisher">Publisher</label>
             <input type="text" id="publisher" name="publisher" value="{{ book.publisher or '' }}">
         </div>
@@ -51,13 +69,13 @@
         </div>
     </div>
     <div class="form-row">
-        <div>
+        <div id="physical-ownership-field" {{ 'hidden' if book.format_availability == 'digital_only' }}>
             <label for="owns_physical">
                 <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;" {{ 'checked' if book.owns_physical }}>
                 Own Physical Copy
             </label>
         </div>
-        <div>
+        <div id="digital-ownership-field" {{ 'hidden' if book.format_availability == 'physical_only' }}>
             <label for="owns_digital">
                 <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;" {{ 'checked' if book.owns_digital }}>
                 Own Digital Copy
@@ -65,11 +83,11 @@
         </div>
     </div>
     <div class="form-row">
-        <div>
+        <div id="physical-location-field" {{ 'hidden' if book.format_availability == 'digital_only' }}>
             <label for="physical_location">Physical Location</label>
             <input type="text" id="physical_location" name="physical_location" value="{{ book.physical_location or '' }}">
         </div>
-        <div>
+        <div id="digital-source-field" {{ 'hidden' if book.format_availability == 'physical_only' }}>
             <label for="drivethrurpg_url">DriveThruRPG URL</label>
             <input type="url" id="drivethrurpg_url" name="drivethrurpg_url" value="{{ book.drivethrurpg_url or '' }}">
         </div>
@@ -97,4 +115,8 @@
 </aside>
 {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/book-format-availability.js"></script>
 {% endblock %}

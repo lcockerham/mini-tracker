@@ -23,6 +23,17 @@
     </div>
     <div class="form-row">
         <div>
+            <label for="format_availability">Format Availability</label>
+            <select id="format_availability" name="format_availability">
+                <option value="">Unknown</option>
+                {% for value, label in availability_labels.items() %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
             <label for="publisher">Publisher</label>
             <input type="text" id="publisher" name="publisher">
         </div>
@@ -32,13 +43,13 @@
         </div>
     </div>
     <div class="form-row">
-        <div>
+        <div id="physical-ownership-field">
             <label for="owns_physical">
                 <input type="checkbox" id="owns_physical" name="owns_physical" style="width: auto;">
                 Own Physical Copy
             </label>
         </div>
-        <div>
+        <div id="digital-ownership-field">
             <label for="owns_digital">
                 <input type="checkbox" id="owns_digital" name="owns_digital" style="width: auto;">
                 Own Digital Copy
@@ -46,11 +57,11 @@
         </div>
     </div>
     <div class="form-row">
-        <div>
+        <div id="physical-location-field">
             <label for="physical_location">Physical Location</label>
             <input type="text" id="physical_location" name="physical_location" placeholder="e.g. Shelf 2">
         </div>
-        <div>
+        <div id="digital-source-field">
             <label for="drivethrurpg_url">DriveThruRPG URL</label>
             <input type="url" id="drivethrurpg_url" name="drivethrurpg_url" placeholder="https://www.drivethrurpg.com/...">
         </div>
@@ -66,4 +77,8 @@
 
     <button type="submit" class="btn-success">Add Book</button>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/book-format-availability.js"></script>
 {% endblock %}
