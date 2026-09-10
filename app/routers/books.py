@@ -16,6 +16,23 @@ templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "
 router = APIRouter()
 BOOK_COVER_DIR = Path(__file__).resolve().parent.parent / "static" / "images" / "books"
 BOOK_COVER_EXTENSIONS = (".webp", ".jpg", ".jpeg", ".png")
+FORMAT_AVAILABILITY_VALUES = {
+    "both": "Physical and digital",
+    "physical_only": "Physical only",
+    "digital_only": "Digital only",
+}
+
+
+def _format_availability(value: Optional[str]) -> Optional[str]:
+    return value if value in FORMAT_AVAILABILITY_VALUES else None
+
+
+def _owns_physical(availability: Optional[str], value: Optional[str]) -> bool:
+    return availability != "digital_only" and bool(value)
+
+
+def _owns_digital(availability: Optional[str], value: Optional[str]) -> bool:
+    return availability != "physical_only" and bool(value)
 
 
 def _book_cover_url(book_id: int) -> Optional[str]:
@@ -30,6 +47,7 @@ def _filtered_books_query(
     search: Optional[str],
     game_system_id: Optional[int],
     ownership: Optional[str],
+    availability: Optional[str],
 ):
     query = db.query(Book)
     if search:
@@ -40,6 +58,8 @@ def _filtered_books_query(
         query = query.filter(Book.owns_physical.is_(True))
     elif ownership == "digital":
         query = query.filter(Book.owns_digital.is_(True))
+    if availability in FORMAT_AVAILABILITY_VALUES:
+        query = query.filter(Book.format_availability == availability)
     return query
 
 
@@ -47,6 +67,7 @@ def _navigation_query(
     search: Optional[str],
     game_system_id: Optional[int | str],
     ownership: Optional[str],
+    availability: Optional[str],
 ) -> str:
     params = []
     if search:
@@ -55,6 +76,8 @@ def _navigation_query(
         params.append(("game_system_id", str(game_system_id)))
     if ownership in ("physical", "digital"):
         params.append(("ownership", ownership))
+    if availability in FORMAT_AVAILABILITY_VALUES:
+        params.append(("availability", availability))
     return urlencode(params)
 
 
@@ -63,6 +86,7 @@ def _navigation_query_from_request(request: Request) -> str:
         request.query_params.get("search"),
         request.query_params.get("game_system_id"),
         request.query_params.get("ownership"),
+        request.query_params.get("availability"),
     )
 
 
@@ -72,11 +96,14 @@ def list_books(
     search: Optional[str] = None,
     game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
+    availability: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     game_system_id_int = int(game_system_id) if game_system_id else None
 
-    query = _filtered_books_query(db, search, game_system_id_int, ownership)
+    query = _filtered_books_query(
+        db, search, game_system_id_int, ownership, availability
+    )
     books = query.order_by(Book.title, Book.id).all()
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
     return templates.TemplateResponse(request, "books/list.html", {
@@ -85,8 +112,10 @@ def list_books(
         "search": search,
         "game_system_id": game_system_id_int,
         "ownership": ownership,
+        "availability": availability,
+        "availability_labels": FORMAT_AVAILABILITY_VALUES,
         "navigation_query": _navigation_query(
-            search, game_system_id_int, ownership
+            search, game_system_id_int, ownership, availability
         ),
     })
 
@@ -96,6 +125,7 @@ def create_book_form(request: Request, db: Session = Depends(get_db)):
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
     return templates.TemplateResponse(request, "books/create.html", {
         "game_systems": game_systems,
+        "availability_labels": FORMAT_AVAILABILITY_VALUES,
     })
 
 
@@ -105,6 +135,7 @@ def create_book(
     game_system_id: Optional[str] = Form(None),
     publisher: Optional[str] = Form(None),
     category: Optional[str] = Form(None),
+    format_availability: Optional[str] = Form(None),
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
     physical_location: Optional[str] = Form(None),
@@ -113,15 +144,21 @@ def create_book(
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
+    availability = _format_availability(format_availability)
     book = Book(
         title=title,
         game_system_id=int(game_system_id) if game_system_id else None,
         publisher=publisher or None,
         category=category or None,
-        owns_physical=bool(owns_physical),
-        owns_digital=bool(owns_digital),
-        physical_location=physical_location or None,
-        drivethrurpg_url=drivethrurpg_url or None,
+        format_availability=availability,
+        owns_physical=_owns_physical(availability, owns_physical),
+        owns_digital=_owns_digital(availability, owns_digital),
+        physical_location=(
+            physical_location or None if availability != "digital_only" else None
+        ),
+        drivethrurpg_url=(
+            drivethrurpg_url or None if availability != "physical_only" else None
+        ),
         acquired_date=date.fromisoformat(acquired_date) if acquired_date else None,
         notes=notes or None,
     )
@@ -137,12 +174,15 @@ def get_book(
     search: Optional[str] = None,
     game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
+    availability: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     book = db.query(Book).get(book_id)
     game_system_id_int = int(game_system_id) if game_system_id else None
     navigation_books = (
-        _filtered_books_query(db, search, game_system_id_int, ownership)
+        _filtered_books_query(
+            db, search, game_system_id_int, ownership, availability
+        )
         .order_by(Book.title, Book.id)
         .all()
     )
@@ -158,11 +198,14 @@ def get_book(
         if current_index + 1 < len(navigation_books):
             next_book = navigation_books[current_index + 1]
 
-    navigation_query = _navigation_query(search, game_system_id_int, ownership)
+    navigation_query = _navigation_query(
+        search, game_system_id_int, ownership, availability
+    )
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
     return templates.TemplateResponse(request, "books/detail.html", {
         "book": book,
         "game_systems": game_systems,
+        "availability_labels": FORMAT_AVAILABILITY_VALUES,
         "cover_image_url": _book_cover_url(book_id),
         "previous_book": previous_book,
         "next_book": next_book,
@@ -181,6 +224,7 @@ def update_book(
     game_system_id: Optional[str] = Form(None),
     publisher: Optional[str] = Form(None),
     category: Optional[str] = Form(None),
+    format_availability: Optional[str] = Form(None),
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
     physical_location: Optional[str] = Form(None),
@@ -194,10 +238,16 @@ def update_book(
     book.game_system_id = int(game_system_id) if game_system_id else None
     book.publisher = publisher or None
     book.category = category or None
-    book.owns_physical = bool(owns_physical)
-    book.owns_digital = bool(owns_digital)
-    book.physical_location = physical_location or None
-    book.drivethrurpg_url = drivethrurpg_url or None
+    availability = _format_availability(format_availability)
+    book.format_availability = availability
+    book.owns_physical = _owns_physical(availability, owns_physical)
+    book.owns_digital = _owns_digital(availability, owns_digital)
+    book.physical_location = (
+        physical_location or None if availability != "digital_only" else None
+    )
+    book.drivethrurpg_url = (
+        drivethrurpg_url or None if availability != "physical_only" else None
+    )
     book.acquired_date = date.fromisoformat(acquired_date) if acquired_date else None
     book.notes = notes or None
     db.commit()

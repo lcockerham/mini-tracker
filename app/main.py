@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import inspect, text
 
 from app.database import Base, SessionLocal, engine
 from app.models import GameSystem
@@ -36,6 +37,14 @@ templates = Jinja2Templates(directory=app_dir / "templates")
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+    # create_all() does not add columns to an existing SQLite database.
+    if "format_availability" not in {
+        column["name"] for column in inspect(engine).get_columns("books")
+    }:
+        with engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE books ADD COLUMN format_availability VARCHAR(20)")
+            )
     db = SessionLocal()
     try:
         existing = {name for (name,) in db.query(GameSystem.name).all()}

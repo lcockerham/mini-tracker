@@ -279,6 +279,14 @@ button:hover, .btn:hover {
 .status-done { background: var(--status-done); }
 .status-pre-painted { background: var(--status-pre-painted); }
 
+.book-availability {
+    margin: -8px 0 16px;
+}
+
+.availability-physical_only { background: var(--status-in-progress); }
+.availability-digital_only { background: var(--status-pre-painted); }
+.availability-both { background: var(--status-done); }
+
 .flash {
     padding: 12px 16px;
     border-radius: 8px;

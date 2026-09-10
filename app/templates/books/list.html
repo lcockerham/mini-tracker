@@ -27,6 +27,15 @@
         </select>
     </div>
     <div>
+        <label for="availability">Format Availability</label>
+        <select id="availability" name="availability">
+            <option value="">All</option>
+            {% for value, label in availability_labels.items() %}
+            <option value="{{ value }}" {{ 'selected' if availability == value }}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
         <label>&nbsp;</label>
         <button type="submit">Search</button>
     </div>
@@ -44,6 +53,7 @@
             <th>Game System</th>
             <th>Publisher</th>
             <th>Category</th>
+            <th>Availability</th>
             <th>Physical</th>
             <th>Digital</th>
         </tr>
@@ -55,6 +65,7 @@
             <td>{{ book.game_system.name if book.game_system else '' }}</td>
             <td>{{ book.publisher or '' }}</td>
             <td>{{ book.category or '' }}</td>
+            <td>{{ availability_labels.get(book.format_availability, 'Unknown') }}</td>
             <td>{{ '✓' if book.owns_physical else '' }}</td>
             <td>{{ '✓' if book.owns_digital else '' }}</td>
         </tr>

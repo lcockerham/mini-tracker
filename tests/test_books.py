@@ -66,6 +66,76 @@ class TestBooks:
         assert 'name="owns_physical" style="width: auto;" checked' in detail.text
         assert 'name="owns_digital" style="width: auto;" checked' in detail.text
 
+    def test_format_availability_is_separate_from_ownership(self, client):
+        create_book(
+            client,
+            title="Print-Only Adventure",
+            format_availability="physical_only",
+        )
+        list_response = client.get("/books")
+        book_id = book_id_for_title(list_response.text, "Print-Only Adventure")
+
+        assert "Physical only" in list_response.text
+        detail = client.get(f"/books/{book_id}")
+        assert (
+            'value="physical_only" selected>Physical only</option>'
+            in detail.text
+        )
+        assert "Format availability: Physical only" in detail.text
+        assert 'id="digital-ownership-field" hidden' in detail.text
+        assert 'id="digital-source-field" hidden' in detail.text
+        assert 'name="owns_physical" style="width: auto;" checked' not in detail.text
+
+    def test_digital_only_hides_physical_fields(self, client):
+        create_book(
+            client,
+            title="PDF-Only Adventure",
+            format_availability="digital_only",
+        )
+        list_response = client.get("/books")
+        book_id = book_id_for_title(list_response.text, "PDF-Only Adventure")
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert 'id="physical-ownership-field" hidden' in detail.text
+        assert 'id="physical-location-field" hidden' in detail.text
+
+    def test_unavailable_format_values_are_discarded(self, client):
+        create_book(
+            client,
+            title="Print-Only Adventure",
+            format_availability="physical_only",
+            owns_digital="on",
+            drivethrurpg_url="https://www.drivethrurpg.com/product/12345",
+        )
+        list_response = client.get("/books")
+        book_id = book_id_for_title(list_response.text, "Print-Only Adventure")
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert 'name="owns_digital" style="width: auto;" checked' not in detail.text
+        assert 'value="https://www.drivethrurpg.com/product/12345"' not in detail.text
+
+    def test_filter_by_format_availability(self, client):
+        create_book(
+            client,
+            title="Print-Only Adventure",
+            format_availability="physical_only",
+        )
+        create_book(
+            client,
+            title="PDF-Only Adventure",
+            format_availability="digital_only",
+        )
+
+        response = client.get(
+            "/books", params={"availability": "physical_only"}
+        )
+
+        assert "Print-Only Adventure" in response.text
+        assert "PDF-Only Adventure" not in response.text
+        assert "availability=physical_only" in response.text
+
     def test_book_detail_shows_fields(self, client):
         create_book(
             client,
