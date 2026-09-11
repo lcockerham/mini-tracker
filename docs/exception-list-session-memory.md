@@ -28,7 +28,7 @@ edition, or product-code match is ambiguous.
 | Report | Open |
 | --- | ---: |
 | AD&D 1e | 0 |
-| AD&D 2e | 17 |
+| AD&D 2e | 0 |
 | D&D 3e/3.5e | 45 |
 | D&D 4e | 13 |
 | D&D 5e | 25 |
@@ -78,6 +78,22 @@ catalog rules, reducing the open list from 31 to 17:
   basic 3rd-edition rules, its category badge says 4e, and it has no matching
   TSR 11450 stock code.
 
+The remaining 17 rows were resolved on 2026-09-10 after a second catalog pass:
+
+- Removed six owner-excluded records: bonus-pack adventures 248 and 383,
+  tournament promotion 344, and RPGA/Gen Con exclusives 321, 364, and 379.
+- Kept ID 219 as AD&D 2e and marked it physical-only; TSR 11450 is the 1999
+  D&D/Fast Play boxed set, not the unrelated third-edition DMsGuild listing.
+- Marked IDs 221, 372, 410, 450, 462, 480, and 481 physical-only after exact
+  title and stock-code DMsGuild searches found no official digital editions.
+- Reclassified Mystara trail maps 420 and 434 to D&D Basic and physical-only.
+- Marked TSR 2524 digital-only: it was an official TSR online release and no
+  cover was issued.
+- Merged duplicate Domains of Dread ID 952 into canonical ID 414, retaining
+  physical ownership, and saved the owner-supplied cover for ID 221.
+
+No AD&D 2e exceptions remain.
+
 ## Backups
 
 - Permanent checkpoint, excluded from rotating cleanup:
@@ -87,7 +103,9 @@ catalog rules, reducing the open list from 31 to 17:
   `backups/mini_tracker.20260908221243.db`.
 - Rotating backup immediately before the AD&D 2e database changes:
   `backups/mini_tracker.20260909231742.db`.
-- The `backups/` directory currently contains four database files because the
+- Rotating backup immediately before the final AD&D 2e cleanup:
+  `backups/mini_tracker.20260910212526.db`.
+- The `backups/` directory currently contains five database files because the
   oldest backup was preserved during this session. Its documented target is
   the three newest files. Never apply that cleanup rule to
   `database-checkpoints/`.
