@@ -7,7 +7,7 @@ Reclassified: 2026-09-05
 Baseline inventory: 216 AD&D 1e records. No records contained a product URL or
 were marked as digitally owned when this pass began.
 
-Result: 113 records were enriched with a verified DMsGuild product URL and
+Result: 115 records were enriched with a verified DMsGuild product URL and
 cover; none displayed the signed-in `You own this title` banner. A later system
 audit moved 56 Basic/BECMI records to D&D Basic, 24 Expert-set records to D&D
 Expert, and four original Monster & Treasure Assortment records to OD&D.
@@ -19,7 +19,7 @@ The split follows the published product lines: Basic and B-series material plus
 the wider BECMI line are filed under D&D Basic; Expert rules, X-series, O-series,
 and DA-series adventures are filed under D&D Expert.
 
-The remaining 19 records have no confidently identifiable standalone listing.
+The 19 records left by the original pass are now resolved or removed.
 
 **2026-09-07 update:** Cross-referenced all 19 records against Shannon Appelcline's
 *Designers & Dragons: Origins, Vol. 1*, a publishing history of TSR/D&D. It
@@ -40,18 +40,23 @@ represent a book/module the collection can actually own, all nine were deleted
 from `mini_tracker.db` after a backup (see `backups/`). The rows below are kept
 for the audit trail but the underlying Book records no longer exist.
 
-## Open (3)
+**2026-09-08 resolution:** Queen of the Spiders and Scourge of the Slave Lords
+were enriched from exact official DMsGuild listings, including full-size local
+covers. Neither product displayed the signed-in ownership banner. Quest for the
+Fazzlewood was identified as a duplicate/misnamed record for The Gem and the
+Staff (book 147) and was removed after a database backup.
+
+## Open (0)
+
+No open exceptions remain.
+
+## Resolved (19)
 
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
-| 101 | Queen of the Spiders | Confirmed reprint compilation | *Designers & Dragons: Origins, Vol. 1* confirms this is the 1986/1987 supermodule "GDQ1-7: Queen of the Spiders," a reprint of older TSR modules, matching the earlier DMsGuild search finding. | Recheck if an official listing is added, restored, or link to the individual GDQ modules. | Open |
-| 102 | Quest for the Fazzlewood | Listing unavailable | Not mentioned in *Designers & Dragons: Origins, Vol. 1*; exact and simplified signed-in DMsGuild searches found no confidently matching standalone product. | Recheck if an official listing is added, restored, or the containing publication is identified. | Open |
-| 114 | Scourge of the Slave Lords | Confirmed reprint compilation | *Designers & Dragons: Origins, Vol. 1* confirms this is the 1986 supermodule "A1-4: Scourge of the Slavelords," a reprint of older TSR modules, matching the earlier DMsGuild search finding. | Recheck if an official listing is added, restored, or link to the individual A-series modules. | Open |
-
-## Resolved (16)
-
-| Book ID | Title | Category | Evidence | Required next action | Status |
-| ---: | --- | --- | --- | --- | --- |
+| 101 | Queen of the Spiders | Confirmed official listing | The supplied DMsGuild product 17036 exactly matches GDQ1-7: Queen of the Spiders. The canonical URL and full-size cover were saved; the signed-in page did not show the ownership banner. | None. | Resolved and enriched (2026-09-08) |
+| 102 | Quest for the Fazzlewood | Duplicate/misnamed record | Collection review identified this as The Gem and the Staff, which already exists as book 147 with code O1 and a verified DMsGuild listing. | None. | Removed from collection (2026-09-08) |
+| 114 | Scourge of the Slave Lords | Confirmed official listing | The supplied DMsGuild product 17362 exactly matches A1-4: Scourge of the Slave Lords. The canonical URL and full-size cover were saved; the signed-in page did not show the ownership banner. | None. | Resolved and enriched (2026-09-08) |
 | 15 | Air Plane! | Never published | *Designers & Dragons: Origins, Vol. 1* confirms "R10: Air Plane!" was one of four planned Mentzer RPGA tournament modules (R7-R10) that "have never been published, and so remain a holy grail for D&D enthusiasts." | None — no product exists to list. | Removed from collection (2026-09-07) |
 | 17 | And the Gods Will Have Their Way | Polyhedron serial, not a standalone product | *Designers & Dragons: Origins, Vol. 1* identifies this as "...And the Gods Will Have Their Way" in Polyhedron #19 (1984), part of a four-part RPGA tournament series later collected as C5: The Bane of Llywelyn (1985). | Consider retitling/relinking this record to C5: The Bane of Llywelyn if the collection wants a purchasable product; otherwise leave as a magazine credit with no DMsGuild listing. | Removed from collection (2026-09-07) |
 | 21 | Bigby's Tomb | Never published under this title; later ran as a Polyhedron serial | *Designers & Dragons: Origins, Vol. 1* says Mentzer's "Bigby's Tomb" replaced the planned RPGA module "R6," but was itself never published as a module — it later appeared as "384th Incarnation of Bigby's Tomb" in Polyhedron #20 (1984). | None — no standalone product exists to list. | Removed from collection (2026-09-07) |
