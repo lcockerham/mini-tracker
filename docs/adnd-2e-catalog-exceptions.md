@@ -42,36 +42,45 @@ resolved Moonlight Madness, Slavers, and TSR Jam 1999 despite incorrect
 DMsGuild category labels. All seven licensed Lankhmar/Nehwon titles, First
 Quest, and Ravenloft 25th Anniversary are recorded as physical-only; exact
 covers were saved when the cited source supplied one. None of the checked
-DMsGuild pages showed the
-signed-in ownership banner. Seventeen rows remain open: 16 incomplete records
-and one duplicate-record review.
+DMsGuild pages showed the signed-in ownership banner. At that point, seventeen
+rows remained open: 16 incomplete records and one duplicate-record review.
 
-## Open (17)
+**2026-09-10 applied:** Searched every remaining row in both the signed-in
+DMsGuild catalog and independent publication indexes. The catalog now excludes
+RPGA/Gen Con exclusives and owner-rejected bundle or tournament promotions:
+Dark and Hidden Ways (248), Ravenloft: 25th Anniversary (321), Terrible Trouble
+at Tragidore (344), The Star of Kolhapur (364), Wand of Archeal (379), and Wild
+Things (383). The Acaeum's RPGA index specifically confirms that books 321,
+364, and 379 were never sold to the public and were available to qualifying
+RPGA members at Gen Con. The remaining legitimate releases are classified by
+their actual format. The duplicate Domains of Dread row (952) was merged into
+canonical record 414, preserving physical ownership. The owner-supplied cover
+was saved for Introduction to Advanced Dungeons & Dragons Game (221).
 
-| Book ID | Title | Category | Evidence | Required next action | Status |
-| ---: | --- | --- | --- | --- | --- |
-| 219 | Dungeons & Dragons Adventure Game | Metadata conflict | DMsGuild 294522 has the same title, but describes basic 3rd-edition rules, has no publisher stock code, and displays a conflicting 4e category badge. It is not sufficient evidence for the collection's TSR 11450 record. | Find a source tied specifically to TSR 11450 or confirm this record is physical-only. | Open |
-| 221 | Introduction to Advanced Dungeons & Dragons Game | No listing | Exact and shortened-title searches produced no matching product for TSR 1134. | Check whether this boxed set has ever been released digitally. | Open |
-| 248 | Dark and Hidden Ways | No listing | Exact-title and catalog-code searches produced no matching DMsGuild product for 2019S. | Check whether this adventure has been released digitally under another title. | Open |
-| 344 | Terrible Trouble at Tragidore | No listing | Exact-title, shortened-title, and `NN` searches produced no matching DMsGuild product. | Check whether this promotional adventure has been released digitally. | Open |
-| 364 | The Star of Kolhapur | No listing | Exact and shortened-title searches produced related 2e adventures but no matching DMsGuild product. | Check whether this adventure was released only as part of another product. | Open |
-| 372 | Treasure Tales | No listing | Exact-title and TSR 9518 searches produced no matching DMsGuild product. | Check whether this adventure anthology has been released digitally under another title. | Open |
-| 379 | Wand of Archeal | No listing | Exact-title and catalog-code searches produced no matching DMsGuild product for B00778. | Check whether this convention or promotional adventure has been released digitally. | Open |
-| 383 | Wild Things | No listing | Exact-title and 2020S searches produced no matching official DMsGuild product. | Check whether this adventure was released only as part of another product. | Open |
-| 410 | Krynn Trail Map | No listing | Exact-title and `TM3` searches produced no matching DMsGuild product. | Check whether the Dragonlance trail map has been released digitally. | Open |
-| 420 | The Eastern Countries Trail Map | No listing | Exact-title and `TM2` searches produced no matching DMsGuild product. | Check whether this trail map has been released digitally under another title. | Open |
-| 434 | The Western Countries Trail Map | No listing | Exact-title and `TM1` searches produced no matching DMsGuild product. | Check whether this trail map has been released digitally under another title. | Open |
-| 450 | Deck of Magical Items | No listing | Exact-title and TSR 9423 searches produced no matching DMsGuild product. | Check whether this accessory has been released digitally under another title. | Open |
-| 462 | Monstrous Compendium Annual Volume Two | No listing | Exact-title and TSR 2158 searches produced no matching Volume Two product; the Volume Three result is not this book. | Check whether Volume Two has been released digitally under another title. | Open |
-| 480 | Planescape Monstrous Compendium Appendix | No listing | Exact-title, TSR 2602, and abbreviated searches produced no matching DMsGuild product; Appendix III is listed separately. | Check whether this volume has been released digitally or folded into another product. | Open |
-| 481 | Planescape Monstrous Compendium Appendix II | No listing | Exact-title, TSR 2613, and abbreviated searches produced no matching DMsGuild product; Appendix III is listed separately. | Check whether this volume has been released digitally or folded into another product. | Open |
-| 492 | Savage Coast Monstrous Compendium Appendix | No listing | Exact-title and TSR 2524 searches produced no matching DMsGuild product. | Check whether this accessory is only available through a legacy/free archive. | Open |
-| 952 | Domains of Dread | Duplicate collection record | This record and ID 414 (`Ravenloft: Domains of Dread`, TSR 2174) both resolve to DMsGuild 17525. Both records were enriched successfully. | Decide whether both collection records are intentional or should be merged. | Review |
+DMsGuild 294522 was not applied to Dungeons & Dragons Adventure Game (219):
+TSR 11450 is a 1999 2e fast-play boxed set, while the digital listing is a
+different third-edition product with no matching stock code.
 
-## Resolved (71)
+## Open (0)
+
+No open exceptions remain.
+
+## Resolved (82)
 
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
+| 219 | Dungeons & Dragons Adventure Game | Physical only | BoardGameGeek and a contemporary RPGnet review identify TSR 11450 as the 1999 D&D/Fast Play (2e) boxed set. DMsGuild 294522 is a different third-edition product and was rejected. No exact digital listing was found. | None. | Resolved — physical only 2026-09-10 |
+| 221 | Introduction to Advanced Dungeons & Dragons Game | Physical only | TSR Archive and collector references identify TSR 1134 as a 1995 AD&D 2e boxed set with books, screen, cards, map, miniatures, dice, and audio CD. No exact DMsGuild listing was found; the owner-supplied BoardGameGeek cover is saved. | None. | Resolved — physical only 2026-09-10 |
+| 372 | Treasure Tales | Physical only | Dragon 229 advertised TSR 9518 as a retail AD&D accessory, and TSR Archive confirms the stock code. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 410 | Krynn Trail Map | Physical only | TSR Archive identifies TM3/TSR 9400 as a 1989 oversized fold-out map. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 420 | The Eastern Countries Trail Map | Metadata conflict, physical only | TSR Archive and *Designers & Dragons: Origins* identify TM2/TSR 9404 as a Basic D&D/Mystara oversized fold-out map, not AD&D 2e. No official digital listing was found. | None. | Resolved — reclassified to D&D Basic 2026-09-10 |
+| 434 | The Western Countries Trail Map | Metadata conflict, physical only | TSR Archive and *Designers & Dragons: Origins* identify TM1/TSR 9403 as a Basic D&D/Mystara oversized fold-out map, not AD&D 2e. No official digital listing was found. | None. | Resolved — reclassified to D&D Basic 2026-09-10 |
+| 450 | Deck of Magical Items | Physical only | Dragon 191 and the 1993 TSR catalog identify TSR 9423 as a retail deck of more than 400 cards. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 462 | Monstrous Compendium Annual Volume Two | Physical only | TSR Archive identifies TSR 2158 as a 128-page retail accessory. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 480 | Planescape Monstrous Compendium Appendix | Physical only | TSR Archive identifies TSR 2602 as a 1994 128-page retail Planescape accessory. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 481 | Planescape Monstrous Compendium Appendix II | Physical only | TSR Archive identifies TSR 2613 as a 1995 128-page retail Planescape accessory. Exact-title and stock-code DMsGuild searches returned no matching product. | None. | Resolved — physical only 2026-09-10 |
+| 492 | Savage Coast Monstrous Compendium Appendix | Digital only | Acaeum identifies TSR 2524 as an official 1996 TSR downloadable product consisting of RTF/TXT content and separate JPG illustrations; no cover was issued. It was not a retail book and has no current DMsGuild listing. | None. | Resolved — official digital-only release 2026-09-10 |
+| 952 | Domains of Dread | Duplicate collection record | This row duplicated ID 414 (`Ravenloft: Domains of Dread`, TSR 2174) and the same DMsGuild product. Physical ownership was transferred to ID 414 before the duplicate and redundant cover were removed. | None. | Resolved — merged into ID 414 2026-09-10 |
 | 217 | Dungeon Master's Guide | Approved digital counterpart | The owner approved DMsGuild 17552 as the closest digital counterpart. DMsGuild identifies it as revised 2e, stock TSR 2160, and offers PDF and softcover; the collection record is the original TSR 2100 printing. The cover and canonical URL are saved; the ownership banner was absent. | None. | Resolved — approved revised counterpart 2026-09-09 |
 | 220 | First Quest: The Introduction to Role-Playing Games | Physical only | The owner confirmed no digital version. Wikipedia confirms the exact TSR title is a 1994 boxed set built around physical components including an audio CD, and supplied the saved cover. | None. | Resolved — physical only 2026-09-09 |
 | 222 | Player's Handbook | Approved digital counterpart | The owner approved DMsGuild 16868 as the closest digital counterpart. DMsGuild identifies it as revised 2e, stock TSR 2159, and offers PDF and softcover; the collection record is the original TSR 2101 printing. The cover and canonical URL are saved; the ownership banner was absent. | None. | Resolved — approved revised counterpart 2026-09-09 |
@@ -79,7 +88,6 @@ and one duplicate-record review.
 | 303 | Moonlight Madness | DMsGuild category error | DMsGuild 17343 is titled `Moonlight Madness (2e)` and its stock code exactly matches TSR 9568. The 1e category badge is erroneous. The canonical URL and cover are saved; the ownership banner was absent. | None. | Resolved — exact code match 2026-09-09 |
 | 304 | Nehwon | Physical only | The owner confirmed the licensed Lankhmar line has no digital editions. Format availability is physical-only; English Wikipedia has no exact cover image for this title. | None. | Resolved — physical only 2026-09-09 |
 | 315 | Prince of Lankhmar | Physical only | The owner confirmed the licensed Lankhmar line has no digital editions. Format availability is physical-only; English Wikipedia has no exact cover image for this title. | None. | Resolved — physical only 2026-09-09 |
-| 321 | Ravenloft: 25th Anniversary | Physical only | The owner identified this as physical-only. Noble Knight confirms the exact title, AD&D 2e product line, and manufacturer code TSR 11397, and supplied the saved cover. | None. | Resolved — physical only 2026-09-09 |
 | 334 | Slavers | DMsGuild category error | DMsGuild 17405 has the exact title and stock code TSR 11621. Its 1e category badge is erroneous. The canonical URL and cover are saved; the ownership banner was absent. | None. | Resolved — exact code match 2026-09-09 |
 | 335 | Slayers of Lankhmar | Physical only | The owner confirmed the licensed Lankhmar line has no digital editions. Format availability is physical-only; English Wikipedia has no exact cover image for this title. | None. | Resolved — physical only 2026-09-09 |
 | 340 | TSR Jam 1999 | DMsGuild category error | DMsGuild 17292 has the exact title and stock code TSR 11445. Its 1e category badge is erroneous. The canonical URL and cover are saved; the ownership banner was absent. | None. | Resolved — exact code match 2026-09-09 |
