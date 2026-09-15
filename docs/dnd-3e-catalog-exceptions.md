@@ -24,57 +24,48 @@ former 3.5e "Listing unavailable" rows (Dungeons & Dragons Basic Game
 2004/2006, Dungeons & Dragons Player's Kit) are appended at the bottom, unchanged
 except for now being D&D 3e records.
 
-## Open (45)
+**2026-09-11 update:** A second search pass (re-checking every remaining
+"Listing unavailable" row) found 33 more official DMsGuild matches, confirmed
+against each product page individually. All 33 are now enriched with a
+DriveThruRPG URL and a downloaded cover in `mini_tracker.db` /
+`app/static/images/books/`, moved to Resolved below.
+
+Two of those needed a correction: the URLs added to this doc for **672**
+(`.../dungeon-master-s-guide-ii-3-5`, product 25841) and **674**
+(`.../monster-manual-iii-3-5`, product 25927) point to the sequel supplements
+*Dungeon Master's Guide II* and *Monster Manual III* — different books, not the
+"Core Rulebook" this catalog's title refers to. Enriched instead with the
+plain 3.5 reprints that actually match: **DMG** (product 149132) and **Monster
+Manual** (product 148765).
+
+Also re-verified and found genuinely wrong: **673** (Dungeons & Dragons
+Adventure Game, product 284581) is a 2021, 5e-era "D&D Basic" boxed product —
+not a match for the 3e-era record. Left in Open below rather than enriched.
+
+## Open (13)
 
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
-| 594 | Expedition to the Demonweb Pits | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 595 | Expedition to the Ruins of Greyhawk | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 596 | Eyes of the Lich Queen | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 600 | Fantastic Locations: City of Peril | Listing unavailable | The exact-title DMsGuild search returned no matching product; the only similarly named result was the unrelated City of Stormreach. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 601 | Fantastic Locations: Dragondown Grotto | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 605 | Fantastic Locations: The Frostfell Rift | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 607 | Fortress of the Yuan-Ti | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 609 | Grasp of the Emerald Claw | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 614 | Ill Wind in Friezford | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 616 | Legend of the Silver Skeleton | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 621 | March of the Sane | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 624 | Primrose Path | Listing unavailable | The exact-title DMsGuild search returned no matching product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 625 | Red Hand of Doom | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 626 | Return to the Temple of Elemental Evil | Listing unavailable | The exact-title DMsGuild search returned only the 1e original and third-party 5e conversion guides, not an official product for this record. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 627 | Return to the Temple of the Frog | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 628 | Road to Oblivion | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 629 | Scourge of the Howling Horde | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 634 | Shrine of the Feathered Serpent | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 641 | The Burning Plague | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 642 | The Crumbling Hall of the Frost Giant Jarl | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 648 | The Last Breaths of Ashenport | Listing unavailable | The exact-title search returned only Dungeon #156 for 4e, not an official D&D 3e product matching this record. | Confirm whether the record belongs to a different edition or leave it without a cover and URL. | Open |
-| 649 | The Ministry of Winds | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 651 | The Secret of the Windswept Wall | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 653 | The Sinister Spire | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 659 | The Tower of Deception | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 660 | The Treasure of the Black Veils | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 661 | The Vessel of Stars | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 664 | To Quell the Rising Storm | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 668 | War of Dragons | Listing unavailable | The exact-title DMsGuild search returned no matching official legacy product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 669 | Whispers of the Vampire's Blade | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 672 | Dungeon Master's Guide: Core Rulebook II | Listing unavailable | The exact-title DMsGuild search returned no 3e product; results were for other editions and similarly named books. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 673 | Dungeons & Dragons Adventure Game | Listing unavailable | The exact-title DMsGuild search returned no 3e product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 674 | Monster Manual: Core Rulebook III | Listing unavailable | The exact-title DMsGuild search returned no 3e product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 675 | Player's Handbook: Core Rulebook I | Listing unavailable | The exact-title DMsGuild search returned no 3e product; results were for other editions. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 677 | Manual of the Planes | Listing unavailable | The exact-title DMsGuild search returned no 3e product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 680 | Book of Vile Darkness | Listing unavailable | The exact-title DMsGuild search returned no 3e product; results were for the 4e book and related 3.5 titles. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 681 | Defenders of the Faith | Listing unavailable | The exact-title DMsGuild search returned no 3e product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 688 | Psionics Handbook | Listing unavailable | The exact-title DMsGuild search returned the different Expanded Psionics Handbook (3.5), but no 3e product matching this record. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 935 | Cormyr | Listing unavailable | The exact-title DMsGuild search returned no matching 3e Cormyr product. | Confirm the intended title/product or leave the record without a cover and URL. | Open |
-| 938 | Magic of Faerun | Listing unavailable | The exact-title DMsGuild search returned no matching official 3e product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 941 | Races of Faerun | Listing unavailable | The exact-title DMsGuild search returned no 3e product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 945 | Unapproachable East | Listing unavailable | The exact-title DMsGuild search returned no matching official 3e product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 520 | Dungeons & Dragons Basic Game (2004) | Listing unavailable | Merged in from the former D&D 3.5e report. The exact-title DMsGuild search returned no matching 2004 boxed-game product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 521 | Dungeons & Dragons Basic Game (2006) | Listing unavailable | Merged in from the former D&D 3.5e report. The exact-title DMsGuild search returned no matching 2006 boxed-game product. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
-| 522 | Dungeons & Dragons Player's Kit | Listing unavailable | Merged in from the former D&D 3.5e report. The exact-title DMsGuild search returned products for other editions, but no matching 3.5 Player's Kit. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open |
+| 600 | Fantastic Locations: City of Peril | Listing unavailable | The exact-title DMsGuild search returned no matching product; the only similarly named result was the unrelated City of Stormreach. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
+| 601 | Fantastic Locations: Dragondown Grotto | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
+| 605 | Fantastic Locations: The Frostfell Rift | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
+| 621 | March of the Sane | Listing unavailable | Re-checked 2026-09-11: still no listing — appears to be a free WotC web adventure never sold on DMsGuild. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
+| 624 | Primrose Path | Listing unavailable | Re-checked 2026-09-11: still no listing found. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
+| 627 | Return to the Temple of the Frog | Listing unavailable | Re-checked 2026-09-11: still no listing — appears to have been a free WotC download, never re-released for sale. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
+| 648 | The Last Breaths of Ashenport | Listing unavailable | Re-checked 2026-09-11: no standalone 3e/3.5e listing found (only bundled in 4e's Dungeon #156). | User marked "Remove" — awaiting confirmation before deleting the record. | Open | Remove (not yet actioned)
+| 673 | Dungeons & Dragons Adventure Game | Edition mismatch | The only DMsGuild product with this exact title (284581) is a 2021 5e-era "D&D Basic" boxed set, not the 3e-era record in this catalog. | Confirm whether the 3e original was ever sold on DMsGuild under a different title, or leave without a cover and URL. | Open |
+| 935 | Cormyr | Listing unavailable / ambiguous | Only the AD&D 2e "Cormyr" sourcebook (product 16843) carries this exact title; the 3.5-era Forgotten Realms book is a differently-titled adventure, "Cormyr: The Tearing of the Weave" (product 57149) — not the same book. | User asked: is this record supposed to be Cormyr: The Tearing of the Weave, or the 2e Cormyr sourcebook? Still awaiting an answer. | Open | Is this supposed to be Cormyr the Tearing of the Weave? Or the 2e Cormyr sourcebook
+| 521 | Dungeons & Dragons Basic Game (2006) | Listing unavailable | No DMsGuild listing found; physical-only boxed game, never digitized. | User marked "duplicate" — awaiting confirmation of which record (520 vs. 521) to keep before deleting. | Open | duplicate (not yet actioned)
 
-## Resolved (37)
+Two more rows kept a cover image even though no DMsGuild/DriveThruRPG listing
+exists, since the game was never sold digitally:
+
+| Book ID | Title | Category | Evidence | Required next action | Status |
+| ---: | --- | --- | --- | --- | --- |
+| 520 | Dungeons & Dragons Basic Game (2004) | Listing unavailable | Physical-only boxed game, never digitized. Cover downloaded 2026-09-11 from Wikipedia (`File:DnDStarter2004.jpg`, low-res fair-use box art) since no DMsGuild listing exists. | None — cover enriched; no DriveThruRPG URL applies. | Cover only — enriched in mini_tracker.db 2026-09-11 |
+| 522 | Dungeons & Dragons Player's Kit | Listing unavailable | Physical-only boxed set, never digitized. Cover captured 2026-09-11 from the Noble Knight Games listing the user linked (a retailer, not DriveThruRPG). | None — cover enriched; no DriveThruRPG URL applies. | Cover only — enriched in mini_tracker.db 2026-09-11 |
+
+## Resolved (71)
 
 | Book ID | Title | Category | Evidence | Required next action | Status |
 | ---: | --- | --- | --- | --- | --- |
@@ -115,6 +106,40 @@ except for now being D&D 3e records.
 | 552 | Heroes of Battle | Metadata conflict | Merged in from the former D&D 3.5e report. The exact DMsGuild result is product 3732, explicitly labeled 3e, while this collection record was filed under D&D 3.5e. | None — enriched with the cited DMsGuild product now that 3e/3.5e are one category. | Resolved — enriched in mini_tracker.db 2026-09-07 |
 | 569 | Savage Species | Metadata conflict | Merged in from the former D&D 3.5e report. The exact DMsGuild result is product 25108, explicitly labeled 3e, while this collection record was filed under D&D 3.5e. | None — enriched with the cited DMsGuild product now that 3e/3.5e are one category. | Resolved — enriched in mini_tracker.db 2026-09-07 |
 | 936 | Faiths and Pantheons | Metadata conflict | Merged in from the former D&D 3.5e report. The exact DMsGuild result is product 28544, explicitly labeled 3e, while this collection record was filed under D&D 3.5e. | None — enriched with the cited DMsGuild product now that 3e/3.5e are one category. | Resolved — enriched in mini_tracker.db 2026-09-07 |
+| 594 | Expedition to the Demonweb Pits | Listing unavailable | Confirmed DMsGuild product 54341, "Expedition to the Demonweb Pits (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 595 | Expedition to the Ruins of Greyhawk | Listing unavailable | Confirmed DMsGuild product 54342, "Expedition to the Ruins of Castle Greyhawk (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 596 | Eyes of the Lich Queen | Listing unavailable | Confirmed DMsGuild product 54343, "EBERRON: Eyes of the Lich Queen (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 607 | Fortress of the Yuan-Ti | Listing unavailable | Confirmed DMsGuild product 54388, "DD3 Fortress of the Yuan-Ti (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 609 | Grasp of the Emerald Claw | Listing unavailable | Confirmed DMsGuild product 28587, "EBERRON: Grasp of the Emerald Claw (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 614 | Ill Wind in Friezford | Listing unavailable | Confirmed DMsGuild product 187771, "Ill Wind in Friezford (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 616 | Legend of the Silver Skeleton | Listing unavailable | Confirmed DMsGuild product 177395, "Legend of the Silver Skeleton (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 625 | Red Hand of Doom | Listing unavailable | Confirmed DMsGuild product 28797, "Red Hand of Doom (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 626 | Return to the Temple of Elemental Evil | Listing unavailable | Confirmed DMsGuild product 28447, "Return to the Temple of Elemental Evil (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 628 | Road to Oblivion | Listing unavailable | Confirmed DMsGuild product 184752, "Road to Oblivion (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 629 | Scourge of the Howling Horde | Listing unavailable | Confirmed DMsGuild product 54393, "Scourge of the Howling Horde (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 634 | Shrine of the Feathered Serpent | Listing unavailable | Confirmed DMsGuild product 186460, "Shrine of the Feathered Serpent (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 641 | The Burning Plague | Listing unavailable | Confirmed DMsGuild product 169622, "The Burning Plague (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 642 | The Crumbling Hall of the Frost Giant Jarl | Listing unavailable | Confirmed DMsGuild product 183191, "The Crumbling Hall of the Frost Giant Jarl (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 649 | The Ministry of Winds | Listing unavailable | Confirmed DMsGuild product 177396, "The Ministry of Winds (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 651 | The Secret of the Windswept Wall | Listing unavailable | Confirmed DMsGuild product 170941, "The Secret of the Windswept Wall (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 653 | The Sinister Spire | Listing unavailable | Confirmed DMsGuild product 50001, "DD2 The Sinister Spire (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 659 | The Tower of Deception | Listing unavailable | Confirmed DMsGuild product 181981, "The Tower of Deception (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 660 | The Treasure of the Black Veils | Listing unavailable | Confirmed DMsGuild product 178792, "The Treasure of the Black Veils (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 661 | The Vessel of Stars | Listing unavailable | Confirmed DMsGuild product 174202, "The Vessel of Stars (3.0)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 664 | To Quell the Rising Storm | Listing unavailable | Confirmed DMsGuild product 184122, "To Quell the Rising Storm (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 668 | War of Dragons | Listing unavailable | Confirmed DMsGuild product 189669, "War of Dragons (3.5)". A same-named unrelated 5e product also exists on DMsGuild — do not confuse. | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 669 | Whispers of the Vampire's Blade | Listing unavailable | Confirmed DMsGuild product 28712, "EBERRON: Whispers of the Vampire's Blade (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 672 | Dungeon Master's Guide: Core Rulebook II | Listing unavailable | Only the 3.5-revised DMG exists on DMsGuild (product 149132, "Dungeon Master's Guide (3.5)") — the original 3.0 printing isn't sold separately. Note: product 25841 ("Dungeon Master's Guide II") is a different, unrelated sequel book — do not confuse. | None — enriched with product 149132. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 674 | Monster Manual: Core Rulebook III | Listing unavailable | Only the 3.5-revised Monster Manual exists on DMsGuild (product 148765, "Monster Manual (3.5)") — the original 3.0 printing isn't sold separately. Note: product 25927 ("Monster Manual III") is a different, unrelated sequel book — do not confuse. | None — enriched with product 148765. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 675 | Player's Handbook: Core Rulebook I | Listing unavailable | Confirmed DMsGuild product 148008, "Player's Handbook (3.5)" — the original 3.0 printing isn't sold separately. | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 677 | Manual of the Planes | Listing unavailable | Confirmed DMsGuild product 25109, "Manual of the Planes (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 680 | Book of Vile Darkness | Listing unavailable | Confirmed DMsGuild product 3723, "Book of Vile Darkness (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 681 | Defenders of the Faith | Listing unavailable | Confirmed DMsGuild product 3725, "Defenders of the Faith: A Guidebook to Clerics and Paladins (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 688 | Psionics Handbook | Listing unavailable | Only the Expanded (2004) revision exists on DMsGuild (product 25857) — the original 2001 Psionics Handbook isn't sold separately. | None — enriched with product 25857. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 921 | The Grand History of the Realms | Metadata conflict | Merged in from the D&D 4e report. The exact matching official listing is `Grand History of the Realms (3.5)`, product 51644 — this collection record was filed under D&D 4e. | None — moved to D&D 3e and enriched with the cited DMsGuild product. | Resolved — moved and enriched in mini_tracker.db 2026-09-14 |
+| 938 | Magic of Faerun | Listing unavailable | Confirmed DMsGuild product 3731, "Magic of Faerûn (3e)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 941 | Races of Faerun | Listing unavailable | Confirmed DMsGuild product 25986, "Races of Faerûn (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
+| 945 | Unapproachable East | Listing unavailable | Confirmed DMsGuild product 28722, "Unapproachable East (3.5)". | None — enriched with the cited DMsGuild product. | Resolved — enriched in mini_tracker.db 2026-09-11 |
 
 Only unresolved or materially noteworthy exceptions belong in this table.
 Completed records are reported through the collection itself and the batch
