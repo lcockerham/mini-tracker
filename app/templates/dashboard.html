@@ -4,37 +4,85 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<div class="stats-grid">
-    <div class="card stat-card">
-        <div class="stat-value">{{ total }}</div>
-        <div class="stat-label">Total Minis</div>
-    </div>
-    {% for status, count in status_counts.items() %}
-    <div class="card stat-card">
-        <div class="stat-value">{{ count }}</div>
-        <div class="stat-label">{{ status }}</div>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="charts-grid">
-    <div class="card">
-        <h2>Painting Breakdown</h2>
-        <canvas id="statusChart"></canvas>
+<section class="dashboard-section">
+    <div class="dashboard-section-header">
+        <div>
+            <p class="dashboard-kicker">Collection</p>
+            <h2>Miniatures</h2>
+        </div>
+        <a class="dashboard-section-link" href="/minis">View miniatures &rarr;</a>
     </div>
 
-    <div class="card">
-        <h2>By Manufacturer</h2>
-        <canvas id="manufacturerChart"></canvas>
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <div class="stat-value">{{ total }}</div>
+            <div class="stat-label">Total Minis</div>
+        </div>
+        {% for status, count in status_counts.items() %}
+        <div class="card stat-card">
+            <div class="stat-value">{{ count }}</div>
+            <div class="stat-label">{{ status }}</div>
+        </div>
+        {% endfor %}
     </div>
-</div>
 
-{% if timeline %}
-<div class="card" style="margin-top: 24px;">
-    <h2>Painting Timeline</h2>
-    <canvas id="timelineChart"></canvas>
-</div>
-{% endif %}
+    <div class="charts-grid">
+        <div class="card">
+            <h2>Painting Breakdown</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>By Manufacturer</h2>
+            <canvas id="manufacturerChart"></canvas>
+        </div>
+    </div>
+
+    {% if timeline %}
+    <div class="card dashboard-wide-card">
+        <h2>Painting Timeline</h2>
+        <canvas id="timelineChart"></canvas>
+    </div>
+    {% endif %}
+</section>
+
+<section class="dashboard-section books-dashboard-section">
+    <div class="dashboard-section-header">
+        <div>
+            <p class="dashboard-kicker">Collection</p>
+            <h2>Books</h2>
+        </div>
+        <a class="dashboard-section-link" href="/books">View books &rarr;</a>
+    </div>
+
+    <div class="stats-grid books-summary-grid">
+        <div class="card stat-card">
+            <div class="stat-value">{{ total_books }}</div>
+            <div class="stat-label">Total Books</div>
+        </div>
+        {% for ownership, count in book_counts.items() %}
+        <div class="card stat-card">
+            <div class="stat-value">{{ count }}</div>
+            <div class="stat-label">{{ ownership }} Books</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card book-chart-card">
+        <div class="book-chart-heading">
+            <h3>Physical books collected by edition</h3>
+            <p>Click an edition to open its filtered book list.</p>
+        </div>
+        <div class="book-chart-container">
+            <canvas id="bookCollectionChart"></canvas>
+        </div>
+        <div class="book-edition-links" aria-label="Filter books by edition">
+            {% for edition in book_collection %}
+            <a href="/books?game_system_id={{ edition.system_id }}">{{ edition.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
 {% endblock %}
 
@@ -95,6 +143,58 @@
             responsive: true,
             plugins: { legend: { display: false } },
             scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+
+    // Physical book collection by edition. Each bar is clickable.
+    const bookCollection = {{ book_collection | tojson }};
+    new Chart(document.getElementById('bookCollectionChart'), {
+        type: 'bar',
+        data: {
+            labels: bookCollection.map(edition => edition.name),
+            datasets: [{
+                label: 'Physically owned',
+                data: bookCollection.map(edition => edition.physical),
+                backgroundColor: '#e2a33d',
+                borderColor: '#f0b455',
+                borderWidth: 1,
+                stack: 'collection',
+            }, {
+                label: 'Remaining',
+                data: bookCollection.map(edition => edition.total - edition.physical),
+                backgroundColor: '#3a4150',
+                borderColor: '#4b5563',
+                borderWidth: 1,
+                stack: 'collection',
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            onClick: function(event, elements) {
+                if (elements.length > 0) {
+                    const edition = bookCollection[elements[0].index];
+                    window.location.href = `/books?game_system_id=${edition.system_id}`;
+                }
+            },
+            onHover: function(event, elements) {
+                event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        afterBody: function(context) {
+                            const edition = bookCollection[context[0].dataIndex];
+                            return `${edition.physical_percent}% collected (${edition.physical} of ${edition.total})`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { beginAtZero: true, stacked: true, ticks: { stepSize: 1 } }
+            }
         }
     });
 
