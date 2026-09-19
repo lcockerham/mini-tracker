@@ -28,7 +28,10 @@ class TestPaints:
         import re
         paint_id = re.search(r'/paints/(\d+)/edit', list_resp.text).group(1)
 
-        client.post(f"/paints/{paint_id}/edit", data={"brand": "Citadel", "name": "Nuln Oil", "quantity": 3})
+        client.post(
+            f"/paints/{paint_id}/edit",
+            data={"brand": "Citadel", "name": "Nuln Oil", "quantity": 3},
+        )
         response = client.get("/paints")
         assert "3" in response.text
 

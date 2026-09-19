@@ -1,6 +1,6 @@
 # Exception-list session memory
 
-Updated: 2026-09-10
+Updated: 2026-09-19
 
 ## Tomorrow's objective
 
@@ -31,7 +31,7 @@ edition, or product-code match is ambiguous.
 | AD&D 2e | 0 |
 | D&D 3e/3.5e | 45 |
 | D&D 4e | 13 |
-| D&D 5e | 25 |
+| D&D 5e | 22 |
 | D&D Basic/Expert | 4 |
 | OD&D | 1 |
 
@@ -105,10 +105,43 @@ No AD&D 2e exceptions remain.
   `backups/mini_tracker.20260909231742.db`.
 - Rotating backup immediately before the final AD&D 2e cleanup:
   `backups/mini_tracker.20260910212526.db`.
+- Rotating backup from the latest catalog cleanup:
+  `backups/mini_tracker.20260919004056.db`.
 - The `backups/` directory currently contains five database files because the
   oldest backup was preserved during this session. Its documented target is
   the three newest files. Never apply that cleanup rule to
   `database-checkpoints/`.
+
+## D&D 5e updates on 2026-09-19
+
+The D&D 5e exception report is now at 22 open rows. Three records were
+removed after review:
+
+- 818, *Dragon of Icespire Peak*, because it is part of the Essentials Kit.
+- 830, *Light of Xaryxis*, because it is part of *Spelljammer: Adventures in Space*.
+- 854, *Turn of Fortune's Wheel*, because it is part of *Planescape: Adventures in the Multiverse*.
+
+Format availability was recorded for the six products whose notes clearly
+identified a physical or digital status:
+
+- Digital-only: 821 and 825.
+- Physical-only: 822, 844, 845, 846, 856, and 862.
+
+The “real book” and “own product” notes remain open for manual interpretation
+because they do not map cleanly to a database field. The full report is
+`docs/dnd-5e-catalog-exceptions.md`.
+
+## Catalog and dashboard updates on 2026-09-19
+
+- Removed subtitle-bearing duplicate book records while keeping the base-title
+  records, including the 4e *Arcane Power* duplicate.
+- Removed game systems with no associated books.
+- Updated 62 matched D&D 5e cover assets from the D&D Beyond library; 35
+  unmatched records were left unchanged.
+- Added separate miniature and book dashboard sections. The book section shows
+  totals and vertically stacked physical-collection bars for each D&D edition;
+  selecting an edition opens its filtered books view.
+- Tests pass: 61 passed.
 
 ## Miniature work completed and merged
 
@@ -120,9 +153,10 @@ image exceptions are under `docs/*-mini-image-exceptions.md`.
 
 ## Git state at handoff
 
-The handoff branch is `fix/adnd-2e-exceptions`, based on `origin/main` at merge
-commit `22aaf44`. It contains both updated exception reports and this session
-memory. On the Mac mini, fetch the remote and switch to that branch to resume.
+The current branch is `feature/dashboard-book-collection`, with PR #18 open:
+https://github.com/lcockerham/mini-tracker/pull/18. It contains the dashboard
+work, the D&D 5e exception updates, and this session memory. The latest commits
+are `020a68e`, `1234866`, and `ec96198`.
 
 The SQLite database, rotating backups, and downloaded book covers are
 intentionally ignored by Git and remain only on the source Mac. Copy
