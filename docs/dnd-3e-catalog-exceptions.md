@@ -42,28 +42,36 @@ Also re-verified and found genuinely wrong: **673** (Dungeons & Dragons
 Adventure Game, product 284581) is a 2021, 5e-era "D&D Basic" boxed product —
 not a match for the 3e-era record. Left in Open below rather than enriched.
 
-## Open (13)
+## Open (0)
 
-| Book ID | Title | Category | Evidence | Required next action | Status |
-| ---: | --- | --- | --- | --- | --- |
-| 600 | Fantastic Locations: City of Peril | Listing unavailable | The exact-title DMsGuild search returned no matching product; the only similarly named result was the unrelated City of Stormreach. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
-| 601 | Fantastic Locations: Dragondown Grotto | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
-| 605 | Fantastic Locations: The Frostfell Rift | Listing unavailable | The exact-title DMsGuild search returned no product result. | Confirm whether an official DMsGuild listing exists or leave the record without a cover and URL. | Open | physical only
-| 621 | March of the Sane | Listing unavailable | Re-checked 2026-09-11: still no listing — appears to be a free WotC web adventure never sold on DMsGuild. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
-| 624 | Primrose Path | Listing unavailable | Re-checked 2026-09-11: still no listing found. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
-| 627 | Return to the Temple of the Frog | Listing unavailable | Re-checked 2026-09-11: still no listing — appears to have been a free WotC download, never re-released for sale. | User marked "Remove from collection" — awaiting confirmation before deleting the record. | Open | Remove from collection (not yet actioned)
-| 648 | The Last Breaths of Ashenport | Listing unavailable | Re-checked 2026-09-11: no standalone 3e/3.5e listing found (only bundled in 4e's Dungeon #156). | User marked "Remove" — awaiting confirmation before deleting the record. | Open | Remove (not yet actioned)
-| 673 | Dungeons & Dragons Adventure Game | Edition mismatch | The only DMsGuild product with this exact title (284581) is a 2021 5e-era "D&D Basic" boxed set, not the 3e-era record in this catalog. | Confirm whether the 3e original was ever sold on DMsGuild under a different title, or leave without a cover and URL. | Open |
-| 935 | Cormyr | Listing unavailable / ambiguous | Only the AD&D 2e "Cormyr" sourcebook (product 16843) carries this exact title; the 3.5-era Forgotten Realms book is a differently-titled adventure, "Cormyr: The Tearing of the Weave" (product 57149) — not the same book. | User asked: is this record supposed to be Cormyr: The Tearing of the Weave, or the 2e Cormyr sourcebook? Still awaiting an answer. | Open | Is this supposed to be Cormyr the Tearing of the Weave? Or the 2e Cormyr sourcebook
-| 521 | Dungeons & Dragons Basic Game (2006) | Listing unavailable | No DMsGuild listing found; physical-only boxed game, never digitized. | User marked "duplicate" — awaiting confirmation of which record (520 vs. 521) to keep before deleting. | Open | duplicate (not yet actioned)
+None remaining.
 
-Two more rows kept a cover image even though no DMsGuild/DriveThruRPG listing
-exists, since the game was never sold digitally:
+## Removed (9)
 
-| Book ID | Title | Category | Evidence | Required next action | Status |
-| ---: | --- | --- | --- | --- | --- |
-| 520 | Dungeons & Dragons Basic Game (2004) | Listing unavailable | Physical-only boxed game, never digitized. Cover downloaded 2026-09-11 from Wikipedia (`File:DnDStarter2004.jpg`, low-res fair-use box art) since no DMsGuild listing exists. | None — cover enriched; no DriveThruRPG URL applies. | Cover only — enriched in mini_tracker.db 2026-09-11 |
-| 522 | Dungeons & Dragons Player's Kit | Listing unavailable | Physical-only boxed set, never digitized. Cover captured 2026-09-11 from the Noble Knight Games listing the user linked (a retailer, not DriveThruRPG). | None — cover enriched; no DriveThruRPG URL applies. | Cover only — enriched in mini_tracker.db 2026-09-11 |
+**2026-09-22 update:** The 8 records below were deleted from `mini_tracker.db`
+after the user confirmed their "remove"/"duplicate" update notes above. A
+backup was taken first at `backups/mini_tracker.20260922215210.db`. No image
+assets were linked to any of these records, so nothing was orphaned.
+
+Separately, **600**, **601**, and **605** (the three "physical only" rows)
+were kept in the collection but updated in `mini_tracker.db` with
+`format_availability = 'physical_only'`, matching how other physical-only,
+never-digitized titles are recorded elsewhere in this catalog. **673** was
+then also removed, since it had no valid match (the only same-titled DMsGuild
+product is an unrelated 2021 5e release) and no physical-only case applied.
+
+| Book ID | Title | Category | Reason removed |
+| ---: | --- | --- | --- |
+| 520 | Dungeons & Dragons Basic Game (2004) | Core Rulebook | Physical-only boxed game, never digitized; user marked for removal. |
+| 521 | Dungeons & Dragons Basic Game (2006) | Core Rulebook | Duplicate of 520 (physical-only, never digitized); user confirmed removing both rather than keeping either. |
+| 522 | Dungeons & Dragons Player's Kit | Core Rulebook | Physical-only boxed set, never digitized; user marked for removal. |
+| 621 | March of the Sane | Adventure | Appears to be a free WotC web adventure never sold on DMsGuild; user marked for removal. |
+| 624 | Primrose Path | Adventure | No DMsGuild listing found after two search passes; user marked for removal. |
+| 627 | Return to the Temple of the Frog | Adventure | Appears to have been a free WotC download, never re-released for sale; user marked for removal. |
+| 648 | The Last Breaths of Ashenport | Adventure | No standalone 3e/3.5e listing found (only bundled in 4e's Dungeon #156); user marked for removal. |
+| 935 | Cormyr | Sourcebook | Ambiguous whether this should be the 2e Cormyr sourcebook or Cormyr: The Tearing of the Weave; user decided to remove rather than resolve. |
+| 673 | Dungeons & Dragons Adventure Game | Edition mismatch | Only same-titled DMsGuild product (284581) is a 2021 5e-era "D&D Basic" boxed set, not a match; user marked for removal. |
+| 935 | Cormyr | Sourcebook | Ambiguous whether this should be the 2e Cormyr sourcebook or Cormyr: The Tearing of the Weave; user decided to remove rather than resolve. |
 
 ## Resolved (71)
 
