@@ -12,40 +12,40 @@ edition conflicts, two are components without a standalone product listing,
 and 15 had no matching product in the DMsGuild search results. Three component
 records were removed based on the notes below.
 
-## Open (22)
+## Open (5)
 
 | Book ID | Title | Category | Evidence | Required next action | Status | Notes |
 | ---: | --- | --- | --- | --- | --- | --- |
-| 808 | Adventures in Faerun | Listing unavailable | Exact-title and official Roll20 searches returned only third-party battlemap supplements. | Confirm whether an official product listing exists or leave the record without a cover and URL. | Open | |
-| 810 | Baldur's Gate: Descent Into Avernus | Listing unavailable | Exact-title and Roll20 searches returned third-party supplements and bundles, but no standalone official product. | Confirm whether an official product listing exists or leave the record without a cover and URL. | Open | |
-| 815 | Curse of Strahd | Listing unavailable | Searches returned an official cross-platform bundle and third-party supplements, but no standalone official book product with its original cover. | Approve a bundle substitute or leave the record without a cover and URL. | Open | |
-| 821 | Elemental Evil Player's Companion | Listing unavailable | Searches returned third-party automation and related products, but no official companion listing. | Confirm whether an official product listing exists or leave the record without a cover and URL. | Open | digital only supplement
-| 822 | Ghosts of Dragonspear Castle | Metadata conflict | The exact DMsGuild result is product 123270, explicitly labeled D&D Next, while this collection record is filed under D&D 5e. | Correct or approve the edition classification before enrichment. | Open | d&D next playtest, but there is a physical version
-| 824 | Hoard of the Dragon Queen | No standalone listing | The adventure is represented by the combined official Tyranny of Dragons product 464428; no standalone official listing was found. | Approve the combined product as a substitute or leave this component unchanged. | Open | This was its own release, later conbined into rise of tiamat
 | 825 | Hunt for the Thessalhydra | Listing unavailable | The exact-title DMsGuild searches returned no product result. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | digital only
-| 844 | Sundering Adventure II: Legacy of the Crystal Shard | Metadata conflict | The exact DMsGuild result is product 166079, explicitly labeled D&D Next, while this collection record is filed under D&D 5e. | Correct or approve the edition classification before enrichment. | Open | d&d next, physical adventure
-| 845 | Sundering Adventure III: Dreams of the Red Wizards: Scourge of the Sword Coast | Metadata conflict | The exact DMsGuild result is product 125600, explicitly labeled D&D Next, while this collection record is filed under D&D 5e. | Correct or approve the edition classification before enrichment. | Open | d&d next, physical adventure
-| 846 | Sundering Adventure IV: Dreams of the Red Wizards: Dead in Thay | Metadata conflict | The exact DMsGuild result is product 128515, explicitly labeled D&D Next, while this collection record is filed under D&D 5e. | Correct or approve the edition classification before enrichment. | Open | d&d next, physical adventure
-| 848 | The Lost Dungeon of Rickedness | Listing unavailable | Exact-title and simplified DMsGuild searches returned no product result. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
-| 850 | The Rise of Tiamat | No standalone listing | The adventure is represented by the combined official Tyranny of Dragons product 464428; no standalone official listing was found. | Approve the combined product as a substitute or leave this component unchanged. | Open | should be its own product
-| 856 | Vault of the Dracolich | Metadata conflict | The exact DMsGuild result is product 120762, explicitly labeled D&D Next, while this collection record is filed under D&D 5e. | Correct or approve the edition classification before enrichment. | Open | d&d next, physical book
 | 861 | Basic Rules | Listing unavailable | Exact-title searches returned adventures designed for the Basic Rules, but no official Basic Rules product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
-| 862 | Curse of Strahd: Revamped | Listing unavailable | Exact-title and Roll20 searches returned supplements, but no official Revamped boxed-set listing. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | boxed set w/physcial
 | 865 | Dungeons & Dragons Core Rules Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 867 | Dungeons & Dragons Rules Expansion Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
-| 868 | Dungeons & Dragons vs. Rick and Morty | Listing unavailable | Exact-title and simplified Roll20 searches returned no product result. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 874 | Starter Set | Listing unavailable | Searches returned products for specific later starter sets, but no exact official listing for this generic Starter Set record. | Confirm the intended boxed set or leave the record without a cover and URL. | Open | |
-| 878 | The Deck of Many Things | Listing unavailable | Exact-title and simplified searches returned third-party deck products, but no official boxed-set listing. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | real book
-| 895 | Mordenkainen's Tome of Foes | Listing unavailable | Searches returned supplements and the replacement Monsters of the Multiverse product, but no official Tome of Foes listing. | Confirm whether a delisted product should remain without a cover and URL. | Open | real book
-| 897 | Volo's Guide to Monsters | Listing unavailable | Searches returned supplements referencing the book, but no official Volo's Guide product. | Confirm whether a delisted product should remain without a cover and URL. | Open | real book
 
-## Resolved (3)
+## Resolved (20)
 
 | Book ID | Title | Resolution |
 | ---: | --- | --- |
 | 818 | Dragon of Icespire Peak | Removed; part of the Essentials Kit. |
 | 830 | Light of Xaryxis | Removed; part of Spelljammer: Adventures in Space. |
 | 854 | Turn of Fortune's Wheel | Removed; part of Planescape: Adventures in the Multiverse. |
+| 808 | Adventures in Faerun | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/fraif` and cover art (landscape, 1700x1097). |
+| 810 | Baldur's Gate: Descent Into Avernus | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/bgdia`; existing cover kept. |
+| 815 | Curse of Strahd | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/cos`; existing cover kept. |
+| 868 | Dungeons & Dragons vs. Rick and Morty | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/ddvram` and cover art. The URL was supplied on the 848 row's note. |
+| 848 | The Lost Dungeon of Rickedness | 2026-09-23: removed; part of *Dungeons & Dragons vs. Rick and Morty* (868). |
+| 895 | Mordenkainen's Tome of Foes | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/mtof`; existing cover kept. |
+| 897 | Volo's Guide to Monsters | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/vgtm`; existing cover kept. |
+| 821 | Elemental Evil Player's Companion | 2026-09-23: removed; digital-only download, not a catalog product. |
+| 822 | Ghosts of Dragonspear Castle | 2026-09-23: kept under D&D 5e; marked physical and digital (D&D Next playtest with a physical release). Saved DMsGuild product 123270 URL and the full-size DMsGuild cover (594x783); the signed-in page shows the ownership banner, so `owns_digital` is set. |
+| 844 | Sundering Adventure II: Legacy of the Crystal Shard | 2026-09-23: kept under D&D 5e (D&D Next release); marked physical and digital. Saved DMsGuild product 166079 URL and full-size cover (806x1022); ownership banner shown, so `owns_digital` is set. |
+| 845 | Sundering Adventure III: Dreams of the Red Wizards: Scourge of the Sword Coast | 2026-09-23: kept under D&D 5e (D&D Next release); marked physical and digital. Saved DMsGuild product 125600 URL and full-size cover (603x765); no ownership banner, so `owns_digital` is unchanged. |
+| 846 | Sundering Adventure IV: Dreams of the Red Wizards: Dead in Thay | 2026-09-23: kept under D&D 5e (D&D Next release); marked physical and digital. Saved DMsGuild product 128515 URL and full-size cover (604x784); ownership banner shown, so `owns_digital` is set. |
+| 856 | Vault of the Dracolich | 2026-09-23: kept under D&D 5e (D&D Next release); marked physical and digital. Saved DMsGuild product 120762 URL and full-size cover (604x774); ownership banner shown, so `owns_digital` is set. |
+| 824 | Hoard of the Dragon Queen | 2026-09-23: kept as its own entry (original standalone release, later combined into the Tyranny of Dragons product). Saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/hotdq` and its "View Cover Art" image (landscape, 1700x957). |
+| 850 | The Rise of Tiamat | 2026-09-23: kept as its own entry. Saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/rot` and its "View Cover Art" image (landscape, 1700x957). |
+| 862 | Curse of Strahd: Revamped | 2026-09-23: kept as the boxed-set reissue of Curse of Strahd; stays physical-only. Saved the box cover (424x500, ISBN 9780786967155, via Open Library); no marketplace URL. |
+| 878 | The Deck of Many Things | 2026-09-23: treated as a physical product (marked physical-only, no URL). Cover art borrowed from *The Book of Many Things* on D&D Beyond (untitled art, 1600x1369). |
 
 None yet.
 
