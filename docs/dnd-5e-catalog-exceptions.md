@@ -12,17 +12,16 @@ edition conflicts, two are components without a standalone product listing,
 and 15 had no matching product in the DMsGuild search results. Three component
 records were removed based on the notes below.
 
-## Open (5)
+## Open (4)
 
 | Book ID | Title | Category | Evidence | Required next action | Status | Notes |
 | ---: | --- | --- | --- | --- | --- | --- |
 | 825 | Hunt for the Thessalhydra | Listing unavailable | The exact-title DMsGuild searches returned no product result. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | digital only
-| 861 | Basic Rules | Listing unavailable | Exact-title searches returned adventures designed for the Basic Rules, but no official Basic Rules product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 865 | Dungeons & Dragons Core Rules Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 867 | Dungeons & Dragons Rules Expansion Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 874 | Starter Set | Listing unavailable | Searches returned products for specific later starter sets, but no exact official listing for this generic Starter Set record. | Confirm the intended boxed set or leave the record without a cover and URL. | Open | |
 
-## Resolved (20)
+## Resolved (21)
 
 | Book ID | Title | Resolution |
 | ---: | --- | --- |
@@ -45,7 +44,8 @@ records were removed based on the notes below.
 | 824 | Hoard of the Dragon Queen | 2026-09-23: kept as its own entry (original standalone release, later combined into the Tyranny of Dragons product). Saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/hotdq` and its "View Cover Art" image (landscape, 1700x957). |
 | 850 | The Rise of Tiamat | 2026-09-23: kept as its own entry. Saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/rot` and its "View Cover Art" image (landscape, 1700x957). |
 | 862 | Curse of Strahd: Revamped | 2026-09-23: kept as the boxed-set reissue of Curse of Strahd; stays physical-only. Saved the box cover (424x500, ISBN 9780786967155, via Open Library); no marketplace URL. |
-| 878 | The Deck of Many Things | 2026-09-23: treated as a physical product (marked physical-only, no URL). Cover art borrowed from *The Book of Many Things* on D&D Beyond (untitled art, 1600x1369). |
+| 861 | Basic Rules | 2026-09-25: removed; free download, not a catalog product. |
+| 878 | The Deck of Many Things | 2026-09-23: cover art borrowed from *The Book of Many Things* on D&D Beyond (untitled art, 1600x1369). 2026-09-25: marked physical and digital with a digital copy owned; saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/tbomt` for the included *Book of Many Things*. |
 
 None yet.
 
