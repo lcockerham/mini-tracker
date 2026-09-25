@@ -88,7 +88,14 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
         .all()
     )
     book_collection_by_system = {}
-    for system_id, name, availability, total_count, physical_count, digital_count in book_system_rows:
+    for (
+        system_id,
+        name,
+        availability,
+        total_count,
+        physical_count,
+        digital_count,
+    ) in book_system_rows:
         edition = name or "Unassigned"
         if edition not in DND_EDITION_ORDER:
             continue
