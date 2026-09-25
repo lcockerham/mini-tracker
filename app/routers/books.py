@@ -35,10 +35,11 @@ def _owns_digital(availability: Optional[str], value: Optional[str]) -> bool:
     return availability != "physical_only" and bool(value)
 
 
-def _book_cover_url(book_id: int) -> Optional[str]:
+def _book_cover_url(book_id: int, suffix: str = "") -> Optional[str]:
     for extension in BOOK_COVER_EXTENSIONS:
-        if (BOOK_COVER_DIR / f"{book_id}{extension}").is_file():
-            return f"/static/images/books/{book_id}{extension}"
+        filename = f"{book_id}{suffix}{extension}"
+        if (BOOK_COVER_DIR / filename).is_file():
+            return f"/static/images/books/{filename}"
     return None
 
 
@@ -207,6 +208,7 @@ def get_book(
         "game_systems": game_systems,
         "availability_labels": FORMAT_AVAILABILITY_VALUES,
         "cover_image_url": _book_cover_url(book_id),
+        "alternate_cover_image_url": _book_cover_url(book_id, "-alt"),
         "previous_book": previous_book,
         "next_book": next_book,
         "book_position": current_index + 1 if current_index is not None else None,

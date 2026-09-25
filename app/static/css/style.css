@@ -523,6 +523,21 @@ button:hover, .btn:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
+.cover-toggle {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.cover-toggle button {
+    flex: 1;
+}
+
+.cover-toggle button.active {
+    background: var(--accent);
+    color: var(--accent-text);
+}
+
 @media (max-width: 800px) {
     .item-navigation {
         align-items: flex-start;
