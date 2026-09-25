@@ -29,7 +29,7 @@
     </div>
 </nav>
 
-<div class="detail-layout{{ ' has-cover' if cover_image_url }}">
+<div class="detail-layout{{ ' has-cover' if cover_image_url or alternate_cover_image_url }}">
 <div class="detail-info">
 <form method="post" action="/books/{{ book.id }}/edit{% if navigation_query %}?{{ navigation_query }}{% endif %}">
     <div class="form-row">
@@ -111,7 +111,17 @@
 
 {% if cover_image_url %}
 <aside class="cover-panel">
-    <img class="cover-image" src="{{ cover_image_url }}" alt="{{ book.title }} cover">
+    <img class="cover-image" id="book-cover-image" src="{{ cover_image_url }}" alt="{{ book.title }} cover">
+    {% if alternate_cover_image_url %}
+    <div class="cover-toggle" role="group" aria-label="Cover edition">
+        <button type="button" class="btn-secondary active" aria-pressed="true" data-cover-src="{{ cover_image_url }}" data-cover-alt="{{ book.title }} cover">Standard Cover</button>
+        <button type="button" class="btn-secondary" aria-pressed="false" data-cover-src="{{ alternate_cover_image_url }}" data-cover-alt="{{ book.title }} alternate cover">Alternate Cover</button>
+    </div>
+    {% endif %}
+</aside>
+{% elif alternate_cover_image_url %}
+<aside class="cover-panel">
+    <img class="cover-image" src="{{ alternate_cover_image_url }}" alt="{{ book.title }} alternate cover">
 </aside>
 {% endif %}
 </div>
@@ -119,4 +129,5 @@
 
 {% block scripts %}
 <script src="/static/js/book-format-availability.js"></script>
+<script src="/static/js/book-cover-toggle.js"></script>
 {% endblock %}

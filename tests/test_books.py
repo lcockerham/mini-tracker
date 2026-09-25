@@ -173,6 +173,49 @@ class TestBooks:
         assert f'src="/static/images/books/{book_id}.webp"' in detail.text
         assert 'alt="Dark Sun Boxed Set cover"' in detail.text
 
+    def test_book_detail_offers_alternate_cover_toggle(self, client, tmp_path, monkeypatch):
+        # Hobby-store editions ship with different art; both covers should be viewable.
+        create_book(client, title="Tasha's Cauldron of Everything")
+        list_resp = client.get("/books")
+        book_id = re.search(r"/books/(\d+)", list_resp.text).group(1)
+        (tmp_path / f"{book_id}.webp").write_bytes(b"cover")
+        (tmp_path / f"{book_id}-alt.jpg").write_bytes(b"alt cover")
+        monkeypatch.setattr(books, "BOOK_COVER_DIR", tmp_path)
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert f'src="/static/images/books/{book_id}.webp"' in detail.text
+        assert f'data-cover-src="/static/images/books/{book_id}-alt.jpg"' in detail.text
+        assert "Alternate Cover</button>" in detail.text
+
+    def test_book_detail_without_alternate_cover_has_no_toggle(self, client, tmp_path, monkeypatch):
+        # A standard-only cover must not be mistaken for its own alternate.
+        create_book(client, title="Curse of Strahd")
+        list_resp = client.get("/books")
+        book_id = re.search(r"/books/(\d+)", list_resp.text).group(1)
+        (tmp_path / f"{book_id}.webp").write_bytes(b"cover")
+        monkeypatch.setattr(books, "BOOK_COVER_DIR", tmp_path)
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert 'class="cover-toggle"' not in detail.text
+
+    def test_book_detail_shows_alternate_cover_when_it_is_the_only_cover(
+        self, client, tmp_path, monkeypatch
+    ):
+        # Some gift sets only have hobby-edition art on file; it should still display.
+        create_book(client, title="Rules Expansion Gift Set")
+        list_resp = client.get("/books")
+        book_id = re.search(r"/books/(\d+)", list_resp.text).group(1)
+        (tmp_path / f"{book_id}-alt.webp").write_bytes(b"alt cover")
+        monkeypatch.setattr(books, "BOOK_COVER_DIR", tmp_path)
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert f'src="/static/images/books/{book_id}-alt.webp"' in detail.text
+        assert 'alt="Rules Expansion Gift Set alternate cover"' in detail.text
+        assert 'class="cover-toggle"' not in detail.text
+
     def test_book_detail_navigates_in_title_order(self, client):
         create_book(client, title="Charlie")
         create_book(client, title="Alpha")
