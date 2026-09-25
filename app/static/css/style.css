@@ -374,6 +374,18 @@ button:hover, .btn:hover {
     white-space: nowrap;
 }
 
+.book-chart-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 8px;
+}
+
+.book-chart-filter select {
+    min-width: 190px;
+    margin-bottom: 0;
+}
+
 .dashboard-wide-card {
     margin-top: 24px;
 }
@@ -451,6 +463,15 @@ button:hover, .btn:hover {
         align-items: flex-start;
         flex-direction: column;
         gap: 2px;
+    }
+
+    .book-chart-filter {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .book-chart-filter select {
+        width: 100%;
     }
 
     .book-chart-container {

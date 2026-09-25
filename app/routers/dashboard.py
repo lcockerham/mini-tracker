@@ -76,28 +76,40 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
         db.query(
             GameSystem.id,
             GameSystem.name,
+            Book.format_availability,
             func.count(Book.id),
             func.sum(case((Book.owns_physical.is_(True), 1), else_=0)),
+            func.sum(case((Book.owns_digital.is_(True), 1), else_=0)),
         )
         .select_from(Book)
         .outerjoin(GameSystem, Book.game_system_id == GameSystem.id)
-        .group_by(GameSystem.name)
-        .order_by(func.count(Book.id).desc())
+        .group_by(GameSystem.id, GameSystem.name, Book.format_availability)
+        .order_by(GameSystem.name)
         .all()
     )
-    book_collection = []
-    for system_id, name, total_count, physical_count in book_system_rows:
+    book_collection_by_system = {}
+    for (
+        system_id,
+        name,
+        availability,
+        total_count,
+        physical_count,
+        digital_count,
+    ) in book_system_rows:
         edition = name or "Unassigned"
         if edition not in DND_EDITION_ORDER:
             continue
-        physical_count = physical_count or 0
-        book_collection.append({
+        item = book_collection_by_system.setdefault(system_id, {
             "system_id": system_id,
             "name": edition,
-            "total": total_count,
-            "physical": physical_count,
-            "physical_percent": round(physical_count / total_count * 100, 1),
+            "availability": {},
         })
+        item["availability"][availability or "unknown"] = {
+            "total": total_count,
+            "physical": physical_count or 0,
+            "digital": digital_count or 0,
+        }
+    book_collection = list(book_collection_by_system.values())
     book_collection.sort(key=lambda item: DND_EDITION_ORDER.index(item["name"]))
 
     return templates.TemplateResponse(request, "dashboard.html", {

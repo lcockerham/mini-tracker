@@ -70,8 +70,17 @@
 
     <div class="card book-chart-card">
         <div class="book-chart-heading">
-            <h3>Physical books collected by edition</h3>
-            <p>Click an edition to open its filtered book list.</p>
+            <div>
+                <h3 id="book-chart-title">Physical books owned by edition</h3>
+                <p>Bars show the percentage owned in the selected format. Click an edition to view its books.</p>
+            </div>
+            <div class="book-chart-filter">
+                <label for="dashboard-availability">Format availability</label>
+                <select id="dashboard-availability">
+                    <option value="physical">Physical</option>
+                    <option value="digital">Digital</option>
+                </select>
+            </div>
         </div>
         <div class="book-chart-container">
             <canvas id="bookCollectionChart"></canvas>
@@ -146,22 +155,23 @@
         }
     });
 
-    // Physical book collection by edition. Each bar is clickable.
+    // Ownership percentage by edition for books available in the selected format.
     const bookCollection = {{ book_collection | tojson }};
-    new Chart(document.getElementById('bookCollectionChart'), {
+    const availabilitySelect = document.getElementById('dashboard-availability');
+    const bookChart = new Chart(document.getElementById('bookCollectionChart'), {
         type: 'bar',
         data: {
-            labels: bookCollection.map(edition => edition.name),
+            labels: [],
             datasets: [{
                 label: 'Physically owned',
-                data: bookCollection.map(edition => edition.physical),
+                data: [],
                 backgroundColor: '#e2a33d',
                 borderColor: '#f0b455',
                 borderWidth: 1,
                 stack: 'collection',
             }, {
-                label: 'Remaining',
-                data: bookCollection.map(edition => edition.total - edition.physical),
+                label: 'Not physically owned',
+                data: [],
                 backgroundColor: '#3a4150',
                 borderColor: '#4b5563',
                 borderWidth: 1,
@@ -173,7 +183,7 @@
             responsive: true,
             onClick: function(event, elements) {
                 if (elements.length > 0) {
-                    const edition = bookCollection[elements[0].index];
+                    const edition = visibleEditions[elements[0].index];
                     window.location.href = `/books?game_system_id=${edition.system_id}`;
                 }
             },
@@ -184,19 +194,73 @@
                 legend: { position: 'bottom' },
                 tooltip: {
                     callbacks: {
-                        afterBody: function(context) {
-                            const edition = bookCollection[context[0].dataIndex];
-                            return `${edition.physical_percent}% collected (${edition.physical} of ${edition.total})`;
+                        label: function(context) {
+                            const selectedFormat = availabilitySelect.value;
+                            const counts = getEditionCounts(
+                                visibleEditions[context.dataIndex], selectedFormat
+                            );
+                            const owned = getOwnedCount(counts, selectedFormat);
+                            const count = context.datasetIndex === 0 ? owned : counts.total - owned;
+                            return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}% (${count} of ${counts.total})`;
                         }
                     }
                 }
             },
             scales: {
                 x: { stacked: true },
-                y: { beginAtZero: true, stacked: true, ticks: { stepSize: 1 } }
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    stacked: true,
+                    ticks: { callback: value => `${value}%` }
+                }
             }
         }
     });
+
+    let visibleEditions = [];
+    function getEditionCounts(edition, selectedFormat) {
+        const formats = edition.availability;
+        const includedFormats = selectedFormat === 'physical'
+            ? ['physical_only', 'both']
+            : ['digital_only', 'both'];
+        return includedFormats.reduce((result, format) => {
+            const counts = formats[format] || { total: 0, physical: 0, digital: 0 };
+            return {
+                total: result.total + counts.total,
+                physical: result.physical + counts.physical,
+                digital: result.digital + counts.digital,
+            };
+        }, { total: 0, physical: 0, digital: 0 });
+    }
+
+    function getOwnedCount(counts, selectedFormat) {
+        return selectedFormat === 'physical' ? counts.physical : counts.digital;
+    }
+
+    function updateBookChart() {
+        const selectedFormat = availabilitySelect.value;
+        visibleEditions = bookCollection.filter(edition =>
+            getEditionCounts(edition, selectedFormat).total > 0
+        );
+        bookChart.data.labels = visibleEditions.map(edition => edition.name);
+        bookChart.data.datasets[0].data = visibleEditions.map(edition => {
+            const counts = getEditionCounts(edition, selectedFormat);
+            return counts.total ? getOwnedCount(counts, selectedFormat) / counts.total * 100 : 0;
+        });
+        bookChart.data.datasets[1].data = visibleEditions.map(edition => {
+            const counts = getEditionCounts(edition, selectedFormat);
+            return counts.total ? 100 - (getOwnedCount(counts, selectedFormat) / counts.total * 100) : 0;
+        });
+        bookChart.data.datasets[0].label = `${availabilitySelect.selectedOptions[0].text} owned`;
+        bookChart.data.datasets[1].label = `Not ${availabilitySelect.selectedOptions[0].text.toLowerCase()} owned`;
+        document.getElementById('book-chart-title').textContent =
+            `${availabilitySelect.selectedOptions[0].text} books owned by edition`;
+        bookChart.update();
+    }
+
+    availabilitySelect.addEventListener('change', updateBookChart);
+    updateBookChart();
 
     // Timeline chart
     {% if timeline %}
