@@ -603,3 +603,14 @@ button:hover, .btn:hover {
         width: min(100%, 500px);
     }
 }
+
+.autosave-status {
+    min-height: 1.5em;
+    margin: 8px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.autosave-status.error {
+    color: #f5948c;
+}

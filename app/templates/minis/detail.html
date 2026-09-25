@@ -25,7 +25,7 @@
 <div class="detail-layout mini-detail-layout{{ ' has-cover' if mini.photos }}">
     <div class="detail-info">
         <h2>Details</h2>
-        <form method="post" action="/minis/{{ mini.id }}/edit{% if navigation_query %}?{{ navigation_query }}{% endif %}">
+        <form data-autosave method="post" action="/minis/{{ mini.id }}/edit{% if navigation_query %}?{{ navigation_query }}{% endif %}">
             <div class="form-row">
                 <div>
                     <label for="name">Name</label>
@@ -97,8 +97,6 @@
             </div>
             <label for="notes">Notes</label>
             <textarea id="notes" name="notes">{{ mini.notes or '' }}</textarea>
-
-            <button type="submit">Save Changes</button>
         </form>
     </div>
 
@@ -175,4 +173,8 @@
     </div>
     <button type="submit">Add Paint</button>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/autosave.js"></script>
 {% endblock %}

@@ -24,7 +24,7 @@
 
 <div class="detail-layout{{ ' has-cover' if image_url }}">
 <div class="detail-info">
-<form method="post" action="/maps/{{ map.id }}/edit">
+<form data-autosave method="post" action="/maps/{{ map.id }}/edit">
     <div class="form-row">
         <div>
             <label for="name">Name</label>
@@ -55,8 +55,6 @@
             </label>
         </div>
     </div>
-
-    <button type="submit">Save Changes</button>
 </form>
 
 <form method="post" action="/maps/{{ map.id }}/delete" style="margin-top: 12px;">
@@ -70,4 +68,8 @@
 </aside>
 {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/autosave.js"></script>
 {% endblock %}
