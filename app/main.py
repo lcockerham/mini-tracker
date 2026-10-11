@@ -7,9 +7,11 @@ from sqlalchemy import inspect, text
 
 from app.database import Base, SessionLocal, engine
 from app.models import GameSystem
-from app.routers import books, dashboard, maps, minis, paints, photos, wishlist
+from app.routers import books, dashboard, maps, mini_review, minis, paints, photos, wishlist
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
+# Before minis so /minis/review isn't captured by /minis/{mini_id}.
+app.include_router(mini_review.router)
 app.include_router(minis.router)
 app.include_router(paints.router)
 app.include_router(wishlist.router)

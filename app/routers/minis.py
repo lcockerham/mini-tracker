@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
-from app.models import Mini, MiniStatus, Paint
+from app.models import Mini, MiniCandidate, MiniStatus, Paint
 
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
 
@@ -86,6 +86,9 @@ def list_minis(
             "manufacturer": manufacturer,
             "status": status,
             "navigation_query": _navigation_query(search, creature_type, manufacturer, status),
+            "pending_review_count": db.query(MiniCandidate)
+            .filter(MiniCandidate.status == "pending")
+            .count(),
         },
     )
 

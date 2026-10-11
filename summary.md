@@ -189,6 +189,7 @@ mini-tracker/
 - [x] Dashboard "Painting Breakdown" — renamed from "Status Breakdown", excludes pre-painted, "Done" → "Painted", percent tooltips on pie chart
 - [x] Books dashboard chart filter — Physical includes physical-only and both-format books; Digital includes digital-only and both-format books; chart shows ownership percentage for the selected format (PR #24 merged)
 - [x] Normalized manufacturer data (WizKids → Wizkids via SQL)
+- [x] Minis Gallery sync — `imports/minisgallery_sync.py` crawls minisgallery.com's Icons of the Realms / Onslaught indexes and queues WizKids minis not yet in the collection (skips "Unknown …?" pre-release placeholders and anything previously rejected); review at `/minis/review` (approve adds Pre-painted, qty 0, Minis Gallery image as photo; bulk approve backs up the DB first). Runs monthly via launchd (`make install-sync-schedule`); run by hand with `make sync-minis`
 
 ### To Run
 ```bash
