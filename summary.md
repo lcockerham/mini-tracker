@@ -187,6 +187,7 @@ mini-tracker/
 - [x] Pytest test suite (25 tests: mini CRUD/search/filter, wishlist purchase flow, paint inventory, paint-mini linking)
 - [x] Updated to Starlette 1.0 `TemplateResponse` API (request as first arg)
 - [x] Dashboard "Painting Breakdown" — renamed from "Status Breakdown", excludes pre-painted, "Done" → "Painted", percent tooltips on pie chart
+- [x] Books dashboard chart filter — Physical includes physical-only and both-format books; Digital includes digital-only and both-format books; chart shows ownership percentage for the selected format (PR #24 merged)
 - [x] Normalized manufacturer data (WizKids → Wizkids via SQL)
 
 ### To Run
@@ -205,4 +206,5 @@ https://github.com/lcockerham/mini-tracker
 - Alembic migrations (currently delete DB to reset)
 - Direct Google Drive integration for photo upload
 - Mobile-optimized UI
+- Manual pass over the physical book collection to verify `owns_physical` — replaces the unfinished bookshelf-photo cataloging (unread shelf sections dropped; "Monster Manual Expanded" I/II still need a check to confirm they're official books)
   
