@@ -89,6 +89,15 @@ class TestParsing:
         assert page.minis[0].rarity is None
         assert page.minis[0].size is None
 
+    def test_non_web_image_urls_are_dropped(self):
+        # Image URLs are rendered as links on the review and detail pages; a javascript: URL
+        # from a compromised gallery page would run in the app when clicked.
+        html = set_page("S", minibox(1, "A")).replace(
+            'src="images/minis/dungeons-and-dragons-icons-of-the-realms/x.jpg"',
+            'src="javascript:alert(1)"',
+        )
+        assert parse_set_page("s", html).minis[0].image_url is None
+
     def test_index_links_ignore_site_navigation(self):
         # Following the menu would crawl every game line on the site (Star Wars, Heroclix, ...).
         assert parse_index_links(index_page("icons-of-the-realms-ghost-light")) == [

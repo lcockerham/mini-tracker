@@ -91,6 +91,13 @@ def _is_placeholder(name: str) -> bool:
     return not name or name.lower().startswith("unknown") or name.endswith("?")
 
 
+def _image_url(src: str) -> Optional[str]:
+    # The URL ends up in <img src> and <a href> on the site; only allow plain web links so a
+    # tampered page can't smuggle in a javascript: URL.
+    url = urljoin(BASE_URL, src.strip())
+    return url if urlparse(url).scheme in ("http", "https") else None
+
+
 def parse_index_links(html: str) -> list[str]:
     soup = BeautifulSoup(html, "html.parser")
     links = []
@@ -131,7 +138,7 @@ def parse_set_page(page_id: str, html: str) -> Optional[SetPage]:
                 mini_number=number,
                 size=None if size in ("", "Unknown") else size,
                 rarity=None if rarity in ("", "Unknown") else rarity.lower(),
-                image_url=urljoin(BASE_URL, img["src"]) if img else None,
+                image_url=_image_url(img["src"]) if img else None,
             )
         )
     return page
