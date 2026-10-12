@@ -20,7 +20,7 @@ from urllib.parse import parse_qs, urljoin, urlparse
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
 
-from app.models import Mini, MiniCandidate, Photo
+from app.models import Mini, MiniCandidate, Photo, mini_gallery_url
 
 BASE_URL = "https://www.minisgallery.com/"
 USER_AGENT = "mini-tracker/1.0 (personal collection sync)"
@@ -68,6 +68,7 @@ class SyncResult:
     pages_crawled: int = 0
     set_pages: int = 0
     failed_pages: list[str] = field(default_factory=list)
+    linked_minis: int = 0
     new_candidates: Counter = field(default_factory=Counter)
 
 
@@ -164,8 +165,10 @@ def http_fetcher() -> Callable[[str], str]:
     return fetch
 
 
-def crawl(fetch: Callable[[str], str], result: SyncResult) -> list[SetPage]:
-    queue = list(ROOT_PAGES)
+def crawl(
+    fetch: Callable[[str], str], result: SyncResult, roots: Optional[list[str]] = None
+) -> list[SetPage]:
+    queue = list(ROOT_PAGES if roots is None else roots)
     seen = set(queue)
     set_pages = []
     while queue and result.pages_crawled < MAX_PAGES:
@@ -269,6 +272,63 @@ def find_new_minis(db: Session, set_pages: list[SetPage]) -> list[tuple[SetPage,
     return new_minis
 
 
+def link_sources(db: Session, set_pages: list[SetPage]) -> int:
+    """Point minis without a source_url at their Minis Gallery page; returns how many were linked.
+
+    Match on the photo already linked from the gallery, else on the set number within the
+    corresponding collection set when that number is unambiguous on both sides and the names
+    agree ("Goblin (mace)" vs "Goblin").
+    """
+    gallery_by_photo = {
+        mini.image_url.lower(): mini for page in set_pages for mini in page.minis if mini.image_url
+    }
+    minis = db.query(Mini).filter(Mini.source_url.is_(None)).all()
+    set_names_by_key: dict[str, str] = {}
+    minis_by_set: dict[str, list[Mini]] = {}
+    for (set_name,) in db.query(Mini.set_name).distinct():
+        set_names_by_key.setdefault(_set_key(set_name), set_name)
+    for mini in minis:
+        minis_by_set.setdefault(mini.set_name, []).append(mini)
+
+    linked = 0
+    for mini in minis:
+        for photo in mini.photos:
+            gallery_mini = gallery_by_photo.get(photo.url.lower())
+            if gallery_mini:
+                mini.source_url = mini_gallery_url(gallery_mini.mg_id)
+                linked += 1
+                break
+
+    set_by_photo = {
+        url.lower(): set_name
+        for url, set_name in db.query(Photo.url, Mini.set_name).join(Mini, Photo.mini_id == Mini.id)
+    }
+    for page in set_pages:
+        photo_sets = Counter(
+            set_by_photo[m.image_url.lower()]
+            for m in page.minis
+            if m.image_url and m.image_url.lower() in set_by_photo
+        )
+        primary = _primary_set(page, set_names_by_key, photo_sets)
+        unlinked = [m for m in minis_by_set.get(primary, []) if not m.source_url]
+        if not primary or not unlinked:
+            continue
+        gallery_numbers = Counter(_number_key(m.mini_number) for m in page.minis)
+        db_numbers = Counter(
+            _number_key(m.mini_number) for m in db.query(Mini).filter(Mini.set_name == primary)
+        )
+        by_number = {_number_key(m.mini_number): m for m in page.minis}
+        for mini in unlinked:
+            number = _number_key(mini.mini_number)
+            if not number or gallery_numbers[number] != 1 or db_numbers[number] != 1:
+                continue
+            ours, theirs = _base_name_key(mini.name), _base_name_key(by_number[number].name)
+            if ours and theirs and (ours.startswith(theirs) or theirs.startswith(ours)):
+                mini.source_url = mini_gallery_url(by_number[number].mg_id)
+                linked += 1
+    return linked
+
+
 def sync(db: Session, fetch: Callable[[str], str]) -> SyncResult:
     result = SyncResult()
     set_pages = crawl(fetch, result)
@@ -290,14 +350,15 @@ def sync(db: Session, fetch: Callable[[str], str]) -> SyncResult:
             )
         )
         result.new_candidates[set_name] += 1
+    result.linked_minis = link_sources(db, set_pages)
     db.commit()
     return result
 
 
 def main() -> int:
-    from app.database import Base, SessionLocal, engine
+    from app.database import SessionLocal, upgrade_schema
 
-    Base.metadata.create_all(bind=engine)
+    upgrade_schema()
     db = SessionLocal()
     try:
         result = sync(db, http_fetcher())
@@ -306,6 +367,7 @@ def main() -> int:
 
     print(f"[{datetime.now():%Y-%m-%d %H:%M}] Minis Gallery sync")
     print(f"  pages crawled: {result.pages_crawled}, set pages: {result.set_pages}")
+    print(f"  existing minis linked to their gallery page: {result.linked_minis}")
     print(f"  new minis queued for review: {sum(result.new_candidates.values())}")
     for set_name, count in sorted(result.new_candidates.items()):
         print(f"    {count:4}  {set_name}")

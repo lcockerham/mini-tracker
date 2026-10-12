@@ -679,3 +679,10 @@ button:hover, .btn:hover {
     color: var(--text-muted);
     font-size: 13px;
 }
+
+.source-link {
+    margin-left: 8px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+}

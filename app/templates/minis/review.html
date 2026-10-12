@@ -50,7 +50,7 @@
                     <a href="{{ candidate.image_url }}" target="_blank" rel="noopener"><img class="mini-thumbnail" src="{{ candidate.image_url }}" alt="{{ candidate.name }}" loading="lazy"></a>
                     {% endif %}
                 </td>
-                <td>{{ candidate.name }}</td>
+                <td><a href="{{ candidate.gallery_url }}" target="_blank" rel="noopener">{{ candidate.name }}</a></td>
                 <td>{{ candidate.mini_number or '' }}</td>
                 <td>{{ candidate.size or '' }}</td>
                 <td>{{ candidate.rarity or '' }}</td>

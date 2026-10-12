@@ -88,7 +88,7 @@
             <div class="form-row">
                 <div>
                     <label for="quantity">Quantity</label>
-                    <input type="number" id="quantity" name="quantity" value="{{ mini.quantity }}" min="1">
+                    <input type="number" id="quantity" name="quantity" value="{{ mini.quantity }}" min="0">
                 </div>
                 <div>
                     <label for="completion_date">Completion Date</label>
@@ -97,6 +97,11 @@
             </div>
             <label for="notes">Notes</label>
             <textarea id="notes" name="notes">{{ mini.notes or '' }}</textarea>
+            <label for="source_url">
+                Source URL
+                {% if mini.source_link %}<a class="source-link" href="{{ mini.source_link }}" target="_blank" rel="noopener">View source &#8599;</a>{% endif %}
+            </label>
+            <input type="url" id="source_url" name="source_url" value="{{ mini.source_url or '' }}" placeholder="{{ mini.source_link or 'https://' }}">
         </form>
     </div>
 

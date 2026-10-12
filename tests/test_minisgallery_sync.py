@@ -1,3 +1,5 @@
+import html
+import re
 from datetime import datetime
 
 import pytest
@@ -6,7 +8,13 @@ from app.database import get_db
 from app.main import app
 from app.models import Mini, MiniCandidate, MiniStatus, Photo
 from imports import minisgallery_sync as sync_module
-from imports.minisgallery_sync import find_new_minis, parse_index_links, parse_set_page, sync
+from imports.minisgallery_sync import (
+    find_new_minis,
+    link_sources,
+    parse_index_links,
+    parse_set_page,
+    sync,
+)
 
 IMG = "https://www.minisgallery.com/images/minis/dungeons-and-dragons-icons-of-the-realms"
 
@@ -174,6 +182,56 @@ class TestFindNewMinis:
         ]
 
 
+class TestLinkSources:
+    def owned(self, db, name, number, set_name="Dragon Heist", photo=None, source_url=None):
+        mini = Mini(name=name, set_name=set_name, mini_number=number, source_url=source_url)
+        if photo:
+            mini.photos.append(Photo(url=f"{IMG}/{photo}"))
+        db.add(mini)
+        db.commit()
+        return mini
+
+    def test_links_existing_minis_to_their_gallery_page(self, db):
+        by_photo = self.owned(db, "Cranium Rat Swarm", "1", photo="dh/crs.jpg")
+        by_number = self.owned(db, "Darkling (one short sword)", "2")
+        page = parse_set_page(
+            "dh",
+            set_page(
+                "Dragon Heist",
+                minibox(101, "Cranium Rat Swarm", "1", image="dh/crs.jpg"),
+                minibox(102, "Darkling", "2", image="dh/darkling-2.jpg"),
+            ),
+        )
+        assert link_sources(db, [page]) == 2
+        assert by_photo.source_url.endswith("id=101&task=image")
+        assert by_number.source_url.endswith("id=102&task=image")
+
+    def test_does_not_guess_when_number_or_name_disagree(self, db):
+        # A wrong link is worse than none: the collection merges sub-sets that reuse numbers
+        # (50th Anniversary has two #1s), and a premium page can share a number with the base set.
+        twin_a = self.owned(db, "Lemure", "1", set_name="50th Anniversary")
+        twin_b = self.owned(db, "Blue Wizard", "1", set_name="50th Anniversary")
+        renamed = self.owned(db, "Paladin in Hell", "3", set_name="50th Anniversary")
+        page = parse_set_page(
+            "50th",
+            set_page(
+                "50th Anniversary",
+                minibox(201, "Lemure 5e", "1"),
+                minibox(203, "Kobold", "3"),
+            ),
+        )
+        assert link_sources(db, [page]) == 0
+        assert (twin_a.source_url, twin_b.source_url, renamed.source_url) == (None, None, None)
+
+    def test_keeps_a_source_url_set_by_hand(self, db):
+        mini = self.owned(db, "Darkling", "2", photo="dh/d.jpg", source_url="https://example.com/d")
+        page = parse_set_page(
+            "dh", set_page("Dragon Heist", minibox(102, "Darkling", "2", image="dh/d.jpg"))
+        )
+        assert link_sources(db, [page]) == 0
+        assert mini.source_url == "https://example.com/d"
+
+
 class TestSync:
     def fake_site(self, monkeypatch, pages):
         monkeypatch.setattr(sync_module, "ROOT_PAGES", ["root"])
@@ -256,6 +314,8 @@ class TestReviewPage:
         )
         assert (mini.set_name, mini.mini_number, mini.size) == ("Ghost Light", "12", "Large")
         assert [photo.url for photo in mini.photos] == [f"{IMG}/gl/gz.jpg"]
+        # Link back to the gallery's page for this exact mini, not just its set.
+        assert mini.source_url == "https://www.minisgallery.com/index.php?id=1&task=image"
         db.refresh(candidate)
         assert (candidate.status, candidate.mini_id) == ("approved", mini.id)
         assert "Nothing to review" in client.get("/minis/review").text
@@ -295,3 +355,40 @@ class TestReviewPage:
 
     def test_review_route_not_shadowed_by_mini_detail(self, client):
         assert client.get("/minis/review").status_code == 200
+
+
+class TestSourceLink:
+    def test_reaper_minis_link_to_their_product_page_by_sku(self):
+        # Every Reaper mini has a SKU, so they all get a source link without a stored URL.
+        mini = Mini(name="Skeletal Spearmen", manufacturer="Reaper", mini_number="77001")
+        assert mini.source_link == "https://www.reapermini.com/search/77001"
+
+    def test_stored_url_wins_and_only_web_links_render(self):
+        assert Mini(
+            manufacturer="Reaper", mini_number="1", source_url="https://x.test/a"
+        ).source_link == ("https://x.test/a")
+        # The link is rendered as an href; a pasted javascript: URL must not become clickable.
+        assert Mini(name="X", source_url="javascript:alert(1)").source_link is None
+
+    def test_detail_page_links_to_source_and_saves_edits(self, client, db):
+        mini = Mini(name="Darkling", status=MiniStatus.PRE_PAINTED, quantity=1)
+        db.add(mini)
+        db.commit()
+        url = "https://www.minisgallery.com/index.php?id=102&task=image"
+        response = client.post(
+            f"/minis/{mini.id}/edit",
+            data={"name": "Darkling", "status": "Pre-painted", "quantity": 1, "source_url": url},
+        )
+        assert response.status_code == 200
+        assert f'href="{html.escape(url)}"' in client.get(f"/minis/{mini.id}").text
+        assert "View source" in client.get(f"/minis/{mini.id}").text
+
+    def test_unowned_catalog_minis_stay_editable(self, client, db):
+        # Catalog minis have quantity 0; a min="1" input made the browser reject the whole
+        # autosave form, so their notes and source URL could never be saved.
+        mini = Mini(name="Goblin (mace)", status=MiniStatus.PRE_PAINTED, quantity=0)
+        db.add(mini)
+        db.commit()
+        page = client.get(f"/minis/{mini.id}").text
+        quantity_input = re.search(r'<input type="number" id="quantity"[^>]*>', page).group(0)
+        assert 'min="0"' in quantity_input

@@ -190,6 +190,7 @@ mini-tracker/
 - [x] Books dashboard chart filter — Physical includes physical-only and both-format books; Digital includes digital-only and both-format books; chart shows ownership percentage for the selected format (PR #24 merged)
 - [x] Normalized manufacturer data (WizKids → Wizkids via SQL)
 - [x] Minis Gallery sync — `imports/minisgallery_sync.py` crawls minisgallery.com's Icons of the Realms / Onslaught indexes and queues WizKids minis not yet in the collection (skips "Unknown …?" pre-release placeholders and anything previously rejected); review at `/minis/review` (approve adds Pre-painted, qty 0, Minis Gallery image as photo; bulk approve backs up the DB first). Runs monthly via launchd (`make install-sync-schedule`); run by hand with `make sync-minis`
+- [x] Mini source links — `minis.source_url` (editable on the detail page, with a "View source" link). Minis Gallery minis link to their per-mini page: set on approval, and filled for existing minis by the monthly sync (photo match, else unambiguous set number + agreeing name); DDM and Tanares were backfilled once. Reaper minis fall back to `reapermini.com/search/<SKU>`
 
 ### To Run
 ```bash

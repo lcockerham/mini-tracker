@@ -32,6 +32,7 @@ def _approve(db: Session, candidate: MiniCandidate) -> None:
         rarity=candidate.rarity,
         status=MiniStatus.PRE_PAINTED,
         quantity=0,
+        source_url=candidate.gallery_url,
     )
     if candidate.image_url:
         mini.photos.append(Photo(url=candidate.image_url))
