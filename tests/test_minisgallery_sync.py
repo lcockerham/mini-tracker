@@ -1,6 +1,6 @@
 import html
 import re
-from datetime import datetime
+from datetime import date, datetime
 
 import pytest
 
@@ -10,6 +10,7 @@ from app.models import Mini, MiniCandidate, MiniStatus, Photo
 from imports import minisgallery_sync as sync_module
 from imports.minisgallery_sync import (
     find_new_minis,
+    is_released,
     link_sources,
     parse_index_links,
     parse_set_page,
@@ -232,10 +233,74 @@ class TestLinkSources:
         assert mini.source_url == "https://example.com/d"
 
 
+TODAY = date(2026, 10, 13)
+
+
+class TestReleaseDates:
+    @pytest.mark.parametrize(
+        "release_date, released",
+        [
+            ("Oct 13, 2026", True),
+            ("Oct 14, 2026", False),
+            ("Sep 2026", True),
+            # Month-only dates could mean the 31st; wait until the month is over.
+            ("Oct 2026", False),
+            ("Feb 2027", False),
+            ("2003 - 2010", True),
+            ("Release Date: 2007 - 2010", True),
+            ("2022 - current", True),
+        ],
+    )
+    def test_formats_used_by_the_gallery(self, release_date, released):
+        assert is_released(release_date, TODAY) is released
+
+    @pytest.mark.parametrize("release_date", [None, "", "TBA"])
+    def test_unreadable_dates_are_flagged_not_guessed(self, release_date):
+        assert is_released(release_date, TODAY) is None
+
+
 class TestSync:
     def fake_site(self, monkeypatch, pages):
         monkeypatch.setattr(sync_module, "ROOT_PAGES", ["root"])
         return lambda page_id: pages[page_id]
+
+    def test_unreleased_sets_wait_until_release(self, db, monkeypatch):
+        # Minis Gallery posts images months ahead (Deadfall: Feb 2027); queuing them now would
+        # add minis that can't be bought yet.
+        pages = {
+            "root": index_page("deadfall", "ghost-light", "mystery"),
+            "deadfall": set_page("Deadfall", minibox(1, "Szass Tam", "47"), release="Feb 2027"),
+            "ghost-light": set_page("Ghost Light", minibox(2, "Girallon Zombie", "12")),
+            "mystery": set_page("Mystery", minibox(3, "Who", "1"), release="Coming soon"),
+        }
+        fetch = self.fake_site(monkeypatch, pages)
+        result = sync(db, fetch, today=TODAY)
+        assert result.new_candidates == {"Ghost Light": 1}
+        assert result.unreleased_sets == ["Deadfall (Feb 2027)"]
+        assert result.undated_sets == ["Mystery (Coming soon)"]
+
+        # Once the release date passes, the set is picked up by the regular monthly run.
+        later = sync(db, fetch, today=date(2027, 3, 1))
+        assert later.new_candidates == {"Deadfall": 1}
+
+    def test_queued_minis_are_withdrawn_when_set_is_unreleased(self, db, monkeypatch):
+        # Minis queued before this check (or before a release slipped) leave the review page;
+        # anything already reviewed stays as the user decided.
+        fetch = self.fake_site(
+            monkeypatch,
+            {
+                "root": index_page("deadfall"),
+                "deadfall": set_page(
+                    "Deadfall", minibox(1, "Szass Tam"), minibox(2, "Sarrukh"), release="Feb 2027"
+                ),
+            },
+        )
+        url = "https://www.minisgallery.com/index.php?id=deadfall"
+        add_candidate(db, 1, "Szass Tam", set_name="Deadfall", source_url=url)
+        add_candidate(db, 2, "Sarrukh", set_name="Deadfall", source_url=url, status="rejected")
+        result = sync(db, fetch, today=TODAY)
+        assert result.withdrawn_candidates == 1
+        assert [(c.name, c.status) for c in db.query(MiniCandidate)] == [("Sarrukh", "rejected")]
 
     def test_queues_new_minis_once(self, db, monkeypatch):
         fetch = self.fake_site(
@@ -284,15 +349,13 @@ class TestSync:
 
 
 def add_candidate(db, mg_id, name, set_name="Ghost Light", **kwargs):
-    candidate = MiniCandidate(
-        mg_id=mg_id,
-        name=name,
-        set_name=set_name,
-        source_url="https://www.minisgallery.com/index.php?id=x",
-        status="pending",
-        found_at=datetime(2026, 10, 11),
+    fields = {
+        "source_url": "https://www.minisgallery.com/index.php?id=x",
+        "status": "pending",
+        "found_at": datetime(2026, 10, 11),
         **kwargs,
-    )
+    }
+    candidate = MiniCandidate(mg_id=mg_id, name=name, set_name=set_name, **fields)
     db.add(candidate)
     db.commit()
     return candidate

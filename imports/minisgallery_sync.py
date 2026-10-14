@@ -13,7 +13,7 @@ import sys
 import time
 from collections import Counter
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from typing import Callable, Optional
 from urllib.parse import parse_qs, urljoin, urlparse
 
@@ -69,6 +69,9 @@ class SyncResult:
     set_pages: int = 0
     failed_pages: list[str] = field(default_factory=list)
     linked_minis: int = 0
+    unreleased_sets: list[str] = field(default_factory=list)
+    undated_sets: list[str] = field(default_factory=list)
+    withdrawn_candidates: int = 0
     new_candidates: Counter = field(default_factory=Counter)
 
 
@@ -329,11 +332,55 @@ def link_sources(db: Session, set_pages: list[SetPage]) -> int:
     return linked
 
 
-def sync(db: Session, fetch: Callable[[str], str]) -> SyncResult:
+def is_released(release_date: Optional[str], today: date) -> Optional[bool]:
+    """Whether a set is out, from the gallery's release date; None if the date can't be read.
+
+    Minis Gallery posts images ahead of release, so a listed mini isn't necessarily available.
+    A month-only date ("Feb 2027") counts as released once that month is over, and a year or
+    year range ("2003 - 2010", "2022 - current") once its first year is over.
+    """
+    text = (release_date or "").replace("Release Date:", "").strip()
+    for fmt in ("%b %d, %Y", "%B %d, %Y"):
+        try:
+            return datetime.strptime(text, fmt).date() <= today
+        except ValueError:
+            pass
+    for fmt in ("%b %Y", "%B %Y"):
+        try:
+            month = datetime.strptime(text, fmt)
+            return (month.year, month.month) < (today.year, today.month)
+        except ValueError:
+            pass
+    years = re.fullmatch(r"(\d{4})(\s*-\s*(\d{4}|current))?", text)
+    if years:
+        return int(years.group(1)) < today.year
+    return None
+
+
+def sync(db: Session, fetch: Callable[[str], str], today: Optional[date] = None) -> SyncResult:
     result = SyncResult()
     set_pages = crawl(fetch, result)
+    today = today or date.today()
+    released_pages, unreleased_urls = [], []
+    for page in set_pages:
+        released = is_released(page.release_date, today)
+        if released:
+            released_pages.append(page)
+            continue
+        unreleased_urls.append(page.url)
+        label = f"{page.title} ({page.release_date or 'no date'})"
+        (result.unreleased_sets if released is False else result.undated_sets).append(label)
+
+    # Pull back anything queued before its release date moved (or before this check existed);
+    # it's queued again once the set is out. Reviewed candidates are left alone.
+    result.withdrawn_candidates = (
+        db.query(MiniCandidate)
+        .filter(MiniCandidate.status == "pending", MiniCandidate.source_url.in_(unreleased_urls))
+        .delete(synchronize_session=False)
+    )
+
     now = datetime.now()
-    for page, set_name, mini in find_new_minis(db, set_pages):
+    for page, set_name, mini in find_new_minis(db, released_pages):
         db.add(
             MiniCandidate(
                 mg_id=mini.mg_id,
@@ -371,6 +418,15 @@ def main() -> int:
     print(f"  new minis queued for review: {sum(result.new_candidates.values())}")
     for set_name, count in sorted(result.new_candidates.items()):
         print(f"    {count:4}  {set_name}")
+    print(f"  not released yet, skipped ({len(result.unreleased_sets)}):")
+    for label in sorted(result.unreleased_sets):
+        print(f"    {label}")
+    if result.withdrawn_candidates:
+        print(f"  pending minis withdrawn until release: {result.withdrawn_candidates}")
+    if result.undated_sets:
+        print(f"  SKIPPED, couldn't read release date ({len(result.undated_sets)}):")
+        for label in sorted(result.undated_sets):
+            print(f"    {label}")
     if result.failed_pages:
         print(f"  FAILED pages ({len(result.failed_pages)}):")
         for failure in result.failed_pages:
