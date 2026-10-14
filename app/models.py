@@ -1,8 +1,8 @@
 import enum
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
-from sqlalchemy import Column, Date, Enum, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import Column, Date, DateTime, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -53,10 +53,21 @@ class Mini(Base):
         Date, nullable=True
     )
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    source_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     photos: Mapped[list["Photo"]] = relationship(
         back_populates="mini", cascade="all, delete-orphan"
     )
+
+    @property
+    def source_link(self) -> Optional[str]:
+        """Where this mini's catalog details come from, for linking back to the source."""
+        if self.source_url and self.source_url.lower().startswith(("http://", "https://")):
+            return self.source_url
+        # Reaper's product search resolves a SKU straight to its product page.
+        if self.manufacturer == "Reaper" and self.mini_number:
+            return f"https://www.reapermini.com/search/{self.mini_number}"
+        return None
     paints: Mapped[list["Paint"]] = relationship(
         secondary=mini_paint_association, back_populates="minis"
     )
@@ -132,6 +143,36 @@ class Book(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     game_system: Mapped[Optional["GameSystem"]] = relationship(back_populates="books")
+
+
+class MiniCandidate(Base):
+    """A mini found on Minis Gallery that is waiting for review before joining the collection."""
+
+    __tablename__ = "mini_candidates"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Minis Gallery's per-mini image id (index.php?id=<mg_id>&task=image); stable across syncs.
+    mg_id: Mapped[int] = mapped_column(Integer, unique=True)
+    set_name: Mapped[str] = mapped_column(String(255))
+    source_url: Mapped[str] = mapped_column(String(500))
+    name: Mapped[str] = mapped_column(String(255))
+    mini_number: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    size: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    rarity: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    release_date: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    found_at: Mapped[datetime] = mapped_column(DateTime)
+    mini_id: Mapped[Optional[int]] = mapped_column(ForeignKey("minis.id"), nullable=True)
+
+    @property
+    def gallery_url(self) -> str:
+        return mini_gallery_url(self.mg_id)
+
+
+def mini_gallery_url(mg_id: int) -> str:
+    """Minis Gallery's page for a single mini (rarity, size, set, release date)."""
+    return f"https://www.minisgallery.com/index.php?id={mg_id}&task=image"
 
 
 class Map(Base):

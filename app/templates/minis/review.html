@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Review New Minis - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Review New Minis</h1>
+<p><a href="/minis">&larr; Back to Miniatures</a></p>
+
+{% if message %}
+<div class="flash">{{ message }}</div>
+{% endif %}
+
+<p class="review-intro">
+    Minis found on <a href="https://www.minisgallery.com/" target="_blank" rel="noopener">Minis Gallery</a>
+    that aren't in your collection yet. Approved minis are added as Pre-painted with quantity 0;
+    rejected ones won't be suggested again.
+    {% if pending_count %}<strong>{{ pending_count }}</strong> waiting.{% endif %}
+</p>
+
+{% for set_name, candidates in groups %}
+<section class="review-set">
+    <div class="review-set-header">
+        <h2>{{ set_name }} <span class="review-set-count">{{ candidates | length }}</span></h2>
+        <div class="review-actions">
+            <a href="{{ candidates[0].source_url }}" target="_blank" rel="noopener">Gallery page</a>
+            {% if candidates[0].release_date %}<span class="review-meta">{{ candidates[0].release_date }}</span>{% endif %}
+            <form class="inline-form" method="post" action="/minis/review/set">
+                <input type="hidden" name="set_name" value="{{ set_name }}">
+                <button type="submit" name="action" value="approve" class="btn-success">Add all</button>
+                <button type="submit" name="action" value="reject" class="btn-secondary">Reject all</button>
+            </form>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>#</th>
+                <th>Size</th>
+                <th>Rarity</th>
+                <th>Possibly already have</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr>
+                <td class="mini-thumbnail-cell">
+                    {% if candidate.image_url %}
+                    <a href="{{ candidate.image_url }}" target="_blank" rel="noopener"><img class="mini-thumbnail" src="{{ candidate.image_url }}" alt="{{ candidate.name }}" loading="lazy"></a>
+                    {% endif %}
+                </td>
+                <td><a href="{{ candidate.gallery_url }}" target="_blank" rel="noopener">{{ candidate.name }}</a></td>
+                <td>{{ candidate.mini_number or '' }}</td>
+                <td>{{ candidate.size or '' }}</td>
+                <td>{{ candidate.rarity or '' }}</td>
+                <td>
+                    {% for match in possible_matches[candidate.id] %}
+                    <a href="/minis/{{ match.id }}">{{ match.name }}</a> <span class="review-meta">({{ match.set_name or 'no set' }})</span>{% if not loop.last %}<br>{% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <div class="review-row-actions">
+                        <form class="inline-form" method="post" action="/minis/review/{{ candidate.id }}/approve">
+                            <button type="submit" class="btn-success">Add</button>
+                        </form>
+                        <form class="inline-form" method="post" action="/minis/review/{{ candidate.id }}/reject">
+                            <button type="submit" class="btn-secondary">Reject</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% else %}
+<p>Nothing to review. The monthly sync will queue new minis here when Minis Gallery lists them.</p>
+{% endfor %}
+{% endblock %}

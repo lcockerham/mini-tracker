@@ -635,3 +635,54 @@ button:hover, .btn:hover {
 .autosave-status.error {
     color: #f5948c;
 }
+
+.inline-form {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.review-intro {
+    color: var(--text-secondary);
+}
+
+.review-set {
+    margin: 32px 0;
+}
+
+.review-set-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-set-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.review-actions,
+.review-row-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.review-meta {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.source-link {
+    margin-left: 8px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+}

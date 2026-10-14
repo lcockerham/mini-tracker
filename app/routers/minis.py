@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
-from app.models import Mini, MiniStatus, Paint
+from app.models import Mini, MiniCandidate, MiniStatus, Paint
 
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
 
@@ -86,6 +86,9 @@ def list_minis(
             "manufacturer": manufacturer,
             "status": status,
             "navigation_query": _navigation_query(search, creature_type, manufacturer, status),
+            "pending_review_count": db.query(MiniCandidate)
+            .filter(MiniCandidate.status == "pending")
+            .count(),
         },
     )
 
@@ -189,6 +192,7 @@ def update_mini(
     quantity: int = Form(1),
     completion_date: Optional[str] = Form(None),
     notes: Optional[str] = Form(None),
+    source_url: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
@@ -203,6 +207,7 @@ def update_mini(
     mini.quantity = quantity
     mini.completion_date = date.fromisoformat(completion_date) if completion_date else None
     mini.notes = notes or None
+    mini.source_url = source_url or None
     db.commit()
     navigation_query = _navigation_query_from_request(request)
     mini_url = f"/minis/{mini_id}"

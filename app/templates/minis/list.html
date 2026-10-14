@@ -33,7 +33,12 @@
     </div>
 </form>
 
-<p><a href="/minis/new" class="btn btn-success">+ Add Mini</a></p>
+<p>
+    <a href="/minis/new" class="btn btn-success">+ Add Mini</a>
+    {% if pending_review_count %}
+    <a href="/minis/review" class="btn btn-secondary">Review new minis ({{ pending_review_count }})</a>
+    {% endif %}
+</p>
 
 {% if minis %}
 <table>
