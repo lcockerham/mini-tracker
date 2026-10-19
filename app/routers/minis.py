@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, selectinload
@@ -142,6 +142,8 @@ def get_mini(
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
+    if mini is None:
+        raise HTTPException(status_code=404, detail="Mini not found")
     navigation_minis = (
         _filtered_minis_query(db, search, creature_type, manufacturer, status)
         .order_by(Mini.name, Mini.id)
@@ -196,6 +198,8 @@ def update_mini(
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
+    if mini is None:
+        raise HTTPException(status_code=404, detail="Mini not found")
     mini.name = name
     mini.creature_type = creature_type or None
     mini.manufacturer = manufacturer or None
@@ -223,6 +227,8 @@ def add_paint_to_mini(
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
+    if mini is None:
+        raise HTTPException(status_code=404, detail="Mini not found")
     paint = db.query(Paint).get(paint_id)
     if paint and paint not in mini.paints:
         mini.paints.append(paint)
@@ -237,6 +243,8 @@ def remove_paint_from_mini(
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
+    if mini is None:
+        raise HTTPException(status_code=404, detail="Mini not found")
     paint = db.query(Paint).get(paint_id)
     if paint and paint in mini.paints:
         mini.paints.remove(paint)

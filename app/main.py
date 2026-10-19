@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI, File, Request, UploadFile
@@ -7,6 +8,8 @@ from fastapi.templating import Jinja2Templates
 from app.database import SessionLocal, upgrade_schema
 from app.models import GameSystem
 from app.routers import books, dashboard, maps, mini_review, minis, paints, photos, wishlist
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
 # Before minis so /minis/review isn't captured by /minis/{mini_id}.
@@ -29,6 +32,10 @@ DEFAULT_GAME_SYSTEMS = [
     "System-agnostic",
     "Other",
 ]
+
+# Workbook uploads larger than this are rejected rather than copied to disk and parsed.
+MAX_IMPORT_BYTES = 10 * 1024 * 1024
+IMPORT_CHUNK_BYTES = 1024 * 1024
 
 app_dir = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=app_dir / "static"), name="static")
@@ -67,11 +74,21 @@ async def import_spreadsheet_route(request: Request, file: UploadFile = File(...
     from app.database import SessionLocal
     from imports.spreadsheet import import_spreadsheet
 
+    tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
-            contents = await file.read()
-            tmp.write(contents)
             tmp_path = tmp.name
+            size = 0
+            while chunk := await file.read(IMPORT_CHUNK_BYTES):
+                size += len(chunk)
+                if size > MAX_IMPORT_BYTES:
+                    return templates.TemplateResponse(request, "import.html", {
+                        "error": (
+                            f"File is too large. The limit is "
+                            f"{MAX_IMPORT_BYTES // (1024 * 1024)} MB."
+                        ),
+                    }, status_code=413)
+                tmp.write(chunk)
 
         db = SessionLocal()
         try:
@@ -81,7 +98,14 @@ async def import_spreadsheet_route(request: Request, file: UploadFile = File(...
             })
         finally:
             db.close()
-    except Exception as e:
+    except Exception:
+        logger.exception("Spreadsheet import failed for %r", file.filename)
         return templates.TemplateResponse(request, "import.html", {
-            "error": str(e),
+            "error": (
+                "Could not import that file. Make sure it is an Excel workbook (.xlsx) "
+                "with a 'name' column."
+            ),
         })
+    finally:
+        if tmp_path:
+            Path(tmp_path).unlink(missing_ok=True)

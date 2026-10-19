@@ -169,3 +169,21 @@ class TestMiniEdit:
         )
         detail = client.get(f"/minis/{mini_id}")
         assert "Done" in detail.text
+
+
+class TestMissingMini:
+    # A stale link or mistyped URL should say "not found", not crash the server.
+    def test_detail_returns_404(self, client):
+        assert client.get("/minis/999").status_code == 404
+
+    def test_edit_returns_404(self, client):
+        response = client.post(
+            "/minis/999/edit", data={"name": "Ghost", "status": "Unpainted", "quantity": 1}
+        )
+        assert response.status_code == 404
+
+    def test_add_paint_returns_404(self, client):
+        assert client.post("/minis/999/paints", data={"paint_id": 1}).status_code == 404
+
+    def test_remove_paint_returns_404(self, client):
+        assert client.post("/minis/999/paints/1/remove").status_code == 404
