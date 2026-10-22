@@ -57,6 +57,38 @@ class TestMiniList:
         assert "Dragon" in response.text
         assert "Beholder" not in response.text
 
+    def test_filter_by_set_is_exact(self, client):
+        # The dropdown picks one set, so "BONES 1" must not also pull in "BONES 10".
+        create_mini(client, name="Owlbear", set_name="BONES 1")
+        create_mini(client, name="Kobold", set_name="BONES 10")
+        response = client.get("/minis", params={"set_name": "BONES 1"})
+        assert "Owlbear" in response.text
+        assert "Kobold" not in response.text
+
+    def test_set_dropdown_lists_each_set_once(self, client):
+        create_mini(client, name="Owlbear", set_name="Waterdeep")
+        create_mini(client, name="Gnoll", set_name="Waterdeep")
+        create_mini(client, name="Kobold", set_name="angelfire")
+        create_mini(client, name="Setless")
+        response = client.get("/minis", params={"set_name": "Waterdeep"})
+        set_select = response.text.split('id="set_name"')[1].split("</select>")[0]
+        options = re.findall(r'<option value="([^"]*)"', set_select)
+        # Case-insensitive order, no blank entry for minis without a set.
+        assert options == ["", "angelfire", "Waterdeep"]
+        assert '<option value="Waterdeep" selected>' in set_select
+
+    def test_navigation_preserves_set_filter(self, client):
+        create_mini(client, name="Alpha Guard", set_name="Waterdeep")
+        create_mini(client, name="Beta Guard", set_name="Waterdeep")
+        create_mini(client, name="Aardvark", set_name="Angelfire")
+        list_response = client.get("/minis", params={"set_name": "Waterdeep"})
+        alpha_id = mini_id_for_name(list_response.text, "Alpha Guard")
+        beta_id = mini_id_for_name(list_response.text, "Beta Guard")
+
+        detail = client.get(f"/minis/{alpha_id}", params={"set_name": "Waterdeep"})
+        assert f'href="/minis/{beta_id}?set_name=Waterdeep" rel="next"' in detail.text
+        assert '<span class="item-navigation-position">1 of 2</span>' in detail.text
+
 
 class TestMiniCreate:
     def test_create_minimal(self, client):

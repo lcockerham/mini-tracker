@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import func
 from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
@@ -22,6 +23,7 @@ def _filtered_minis_query(
     creature_type: Optional[str],
     manufacturer: Optional[str],
     status: Optional[str],
+    set_name: Optional[str],
 ):
     query = db.query(Mini)
     if search:
@@ -32,6 +34,8 @@ def _filtered_minis_query(
         query = query.filter(Mini.manufacturer.ilike(f"%{manufacturer}%"))
     if status:
         query = query.filter(Mini.status == MiniStatus(status))
+    if set_name:
+        query = query.filter(Mini.set_name == set_name)
     return query
 
 
@@ -40,6 +44,7 @@ def _navigation_query(
     creature_type: Optional[str],
     manufacturer: Optional[str],
     status: Optional[str],
+    set_name: Optional[str],
 ) -> str:
     params = []
     for key, value in (
@@ -47,6 +52,7 @@ def _navigation_query(
         ("creature_type", creature_type),
         ("manufacturer", manufacturer),
         ("status", status),
+        ("set_name", set_name),
     ):
         if value:
             params.append((key, value))
@@ -59,6 +65,7 @@ def _navigation_query_from_request(request: Request) -> str:
         request.query_params.get("creature_type"),
         request.query_params.get("manufacturer"),
         request.query_params.get("status"),
+        request.query_params.get("set_name"),
     )
 
 
@@ -69,13 +76,21 @@ def list_minis(
     creature_type: Optional[str] = None,
     manufacturer: Optional[str] = None,
     status: Optional[str] = None,
+    set_name: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    query = _filtered_minis_query(db, search, creature_type, manufacturer, status).options(
-        selectinload(Mini.photos)
-    )
+    query = _filtered_minis_query(
+        db, search, creature_type, manufacturer, status, set_name
+    ).options(selectinload(Mini.photos))
 
     minis = query.order_by(Mini.name, Mini.id).all()
+    set_names = [
+        row.set_name
+        for row in db.query(Mini.set_name)
+        .filter(Mini.set_name.isnot(None), Mini.set_name != "")
+        .distinct()
+        .order_by(func.lower(Mini.set_name))
+    ]
     return templates.TemplateResponse(
         request,
         "minis/list.html",
@@ -85,7 +100,11 @@ def list_minis(
             "creature_type": creature_type,
             "manufacturer": manufacturer,
             "status": status,
-            "navigation_query": _navigation_query(search, creature_type, manufacturer, status),
+            "set_name": set_name,
+            "set_names": set_names,
+            "navigation_query": _navigation_query(
+                search, creature_type, manufacturer, status, set_name
+            ),
             "pending_review_count": db.query(MiniCandidate)
             .filter(MiniCandidate.status == "pending")
             .count(),
@@ -139,11 +158,12 @@ def get_mini(
     creature_type: Optional[str] = None,
     manufacturer: Optional[str] = None,
     status: Optional[str] = None,
+    set_name: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     mini = db.query(Mini).get(mini_id)
     navigation_minis = (
-        _filtered_minis_query(db, search, creature_type, manufacturer, status)
+        _filtered_minis_query(db, search, creature_type, manufacturer, status, set_name)
         .order_by(Mini.name, Mini.id)
         .all()
     )
@@ -159,7 +179,7 @@ def get_mini(
         if current_index + 1 < len(navigation_minis):
             next_mini = navigation_minis[current_index + 1]
 
-    navigation_query = _navigation_query(search, creature_type, manufacturer, status)
+    navigation_query = _navigation_query(search, creature_type, manufacturer, status, set_name)
     all_paints = db.query(Paint).order_by(Paint.brand, Paint.name).all()
     return templates.TemplateResponse(
         request,
