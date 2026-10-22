@@ -686,3 +686,38 @@ button:hover, .btn:hover {
     text-transform: none;
     letter-spacing: normal;
 }
+
+.set-progress-count,
+.set-progress-percent {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.set-progress-bar {
+    display: inline-block;
+    width: 120px;
+    height: 8px;
+    margin-right: 8px;
+    vertical-align: middle;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.set-progress-bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+}
+
+.set-missing summary,
+.set-complete summary {
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.set-missing ul,
+.set-complete ul {
+    margin: 8px 0 0 20px;
+}
