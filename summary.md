@@ -174,7 +174,7 @@ mini-tracker/
 ### Completed (MVP)
 - [x] Project scaffolding (FastAPI, SQLAlchemy, Jinja2)
 - [x] Database models and Pydantic schemas
-- [x] Mini CRUD with search/filter (name, creature type, manufacturer, status)
+- [x] Mini CRUD with search/filter (name, creature type, manufacturer, status, set dropdown — exact match; single-mini sets live under "Individual")
 - [x] Mini detail view with edit form
 - [x] Paint inventory CRUD with inline editing
 - [x] Link paints to minis (many-to-many)

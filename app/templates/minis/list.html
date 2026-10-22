@@ -28,6 +28,15 @@
         </select>
     </div>
     <div>
+        <label for="set_name">Set</label>
+        <select id="set_name" name="set_name">
+            <option value="">All</option>
+            {% for name in set_names %}
+            <option value="{{ name }}" {{ 'selected' if set_name == name }}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
         <label>&nbsp;</label>
         <button type="submit">Search</button>
     </div>
