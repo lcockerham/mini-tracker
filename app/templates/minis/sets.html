@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Set Completion - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Set Completion</h1>
+<p><a href="/minis">&larr; Back to Miniatures</a></p>
+
+<p class="review-intro">
+    Sets you've started, closest to complete first. A set is complete when you own one of every
+    figure: variants (10A/10B, invisible versions) count as one figure, chase figures are left out,
+    and "Individual" isn't counted as a set.
+    {{ complete | length }} complete, {{ not_started_count }} not started.
+</p>
+
+{% if in_progress %}
+<table class="set-progress-table">
+    <thead>
+        <tr>
+            <th>Set</th>
+            <th>Owned</th>
+            <th>Progress</th>
+            <th>Missing</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in in_progress %}
+        <tr>
+            <td><a href="/minis?set_name={{ entry.set_name | urlencode }}">{{ entry.set_name }}</a></td>
+            <td class="set-progress-count">{{ entry.owned }} / {{ entry.total }}</td>
+            <td>
+                <div class="set-progress-bar" role="img" aria-label="{{ entry.percent }}% complete">
+                    <span style="width: {{ entry.percent }}%"></span>
+                </div>
+                <span class="set-progress-percent">{{ entry.percent }}%</span>
+            </td>
+            <td>
+                <details class="set-missing">
+                    <summary>{{ entry.missing | length }} missing</summary>
+                    <ul>
+                        {% for variants in entry.missing %}
+                        <li>
+                            {%- for mini in variants -%}
+                            {% if not loop.first %} / {% endif %}<a href="/minis/{{ mini.id }}?set_name={{ entry.set_name | urlencode }}">{{ mini.name }}</a>
+                            {%- endfor -%}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No sets in progress.</p>
+{% endif %}
+
+{% if complete %}
+<details class="set-complete">
+    <summary>Complete sets ({{ complete | length }})</summary>
+    <ul>
+        {% for entry in complete %}
+        <li><a href="/minis?set_name={{ entry.set_name | urlencode }}">{{ entry.set_name }}</a> <span class="review-meta">{{ entry.total }} figures</span></li>
+        {% endfor %}
+    </ul>
+</details>
+{% endif %}
+{% endblock %}

@@ -191,6 +191,7 @@ mini-tracker/
 - [x] Normalized manufacturer data (WizKids → Wizkids via SQL)
 - [x] Minis Gallery sync — `imports/minisgallery_sync.py` crawls minisgallery.com's Icons of the Realms / Onslaught indexes and queues WizKids minis not yet in the collection (skips sets whose listed release date hasn't passed yet — month-only dates like "Feb 2027" wait until the month is over — plus "Unknown …?" placeholders and anything previously rejected; pending minis from a set that turns out to be unreleased are withdrawn until it ships); review at `/minis/review` (approve adds Pre-painted, qty 0, Minis Gallery image as photo; bulk approve backs up the DB first). Runs monthly via launchd (`make install-sync-schedule`); run by hand with `make sync-minis`
 - [x] Mini source links — `minis.source_url` (editable on the detail page, with a "View source" link). Minis Gallery minis link to their per-mini page: set on approval, and filled for existing minis by the monthly sync (photo match, else unambiguous set number + agreeing name); DDM and Tanares were backfilled once. Reaper minis fall back to `reapermini.com/search/<SKU>`
+- [x] Set completion — `/minis/sets` lists started sets closest to complete first, with links to each missing mini. One of every figure completes a set: variants sharing a base number (10A/10B, "46/6" invisibles) count once, unnumbered minis match on name minus parenthesized notes/"Invisible", and chase figures, standalone variants (invisible / alternate paint or sculpt) and "Individual" are left out
 
 ### To Run
 ```bash

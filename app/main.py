@@ -6,11 +6,22 @@ from fastapi.templating import Jinja2Templates
 
 from app.database import SessionLocal, upgrade_schema
 from app.models import GameSystem
-from app.routers import books, dashboard, maps, mini_review, minis, paints, photos, wishlist
+from app.routers import (
+    books,
+    dashboard,
+    maps,
+    mini_review,
+    minis,
+    paints,
+    photos,
+    set_completion,
+    wishlist,
+)
 
 app = FastAPI(title="Mini-Tracker", description="RPG miniature collection tracker")
-# Before minis so /minis/review isn't captured by /minis/{mini_id}.
+# Before minis so /minis/review and /minis/sets aren't captured by /minis/{mini_id}.
 app.include_router(mini_review.router)
+app.include_router(set_completion.router)
 app.include_router(minis.router)
 app.include_router(paints.router)
 app.include_router(wishlist.router)
