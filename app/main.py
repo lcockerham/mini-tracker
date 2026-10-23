@@ -9,6 +9,7 @@ from app.models import GameSystem
 from app.routers import (
     books,
     dashboard,
+    dwarven_forge,
     maps,
     mini_review,
     minis,
@@ -29,6 +30,7 @@ app.include_router(photos.router)
 app.include_router(dashboard.router)
 app.include_router(books.router)
 app.include_router(maps.router)
+app.include_router(dwarven_forge.router)
 
 DEFAULT_GAME_SYSTEMS = [
     "D&D Basic",

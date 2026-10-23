@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mini-Tracker{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-    <link rel="stylesheet" href="/static/css/style.css?v=9">
+    <link rel="stylesheet" href="/static/css/style.css?v=11">
 </head>
 <body>
     <nav>
         <a href="/minis" class="{{ 'active' if request.url.path.startswith('/minis') }}">Miniatures</a>
         <a href="/books" class="{{ 'active' if request.url.path.startswith('/books') }}">Books</a>
         <a href="/maps" class="{{ 'active' if request.url.path.startswith('/maps') }}">Maps</a>
+        <a href="/dwarven-forge" class="{{ 'active' if request.url.path.startswith('/dwarven-forge') }}">Dwarven Forge</a>
         <a href="/paints" class="{{ 'active' if request.url.path.startswith('/paints') }}">Paints</a>
         <a href="/wishlist" class="{{ 'active' if request.url.path.startswith('/wishlist') }}">Wishlist</a>
         <a href="/dashboard" class="{{ 'active' if request.url.path.startswith('/dashboard') }}">Dashboard</a>

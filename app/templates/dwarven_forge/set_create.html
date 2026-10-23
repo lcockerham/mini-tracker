@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Add Dwarven Forge Set - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Add Dwarven Forge Set</h1>
+<p><a href="/dwarven-forge">&larr; Back to Dwarven Forge</a></p>
+
+<form method="post" action="/dwarven-forge/sets/new">
+    <div class="form-row">
+        <div>
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required placeholder="e.g. Lowtown Market Dressing">
+        </div>
+        <div>
+            <label for="sku">SKU *</label>
+            <input type="text" id="sku" name="sku" required placeholder="e.g. 8-A129-U">
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="terrain_line">Terrain Line</label>
+            <input type="text" id="terrain_line" name="terrain_line" placeholder="e.g. Cities">
+        </div>
+        <div>
+            <label for="paint_type">Paint</label>
+            <select id="paint_type" name="paint_type">
+                <option value="">N/A</option>
+                <option value="Unpainted">Unpainted</option>
+                <option value="Painted">Painted</option>
+            </select>
+        </div>
+        <div>
+            <label for="copies">Copies</label>
+            <input type="number" id="copies" name="copies" value="1" min="0">
+        </div>
+    </div>
+
+    <button type="submit" class="btn-success">Add Set</button>
+</form>
+<p class="review-meta">Add its pieces on the next page.</p>
+{% endblock %}

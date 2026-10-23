@@ -184,3 +184,70 @@ class Map(Base):
     size: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     owns_physical: Mapped[bool] = mapped_column(default=False)
     owns_digital: Mapped[bool] = mapped_column(default=False)
+
+
+class DwarvenForgeSet(Base):
+    """A Dwarven Forge product you own (a pack or a one-piece item), identified by its SKU."""
+
+    __tablename__ = "df_sets"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sku: Mapped[str] = mapped_column(String(64), unique=True)
+    name: Mapped[str] = mapped_column(String(255))
+    # Dwarven Forge's terrain line: Cities, Cavern, Wilderness, ...
+    terrain_line: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    paint_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    copies: Mapped[int] = mapped_column(Integer, default=1)
+    source_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    contents: Mapped[list["DwarvenForgeSetPiece"]] = relationship(
+        back_populates="set", cascade="all, delete-orphan"
+    )
+
+    @property
+    def pieces_per_copy(self) -> int:
+        return sum(entry.count for entry in self.contents)
+
+    @property
+    def piece_total(self) -> int:
+        return self.pieces_per_copy * self.copies
+
+
+class DwarvenForgePiece(Base):
+    """A Dwarven Forge piece by its code (e.g. AC-824), wherever it came from."""
+
+    __tablename__ = "df_pieces"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(64), unique=True)
+    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    # Bought on its own rather than as part of a set.
+    loose_quantity: Mapped[int] = mapped_column(Integer, default=0)
+    source_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    set_entries: Mapped[list["DwarvenForgeSetPiece"]] = relationship(
+        back_populates="piece", cascade="all, delete-orphan"
+    )
+
+    @property
+    def owned_total(self) -> int:
+        return self.loose_quantity + sum(
+            entry.count * entry.set.copies for entry in self.set_entries
+        )
+
+
+class DwarvenForgeSetPiece(Base):
+    """How many of a piece one copy of a set contains."""
+
+    __tablename__ = "df_set_pieces"
+
+    set_id: Mapped[int] = mapped_column(ForeignKey("df_sets.id"), primary_key=True)
+    piece_id: Mapped[int] = mapped_column(ForeignKey("df_pieces.id"), primary_key=True)
+    count: Mapped[int] = mapped_column(Integer, default=1)
+
+    set: Mapped["DwarvenForgeSet"] = relationship(back_populates="contents")
+    piece: Mapped["DwarvenForgePiece"] = relationship(back_populates="set_entries")
