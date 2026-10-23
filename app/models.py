@@ -207,6 +207,13 @@ class DwarvenForgeSet(Base):
     )
 
     @property
+    def source_link(self) -> Optional[str]:
+        """source_url only when it's a web link; a typed-in javascript: URL never becomes one."""
+        if self.source_url and self.source_url.lower().startswith(("http://", "https://")):
+            return self.source_url
+        return None
+
+    @property
     def pieces_per_copy(self) -> int:
         return sum(entry.count for entry in self.contents)
 
@@ -232,6 +239,13 @@ class DwarvenForgePiece(Base):
     set_entries: Mapped[list["DwarvenForgeSetPiece"]] = relationship(
         back_populates="piece", cascade="all, delete-orphan"
     )
+
+    @property
+    def source_link(self) -> Optional[str]:
+        """source_url only when it's a web link; a typed-in javascript: URL never becomes one."""
+        if self.source_url and self.source_url.lower().startswith(("http://", "https://")):
+            return self.source_url
+        return None
 
     @property
     def owned_total(self) -> int:

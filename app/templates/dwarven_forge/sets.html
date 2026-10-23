@@ -44,7 +44,7 @@
                 <td>
                     <a href="/dwarven-forge/sets/{{ set.id }}">{{ set.name }}</a>
                     {% if set.contents | length == 1 %}<span class="review-meta">single</span>{% endif %}
-                    {% if set.source_url %}<a class="source-link" href="{{ set.source_url }}" target="_blank" rel="noopener">DF site</a>{% endif %}
+                    {% if set.source_link %}<a class="source-link" href="{{ set.source_link }}" target="_blank" rel="noopener">DF site</a>{% endif %}
                 </td>
                 <td>{{ set.sku }}</td>
                 <td>{{ set.paint_type or '' }}</td>

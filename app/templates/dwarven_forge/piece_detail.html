@@ -5,7 +5,7 @@
 <h1>{{ piece.code }}{% if piece.name %} · {{ piece.name }}{% endif %}</h1>
 <p>
     <a href="/dwarven-forge/pieces">&larr; Back to Pieces</a>
-    {% if piece.source_url %}<a class="source-link" href="{{ piece.source_url }}" target="_blank" rel="noopener">View on Dwarven Forge</a>{% endif %}
+    {% if piece.source_link %}<a class="source-link" href="{{ piece.source_link }}" target="_blank" rel="noopener">View on Dwarven Forge</a>{% endif %}
 </p>
 
 <div class="detail-layout{{ ' has-cover' if piece.image_url }}">

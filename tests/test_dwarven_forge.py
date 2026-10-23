@@ -170,3 +170,20 @@ class TestImageSizes:
         walls.image_url = "https://my.photos/walls.jpg"
         db.commit()
         assert 'src="https://my.photos/walls.jpg"' in client.get("/dwarven-forge").text
+
+
+class TestSourceLinks:
+    def test_non_web_links_are_not_rendered(self, client, collection, db):
+        # A javascript: URL typed into the link field must never become a clickable link.
+        walls = db.query(DwarvenForgeSet).filter_by(sku="4-WALLSR-U").one()
+        walls.source_url = "javascript:alert(1)"
+        stairs = db.get(DwarvenForgePiece, collection["stairs"])
+        stairs.source_url = "JavaScript:alert(1)"
+        db.commit()
+        pages = [
+            "/dwarven-forge",
+            f"/dwarven-forge/sets/{walls.id}",
+            f"/dwarven-forge/pieces/{stairs.id}",
+        ]
+        for path in pages:
+            assert 'href="javascript:' not in client.get(path).text.lower()
