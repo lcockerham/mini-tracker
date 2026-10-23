@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dwarven Forge - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Dwarven Forge</h1>
+{% set active_tab = 'sets' %}{% include "dwarven_forge/_tabs.html" %}
+
+<form class="search-form" method="get" action="/dwarven-forge">
+    <div>
+        <label for="search">Set</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Name or SKU...">
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a href="/dwarven-forge/sets/new" class="btn btn-success">+ Add Set</a>
+    <span class="review-meta">{{ set_count }} sets · {{ "{:,}".format(piece_total) }} pieces</span>
+</p>
+
+{% for line, sets in lines %}
+<section class="df-line">
+    <h2>{{ line }} <span class="review-set-count">{{ sets | length }}</span></h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Paint</th>
+                <th>Copies</th>
+                <th>Pieces</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for set in sets %}
+            <tr>
+                <td class="mini-thumbnail-cell">
+                    {% if set.image_url %}<a href="/dwarven-forge/sets/{{ set.id }}"><img class="mini-thumbnail" src="{{ set.image_url | at_width(160) }}" alt="{{ set.name }}" loading="lazy"></a>{% endif %}
+                </td>
+                <td>
+                    <a href="/dwarven-forge/sets/{{ set.id }}">{{ set.name }}</a>
+                    {% if set.contents | length == 1 %}<span class="review-meta">single</span>{% endif %}
+                    {% if set.source_link %}<a class="source-link" href="{{ set.source_link }}" target="_blank" rel="noopener">DF site</a>{% endif %}
+                </td>
+                <td>{{ set.sku }}</td>
+                <td>{{ set.paint_type or '' }}</td>
+                <td>{{ set.copies }}</td>
+                <td>{{ set.piece_total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% else %}
+<p>No Dwarven Forge sets found. <a href="/dwarven-forge/sets/new">Add your first one!</a></p>
+{% endfor %}
+{% endblock %}

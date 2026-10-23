@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}{{ set.name }} - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>{{ set.name }}</h1>
+<p>
+    <a href="/dwarven-forge">&larr; Back to Dwarven Forge</a>
+    {% if set.source_link %}<a class="source-link" href="{{ set.source_link }}" target="_blank" rel="noopener">View on Dwarven Forge</a>{% endif %}
+</p>
+
+<div class="detail-layout{{ ' has-cover' if set.image_url }}">
+<div class="detail-info">
+<form data-autosave method="post" action="/dwarven-forge/sets/{{ set.id }}/edit">
+    <div class="form-row">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="{{ set.name }}" required>
+        </div>
+        <div>
+            <label for="sku">SKU</label>
+            <input type="text" id="sku" name="sku" value="{{ set.sku }}" required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="terrain_line">Terrain Line</label>
+            <input type="text" id="terrain_line" name="terrain_line" value="{{ set.terrain_line or '' }}">
+        </div>
+        <div>
+            <label for="paint_type">Paint</label>
+            <select id="paint_type" name="paint_type">
+                <option value="" {{ 'selected' if not set.paint_type }}>N/A</option>
+                <option value="Unpainted" {{ 'selected' if set.paint_type == 'Unpainted' }}>Unpainted</option>
+                <option value="Painted" {{ 'selected' if set.paint_type == 'Painted' }}>Painted</option>
+            </select>
+        </div>
+        <div>
+            <label for="copies">Copies</label>
+            <input type="number" id="copies" name="copies" value="{{ set.copies }}" min="0" required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="source_url">Dwarven Forge Link</label>
+            <input type="url" id="source_url" name="source_url" value="{{ set.source_url or '' }}" placeholder="https://www.dwarvenforge.com/products/...">
+        </div>
+        <div>
+            <label for="image_url">Image URL</label>
+            <input type="url" id="image_url" name="image_url" value="{{ set.image_url or '' }}">
+        </div>
+    </div>
+    <div>
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3">{{ set.notes or '' }}</textarea>
+    </div>
+</form>
+</div>
+
+{% if set.image_url %}
+<aside class="cover-panel">
+    <img class="cover-image" src="{{ set.image_url | at_width(800) }}" alt="{{ set.name }}">
+</aside>
+{% endif %}
+</div>
+
+<h2>Pieces <span class="review-set-count">{{ set.pieces_per_copy }} per copy · {{ set.piece_total }} owned</span></h2>
+{% if contents %}
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Per Copy</th>
+            <th>Owned</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in contents %}
+        <tr>
+            <td class="mini-thumbnail-cell">
+                {% if entry.piece.image_url %}<img class="mini-thumbnail" src="{{ entry.piece.image_url | at_width(160) }}" alt="{{ entry.piece.name or entry.piece.code }}" loading="lazy">{% endif %}
+            </td>
+            <td class="df-code"><a href="/dwarven-forge/pieces/{{ entry.piece.id }}">{{ entry.piece.code }}</a></td>
+            <td>{{ entry.piece.name or '' }}</td>
+            <td>{{ entry.count }}</td>
+            <td>{{ entry.count * set.copies }}</td>
+            <td>
+                <form class="inline-form" method="post" action="/dwarven-forge/sets/{{ set.id }}/pieces/{{ entry.piece.id }}/remove">
+                    <button type="submit" class="btn-secondary">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No pieces yet.</p>
+{% endif %}
+
+<form class="search-form" method="post" action="/dwarven-forge/sets/{{ set.id }}/pieces">
+    <div>
+        <label for="code">Piece Code</label>
+        <input type="text" id="code" name="code" required placeholder="e.g. AC-824">
+    </div>
+    <div>
+        <label for="count">Per Copy</label>
+        <input type="number" id="count" name="count" value="1" min="1" required>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Add Piece</button>
+    </div>
+</form>
+
+<form method="post" action="/dwarven-forge/sets/{{ set.id }}/delete" style="margin-top: 12px;">
+    <button type="submit" class="btn-danger">Delete Set</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/autosave.js"></script>
+{% endblock %}

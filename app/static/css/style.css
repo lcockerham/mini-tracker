@@ -721,3 +721,31 @@ button:hover, .btn:hover {
 .set-complete ul {
     margin: 8px 0 0 20px;
 }
+
+.df-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.df-tabs a {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.df-tabs a.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.df-line {
+    margin: 24px 0;
+}
+
+.df-code {
+    white-space: nowrap;
+}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Dwarven Forge Pieces - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Dwarven Forge</h1>
+{% set active_tab = 'pieces' %}{% include "dwarven_forge/_tabs.html" %}
+
+<form class="search-form" method="get" action="/dwarven-forge/pieces">
+    <div>
+        <label for="search">Piece</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Code or name...">
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a href="/dwarven-forge/pieces/new" class="btn btn-success">+ Add Loose Piece</a>
+    <span class="review-meta">{{ pieces | length }} piece types · {{ "{:,}".format(owned_total) }} pieces</span>
+</p>
+
+{% if pieces %}
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Owned</th>
+            <th>Loose</th>
+            <th>From Sets</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for piece in pieces %}
+        <tr>
+            <td class="mini-thumbnail-cell">
+                {% if piece.image_url %}<a href="/dwarven-forge/pieces/{{ piece.id }}"><img class="mini-thumbnail" src="{{ piece.image_url | at_width(160) }}" alt="{{ piece.name or piece.code }}" loading="lazy"></a>{% endif %}
+            </td>
+            <td class="df-code"><a href="/dwarven-forge/pieces/{{ piece.id }}">{{ piece.code }}</a></td>
+            <td>{{ piece.name or '' }}</td>
+            <td>{{ piece.owned_total }}</td>
+            <td>{{ piece.loose_quantity or '' }}</td>
+            <td>
+                {%- for entry in piece.set_entries | sort(attribute='set.name') -%}
+                {% if not loop.first %}, {% endif %}<a href="/dwarven-forge/sets/{{ entry.set.id }}">{{ entry.set.name }}</a>
+                {%- endfor -%}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No pieces found.</p>
+{% endif %}
+{% endblock %}

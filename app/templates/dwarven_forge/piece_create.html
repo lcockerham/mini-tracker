@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Add Loose Piece - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>Add Loose Piece</h1>
+<p><a href="/dwarven-forge/pieces">&larr; Back to Pieces</a></p>
+<p class="review-intro">For pieces bought on their own. If the code already exists, this adds to its loose count.</p>
+
+<form method="post" action="/dwarven-forge/pieces/new">
+    <div class="form-row">
+        <div>
+            <label for="code">Code *</label>
+            <input type="text" id="code" name="code" required placeholder="e.g. AC-824">
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g. Hand Cart">
+        </div>
+        <div>
+            <label for="loose_quantity">Quantity</label>
+            <input type="number" id="loose_quantity" name="loose_quantity" value="1" min="1" required>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-success">Add Piece</button>
+</form>
+{% endblock %}

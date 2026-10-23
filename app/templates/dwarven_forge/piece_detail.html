@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ piece.code }} - Mini-Tracker{% endblock %}
+
+{% block content %}
+<h1>{{ piece.code }}{% if piece.name %} · {{ piece.name }}{% endif %}</h1>
+<p>
+    <a href="/dwarven-forge/pieces">&larr; Back to Pieces</a>
+    {% if piece.source_link %}<a class="source-link" href="{{ piece.source_link }}" target="_blank" rel="noopener">View on Dwarven Forge</a>{% endif %}
+</p>
+
+<div class="detail-layout{{ ' has-cover' if piece.image_url }}">
+<div class="detail-info">
+<form data-autosave method="post" action="/dwarven-forge/pieces/{{ piece.id }}/edit">
+    <div class="form-row">
+        <div>
+            <label for="code">Code</label>
+            <input type="text" id="code" name="code" value="{{ piece.code }}" required>
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="{{ piece.name or '' }}">
+        </div>
+        <div>
+            <label for="loose_quantity">Loose (bought on its own)</label>
+            <input type="number" id="loose_quantity" name="loose_quantity" value="{{ piece.loose_quantity }}" min="0" required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label for="source_url">Dwarven Forge Link</label>
+            <input type="url" id="source_url" name="source_url" value="{{ piece.source_url or '' }}">
+        </div>
+        <div>
+            <label for="image_url">Image URL</label>
+            <input type="url" id="image_url" name="image_url" value="{{ piece.image_url or '' }}">
+        </div>
+    </div>
+    <div>
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3">{{ piece.notes or '' }}</textarea>
+    </div>
+</form>
+</div>
+
+{% if piece.image_url %}
+<aside class="cover-panel">
+    <img class="cover-image" src="{{ piece.image_url | at_width(800) }}" alt="{{ piece.name or piece.code }}">
+</aside>
+{% endif %}
+</div>
+
+<h2>Owned <span class="review-set-count">{{ piece.owned_total }} total</span></h2>
+{% if entries %}
+<table>
+    <thead>
+        <tr>
+            <th>Set</th>
+            <th>Per Copy</th>
+            <th>Copies</th>
+            <th>Owned</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td><a href="/dwarven-forge/sets/{{ entry.set.id }}">{{ entry.set.name }}</a></td>
+            <td>{{ entry.count }}</td>
+            <td>{{ entry.set.copies }}</td>
+            <td>{{ entry.count * entry.set.copies }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Not part of any set.</p>
+{% endif %}
+
+<form method="post" action="/dwarven-forge/pieces/{{ piece.id }}/delete" style="margin-top: 12px;">
+    <button type="submit" class="btn-danger">Delete Piece</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/autosave.js"></script>
+{% endblock %}

@@ -1,4 +1,4 @@
-.PHONY: lint test sync-minis install-sync-schedule uninstall-sync-schedule
+.PHONY: lint test import-dwarven-forge link-dwarven-forge sync-minis install-sync-schedule uninstall-sync-schedule
 
 SYNC_LABEL := com.minitracker.minisgallery-sync
 SYNC_PLIST := $(HOME)/Library/LaunchAgents/$(SYNC_LABEL).plist
@@ -8,6 +8,14 @@ lint:
 
 test:
 	pytest
+
+# One-time import of the Dwarven Forge inventory CSV (pass CSV=path to override the default).
+import-dwarven-forge:
+	.venv/bin/python -m imports.dwarven_forge $(CSV)
+
+# Fill empty Dwarven Forge links/pictures from imports/dwarven_forge_links.tsv.
+link-dwarven-forge:
+	.venv/bin/python -m imports.dwarven_forge_links
 
 # Queue minis that are on Minis Gallery but not in the collection; review at /minis/review.
 sync-minis:
