@@ -350,3 +350,33 @@ class TestBooks:
         }
         assert "/books/import" not in registered_paths
         assert "/books/import-catalog" not in registered_paths
+
+
+class TestMissingBook:
+    # A stale link or mistyped URL should say "not found", not crash the server.
+    def test_detail_returns_404(self, client):
+        assert client.get("/books/999").status_code == 404
+
+    def test_edit_returns_404(self, client):
+        assert client.post("/books/999/edit", data={"title": "Ghost"}).status_code == 404
+
+    def test_delete_returns_404(self, client):
+        assert client.post("/books/999/delete").status_code == 404
+
+
+class TestMalformedGameSystemFilter:
+    # The filter is optional, so a bad value is dropped like other unknown filter
+    # values; the user still sees their books instead of a server error.
+    def test_list_ignores_malformed_game_system_id(self, client):
+        create_book(client, title="Tomb of Annihilation")
+        response = client.get("/books", params={"game_system_id": "abc"})
+        assert response.status_code == 200
+        assert "Tomb of Annihilation" in response.text
+        assert "game_system_id=abc" not in response.text
+
+    def test_detail_ignores_malformed_game_system_id(self, client):
+        create_book(client, title="Tomb of Annihilation")
+        book_id = book_id_for_title(client.get("/books").text, "Tomb of Annihilation")
+        response = client.get(f"/books/{book_id}", params={"game_system_id": "abc"})
+        assert response.status_code == 200
+        assert "Tomb of Annihilation" in response.text
