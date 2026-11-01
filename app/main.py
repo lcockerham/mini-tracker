@@ -85,7 +85,7 @@ async def import_spreadsheet_route(request: Request, file: UploadFile = File(...
     import tempfile
 
     from app.database import SessionLocal
-    from imports.spreadsheet import import_spreadsheet
+    from imports.spreadsheet import SpreadsheetError, import_spreadsheet
 
     tmp_path = None
     try:
@@ -111,6 +111,8 @@ async def import_spreadsheet_route(request: Request, file: UploadFile = File(...
             })
         finally:
             db.close()
+    except SpreadsheetError as e:
+        return templates.TemplateResponse(request, "import.html", {"error": str(e)})
     except Exception:
         logger.exception("Spreadsheet import failed for %r", file.filename)
         return templates.TemplateResponse(request, "import.html", {

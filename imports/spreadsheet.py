@@ -61,6 +61,10 @@ SIZE_MAP = {
 }
 
 
+class SpreadsheetError(ValueError):
+    """A problem with the workbook's contents that the user can fix; safe to show them."""
+
+
 def import_spreadsheet(file_path: str, db: Session) -> dict:
     """Import minis from an Excel spreadsheet. Returns stats dict."""
     df = pd.read_excel(file_path)
@@ -75,7 +79,7 @@ def import_spreadsheet(file_path: str, db: Session) -> dict:
             mapped[col] = COLUMN_MAP[col]
 
     if "name" not in mapped.values():
-        raise ValueError(
+        raise SpreadsheetError(
             f"Could not find a 'name' column. "
             f"Found columns: {list(df.columns)}"
         )

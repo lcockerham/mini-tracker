@@ -57,6 +57,20 @@ class TestImportUpload:
         assert "pandas internals" not in response.text
         assert "pandas internals" in caplog.text
 
+    def test_spreadsheet_problem_shown_to_user(self, client, upload_tmpdir, monkeypatch):
+        # The importer's own messages say how to fix the workbook, so they reach the page.
+        def missing_name_column(path, db):
+            raise imports.spreadsheet.SpreadsheetError(
+                "Could not find a 'name' column. Found columns: ['title']"
+            )
+
+        monkeypatch.setattr(imports.spreadsheet, "import_spreadsheet", missing_name_column)
+        response = upload(client)
+
+        assert "Could not find a &#39;name&#39; column" in response.text
+        assert "[&#39;title&#39;]" in response.text
+        assert list(upload_tmpdir.iterdir()) == []
+
     def test_oversized_upload_rejected(
         self, client, upload_tmpdir, imported_paths, monkeypatch
     ):
