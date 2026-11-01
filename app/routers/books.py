@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -33,6 +33,14 @@ def _owns_physical(availability: Optional[str], value: Optional[str]) -> bool:
 
 def _owns_digital(availability: Optional[str], value: Optional[str]) -> bool:
     return availability != "physical_only" and bool(value)
+
+
+def _game_system_id_filter(value: Optional[str]) -> Optional[int]:
+    # Ignore a malformed filter rather than erroring, like the other list filters.
+    try:
+        return int(value) if value else None
+    except ValueError:
+        return None
 
 
 def _book_cover_url(book_id: int, suffix: str = "") -> Optional[str]:
@@ -100,7 +108,7 @@ def list_books(
     availability: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    game_system_id_int = int(game_system_id) if game_system_id else None
+    game_system_id_int = _game_system_id_filter(game_system_id)
 
     query = _filtered_books_query(
         db, search, game_system_id_int, ownership, availability
@@ -179,7 +187,9 @@ def get_book(
     db: Session = Depends(get_db),
 ):
     book = db.query(Book).get(book_id)
-    game_system_id_int = int(game_system_id) if game_system_id else None
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    game_system_id_int = _game_system_id_filter(game_system_id)
     navigation_books = (
         _filtered_books_query(
             db, search, game_system_id_int, ownership, availability
@@ -236,6 +246,8 @@ def update_book(
     db: Session = Depends(get_db),
 ):
     book = db.query(Book).get(book_id)
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
     book.title = title
     book.game_system_id = int(game_system_id) if game_system_id else None
     book.publisher = publisher or None
@@ -263,6 +275,8 @@ def update_book(
 @router.post("/books/{book_id}/delete")
 def delete_book(request: Request, book_id: int, db: Session = Depends(get_db)):
     book = db.query(Book).get(book_id)
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
     db.delete(book)
     db.commit()
     navigation_query = _navigation_query_from_request(request)
