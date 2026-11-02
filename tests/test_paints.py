@@ -51,3 +51,12 @@ class TestMiniPaintLink:
         client.post(f"/minis/{mini_id}/paints", data={"paint_id": paint_id})
         detail = client.get(f"/minis/{mini_id}")
         assert "Nuln Oil" in detail.text
+
+
+class TestMissingPaint:
+    # A stale link or mistyped URL should say "not found", not crash the server.
+    def test_edit_returns_404(self, client):
+        response = client.post(
+            "/paints/999/edit", data={"brand": "Citadel", "name": "Ghost", "quantity": 1}
+        )
+        assert response.status_code == 404

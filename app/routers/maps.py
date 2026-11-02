@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -103,6 +103,8 @@ def get_map(
     db: Session = Depends(get_db),
 ):
     map_ = db.query(Map).get(map_id)
+    if map_ is None:
+        raise HTTPException(status_code=404, detail="Map not found")
     navigation_maps = (
         _filtered_maps_query(db, search, ownership).order_by(Map.name, Map.id).all()
     )
@@ -143,6 +145,8 @@ def update_map(
     db: Session = Depends(get_db),
 ):
     map_ = db.query(Map).get(map_id)
+    if map_ is None:
+        raise HTTPException(status_code=404, detail="Map not found")
     map_.name = name
     map_.source = source or None
     map_.size = size or None
@@ -159,6 +163,8 @@ def update_map(
 @router.post("/maps/{map_id}/delete")
 def delete_map(request: Request, map_id: int, db: Session = Depends(get_db)):
     map_ = db.query(Map).get(map_id)
+    if map_ is None:
+        raise HTTPException(status_code=404, detail="Map not found")
     db.delete(map_)
     db.commit()
     navigation_query = _navigation_query_from_request(request)

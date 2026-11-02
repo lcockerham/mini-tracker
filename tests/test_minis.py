@@ -203,6 +203,28 @@ class TestMiniEdit:
         assert "Done" in detail.text
 
 
+class TestUnknownStatusFilter:
+    # The status filter is optional, so an unknown value (old bookmark, hand-edited
+    # URL) is dropped like other bad filter values; the user still sees their minis
+    # instead of a server error, and the bad value isn't carried into the links.
+    def test_list_ignores_unknown_status(self, client):
+        create_mini(client, name="Beholder", status="Unpainted")
+        create_mini(client, name="Skeleton", status="Done")
+        response = client.get("/minis", params={"status": "bogus"})
+        assert response.status_code == 200
+        assert "Beholder" in response.text
+        assert "Skeleton" in response.text
+        assert "status=bogus" not in response.text
+
+    def test_detail_ignores_unknown_status(self, client):
+        create_mini(client, name="Beholder")
+        mini_id = mini_id_for_name(client.get("/minis").text, "Beholder")
+        response = client.get(f"/minis/{mini_id}", params={"status": "bogus"})
+        assert response.status_code == 200
+        assert "Beholder" in response.text
+        assert "status=bogus" not in response.text
+
+
 class TestMissingMini:
     # A stale link or mistyped URL should say "not found", not crash the server.
     def test_detail_returns_404(self, client):

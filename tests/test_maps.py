@@ -156,3 +156,15 @@ class TestMaps:
         assert response.url.path == f"/maps/{map_id}"
         assert response.url.query.decode() == query
         assert '<span class="item-navigation-position">1 of 1</span>' in response.text
+
+
+class TestMissingMap:
+    # A stale link or mistyped URL should say "not found", not crash the server.
+    def test_detail_returns_404(self, client):
+        assert client.get("/maps/999").status_code == 404
+
+    def test_edit_returns_404(self, client):
+        assert client.post("/maps/999/edit", data={"name": "Ghost"}).status_code == 404
+
+    def test_delete_returns_404(self, client):
+        assert client.post("/maps/999/delete").status_code == 404
