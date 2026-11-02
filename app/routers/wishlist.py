@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -46,6 +46,8 @@ def purchase_wishlist_item(
     db: Session = Depends(get_db),
 ):
     item = db.query(WishlistItem).get(item_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Wishlist item not found")
     mini = Mini(
         name=item.name,
         manufacturer=item.manufacturer,
@@ -64,6 +66,8 @@ def delete_wishlist_item(
     db: Session = Depends(get_db),
 ):
     item = db.query(WishlistItem).get(item_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Wishlist item not found")
     db.delete(item)
     db.commit()
     return RedirectResponse(url="/wishlist", status_code=303)

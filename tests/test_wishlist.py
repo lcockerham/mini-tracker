@@ -68,3 +68,15 @@ class TestWishlistPurchase:
         item_id = re.search(r'/wishlist/(\d+)/purchase', list_resp.text).group(1)
         response = client.post(f"/wishlist/{item_id}/purchase", data={"quantity": 1})
         assert "Unpainted" in response.text
+
+
+class TestMissingWishlistItem:
+    # A stale link (e.g. an item already bought in another tab) should say
+    # "not found", not crash the server.
+    def test_purchase_returns_404_without_adding_a_mini(self, client):
+        response = client.post("/wishlist/999/purchase", data={"quantity": 1})
+        assert response.status_code == 404
+        assert "No miniatures found" in client.get("/minis").text
+
+    def test_delete_returns_404(self, client):
+        assert client.post("/wishlist/999/delete").status_code == 404

@@ -1,7 +1,7 @@
 
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -44,6 +44,8 @@ def update_paint(
     db: Session = Depends(get_db),
 ):
     paint = db.query(Paint).get(paint_id)
+    if paint is None:
+        raise HTTPException(status_code=404, detail="Paint not found")
     paint.brand = brand
     paint.name = name
     paint.quantity = quantity

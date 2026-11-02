@@ -15,6 +15,8 @@ from app.models import Mini, MiniCandidate, MiniStatus, Paint
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
 
 router = APIRouter()
+# An unknown status filter is ignored rather than erroring, like the other list filters.
+MINI_STATUS_VALUES = {status.value for status in MiniStatus}
 
 
 def _filtered_minis_query(
@@ -32,7 +34,7 @@ def _filtered_minis_query(
         query = query.filter(Mini.creature_type.ilike(f"%{creature_type}%"))
     if manufacturer:
         query = query.filter(Mini.manufacturer.ilike(f"%{manufacturer}%"))
-    if status:
+    if status in MINI_STATUS_VALUES:
         query = query.filter(Mini.status == MiniStatus(status))
     if set_name:
         query = query.filter(Mini.set_name == set_name)
@@ -51,7 +53,7 @@ def _navigation_query(
         ("search", search),
         ("creature_type", creature_type),
         ("manufacturer", manufacturer),
-        ("status", status),
+        ("status", status if status in MINI_STATUS_VALUES else None),
         ("set_name", set_name),
     ):
         if value:
