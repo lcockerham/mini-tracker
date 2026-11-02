@@ -380,3 +380,40 @@ class TestMalformedGameSystemFilter:
         response = client.get(f"/books/{book_id}", params={"game_system_id": "abc"})
         assert response.status_code == 200
         assert "Tomb of Annihilation" in response.text
+
+
+class TestInvalidBookFormValues:
+    # A bad form value (hand-edited request, stale form, script) is the client's
+    # mistake: say which field was wrong with a 422 instead of crashing with a 500,
+    # and don't save a half-valid book.
+    def test_create_rejects_non_numeric_game_system_id(self, client):
+        response = client.post(
+            "/books/new", data={"title": "Tomb of Annihilation", "game_system_id": "abc"}
+        )
+        assert response.status_code == 422
+        assert "game_system_id" in response.json()["detail"]
+        assert "abc" in response.json()["detail"]
+        assert "Tomb of Annihilation" not in client.get("/books").text
+
+    def test_edit_rejects_non_numeric_game_system_id(self, client):
+        create_book(client, title="Old Title")
+        book_id = book_id_for_title(client.get("/books").text, "Old Title")
+        response = client.post(
+            f"/books/{book_id}/edit", data={"title": "New Title", "game_system_id": "abc"}
+        )
+        assert response.status_code == 422
+        assert "game_system_id" in response.json()["detail"]
+        assert "abc" in response.json()["detail"]
+        detail = client.get(f"/books/{book_id}").text
+        assert "Old Title" in detail
+        assert "New Title" not in detail
+
+    def test_blank_game_system_id_is_still_allowed(self, client):
+        # The forms' "no game system" option submits an empty game_system_id.
+        create_book(client, title="Old Title", game_system_id="")
+        book_id = book_id_for_title(client.get("/books").text, "Old Title")
+        response = client.post(
+            f"/books/{book_id}/edit", data={"title": "New Title", "game_system_id": ""}
+        )
+        assert response.status_code == 200
+        assert "New Title" in response.text

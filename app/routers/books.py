@@ -43,6 +43,17 @@ def _game_system_id_filter(value: Optional[str]) -> Optional[int]:
         return None
 
 
+def _form_game_system_id(value: Optional[str]) -> Optional[int]:
+    if not value:
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        raise HTTPException(
+            status_code=422, detail=f"Invalid game_system_id: {value!r}"
+        ) from None
+
+
 def _book_cover_url(book_id: int, suffix: str = "") -> Optional[str]:
     for extension in BOOK_COVER_EXTENSIONS:
         filename = f"{book_id}{suffix}{extension}"
@@ -156,7 +167,7 @@ def create_book(
     availability = _format_availability(format_availability)
     book = Book(
         title=title,
-        game_system_id=int(game_system_id) if game_system_id else None,
+        game_system_id=_form_game_system_id(game_system_id),
         publisher=publisher or None,
         category=category or None,
         format_availability=availability,
@@ -248,8 +259,9 @@ def update_book(
     book = db.query(Book).get(book_id)
     if book is None:
         raise HTTPException(status_code=404, detail="Book not found")
+    book_game_system_id = _form_game_system_id(game_system_id)
     book.title = title
-    book.game_system_id = int(game_system_id) if game_system_id else None
+    book.game_system_id = book_game_system_id
     book.publisher = publisher or None
     book.category = category or None
     availability = _format_availability(format_availability)
