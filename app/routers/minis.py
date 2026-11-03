@@ -19,6 +19,23 @@ router = APIRouter()
 MINI_STATUS_VALUES = {status.value for status in MiniStatus}
 
 
+def _form_status(value: str) -> MiniStatus:
+    if value not in MINI_STATUS_VALUES:
+        raise HTTPException(status_code=422, detail=f"Invalid status: {value!r}")
+    return MiniStatus(value)
+
+
+def _form_completion_date(value: Optional[str]) -> Optional[date]:
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        raise HTTPException(
+            status_code=422, detail=f"Invalid completion_date: {value!r}"
+        ) from None
+
+
 def _filtered_minis_query(
     db: Session,
     search: Optional[str],
@@ -142,9 +159,9 @@ def create_mini(
         set_name=set_name or None,
         mini_number=mini_number or None,
         size=size or None,
-        status=MiniStatus(status),
+        status=_form_status(status),
         quantity=quantity,
-        completion_date=date.fromisoformat(completion_date) if completion_date else None,
+        completion_date=_form_completion_date(completion_date),
         notes=notes or None,
     )
     db.add(mini)
@@ -222,6 +239,8 @@ def update_mini(
     mini = db.query(Mini).get(mini_id)
     if mini is None:
         raise HTTPException(status_code=404, detail="Mini not found")
+    mini_status = _form_status(status)
+    mini_completion_date = _form_completion_date(completion_date)
     mini.name = name
     mini.creature_type = creature_type or None
     mini.manufacturer = manufacturer or None
@@ -229,9 +248,9 @@ def update_mini(
     mini.set_name = set_name or None
     mini.mini_number = mini_number or None
     mini.size = size or None
-    mini.status = MiniStatus(status)
+    mini.status = mini_status
     mini.quantity = quantity
-    mini.completion_date = date.fromisoformat(completion_date) if completion_date else None
+    mini.completion_date = mini_completion_date
     mini.notes = notes or None
     mini.source_url = source_url or None
     db.commit()

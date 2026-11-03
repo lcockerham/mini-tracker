@@ -241,3 +241,78 @@ class TestMissingMini:
 
     def test_remove_paint_returns_404(self, client):
         assert client.post("/minis/999/paints/1/remove").status_code == 404
+
+
+class TestInvalidMiniFormValues:
+    # A bad form value (hand-edited request, stale form, script) is the client's
+    # mistake: say which field was wrong with a 422 instead of crashing with a 500,
+    # and don't save a half-valid mini.
+    def test_create_rejects_unknown_status(self, client):
+        response = client.post(
+            "/minis/new", data={"name": "Beholder", "status": "bogus", "quantity": 1}
+        )
+        assert response.status_code == 422
+        assert "status" in response.json()["detail"]
+        assert "bogus" in response.json()["detail"]
+        assert "No miniatures found" in client.get("/minis").text
+
+    def test_create_rejects_malformed_completion_date(self, client):
+        response = client.post(
+            "/minis/new",
+            data={
+                "name": "Beholder",
+                "status": "Done",
+                "quantity": 1,
+                "completion_date": "13/45/2024",
+            },
+        )
+        assert response.status_code == 422
+        assert "completion_date" in response.json()["detail"]
+        assert "13/45/2024" in response.json()["detail"]
+        assert "No miniatures found" in client.get("/minis").text
+
+    def test_edit_rejects_unknown_status(self, client):
+        create_mini(client, name="Orc")
+        mini_id = mini_id_for_name(client.get("/minis").text, "Orc")
+        response = client.post(
+            f"/minis/{mini_id}/edit",
+            data={"name": "Orc Warlord", "status": "bogus", "quantity": 1},
+        )
+        assert response.status_code == 422
+        assert "status" in response.json()["detail"]
+        assert "bogus" in response.json()["detail"]
+        assert "Orc Warlord" not in client.get(f"/minis/{mini_id}").text
+
+    def test_edit_rejects_malformed_completion_date(self, client):
+        create_mini(client, name="Orc")
+        mini_id = mini_id_for_name(client.get("/minis").text, "Orc")
+        response = client.post(
+            f"/minis/{mini_id}/edit",
+            data={
+                "name": "Orc Warlord",
+                "status": "Done",
+                "quantity": 1,
+                "completion_date": "yesterday",
+            },
+        )
+        assert response.status_code == 422
+        assert "completion_date" in response.json()["detail"]
+        assert "yesterday" in response.json()["detail"]
+        assert "Orc Warlord" not in client.get(f"/minis/{mini_id}").text
+
+    def test_blank_completion_date_is_still_allowed(self, client):
+        # The create and edit forms submit an empty completion_date when the
+        # date picker is left blank; that means "not finished", not an error.
+        create_mini(client, name="Orc", completion_date="")
+        mini_id = mini_id_for_name(client.get("/minis").text, "Orc")
+        response = client.post(
+            f"/minis/{mini_id}/edit",
+            data={
+                "name": "Orc Warlord",
+                "status": "Unpainted",
+                "quantity": 1,
+                "completion_date": "",
+            },
+        )
+        assert response.status_code == 200
+        assert "Orc Warlord" in response.text
