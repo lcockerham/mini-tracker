@@ -408,6 +408,27 @@ class TestInvalidBookFormValues:
         assert "Old Title" in detail
         assert "New Title" not in detail
 
+    def test_create_rejects_malformed_acquired_date(self, client):
+        response = client.post(
+            "/books/new", data={"title": "Tomb of Annihilation", "acquired_date": "last spring"}
+        )
+        assert response.status_code == 422
+        assert "acquired_date" in response.json()["detail"]
+        assert "last spring" in response.json()["detail"]
+        assert "Tomb of Annihilation" not in client.get("/books").text
+
+    def test_edit_rejects_malformed_acquired_date(self, client):
+        create_book(client, title="Old Title")
+        book_id = book_id_for_title(client.get("/books").text, "Old Title")
+        response = client.post(
+            f"/books/{book_id}/edit", data={"title": "New Title", "acquired_date": "2026-13-40"}
+        )
+        assert response.status_code == 422
+        assert "acquired_date" in response.json()["detail"]
+        detail = client.get(f"/books/{book_id}").text
+        assert "Old Title" in detail
+        assert "New Title" not in detail
+
     def test_blank_game_system_id_is_still_allowed(self, client):
         # The forms' "no game system" option submits an empty game_system_id.
         create_book(client, title="Old Title", game_system_id="")

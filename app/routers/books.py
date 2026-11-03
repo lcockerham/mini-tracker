@@ -54,6 +54,17 @@ def _form_game_system_id(value: Optional[str]) -> Optional[int]:
         ) from None
 
 
+def _form_acquired_date(value: Optional[str]) -> Optional[date]:
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        raise HTTPException(
+            status_code=422, detail=f"Invalid acquired_date: {value!r}"
+        ) from None
+
+
 def _book_cover_url(book_id: int, suffix: str = "") -> Optional[str]:
     for extension in BOOK_COVER_EXTENSIONS:
         filename = f"{book_id}{suffix}{extension}"
@@ -179,7 +190,7 @@ def create_book(
         drivethrurpg_url=(
             drivethrurpg_url or None if availability != "physical_only" else None
         ),
-        acquired_date=date.fromisoformat(acquired_date) if acquired_date else None,
+        acquired_date=_form_acquired_date(acquired_date),
         notes=notes or None,
     )
     db.add(book)
@@ -260,6 +271,7 @@ def update_book(
     if book is None:
         raise HTTPException(status_code=404, detail="Book not found")
     book_game_system_id = _form_game_system_id(game_system_id)
+    book_acquired_date = _form_acquired_date(acquired_date)
     book.title = title
     book.game_system_id = book_game_system_id
     book.publisher = publisher or None
@@ -274,7 +286,7 @@ def update_book(
     book.drivethrurpg_url = (
         drivethrurpg_url or None if availability != "physical_only" else None
     )
-    book.acquired_date = date.fromisoformat(acquired_date) if acquired_date else None
+    book.acquired_date = book_acquired_date
     book.notes = notes or None
     db.commit()
     navigation_query = _navigation_query_from_request(request)
