@@ -1,5 +1,11 @@
 # mini-tracker project notes
 
+## Security: read first (added 2026-11-03)
+
+- **No version pins or lockfile.** Add a lock or constraints file before relying on this further. The `.venv` was hand-patched on 2026-11-03 for certifi and Pillow CVEs (certifi 2026.10.23, pillow 13.0.0); a fresh `pip install -r requirements.txt` gives no such guarantee.
+- **The FastAPI app has no auth and accepts `.xlsx` uploads** (parsed by openpyxl, which uses Pillow). Never run uvicorn with `--host 0.0.0.0`; keep it on `127.0.0.1`.
+- **CI hardening gap:** all workflows now set `permissions: contents: read`, but actions are still pinned by tag, not SHA.
+
 ## Database backups
 
 Before any significant change to `mini_tracker.db` (bulk imports, schema/migration changes, scripted data cleanup, or anything else that writes to many rows at once), copy it to `backups/mini_tracker.<timestamp>.db` first, e.g.:

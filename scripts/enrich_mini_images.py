@@ -3,7 +3,6 @@
 Requires beautifulsoup4, httpx and Pillow. Run crawl before matching.
 """
 
-import concurrent.futures
 import hashlib
 import json
 import sys
@@ -18,6 +17,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "media/mini-image-research"
 CACHE.mkdir(parents=True, exist_ok=True)
 BASE = "https://www.minisgallery.com/"
+# Same identifying User-Agent and pacing as imports/minisgallery_sync.py.
+USER_AGENT = "mini-tracker/1.0 (personal collection sync)"
+REQUEST_DELAY_SECONDS = 1.0
 
 
 def fetch(url):
@@ -26,10 +28,12 @@ def fetch(url):
         return path.read_text()
     for attempt in range(3):
         try:
-            r = httpx.get(url, timeout=45, follow_redirects=True)
+            time.sleep(REQUEST_DELAY_SECONDS)
+            r = httpx.get(
+                url, headers={"User-Agent": USER_AGENT}, timeout=45, follow_redirects=True
+            )
             r.raise_for_status()
             path.write_text(r.text)
-            time.sleep(0.15)
             return r.text
         except Exception:
             if attempt == 2:
@@ -48,65 +52,59 @@ def crawl():
             break
         pending.clear()
 
-        def read(slug):
+        for slug in batch:
+            seen.add(slug)
             url = BASE + "index.php?id=" + slug
-            return slug, url, fetch(url)
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-            futures = {pool.submit(read, slug): slug for slug in batch}
-            for f in concurrent.futures.as_completed(futures):
-                slug = futures[f]
-                seen.add(slug)
-                try:
-                    _, url, html = f.result()
-                except Exception as e:
-                    errors[slug] = str(e)
+            try:
+                html = fetch(url)
+            except Exception as e:
+                errors[slug] = str(e)
+                continue
+            soup = BeautifulSoup(html, "html.parser")
+            minis = []
+            for name in soup.select(".miniName"):
+                box = name.parent
+                img = box.select_one(".miniImage img")
+                if not img:
                     continue
-                soup = BeautifulSoup(html, "html.parser")
-                minis = []
-                for name in soup.select(".miniName"):
-                    box = name.parent
-                    img = box.select_one(".miniImage img")
-                    if not img:
-                        continue
-                    number = box.select_one(".miniInfo2_num")
-                    a = img.find_parent("a")
-                    minis.append(
-                        dict(
-                            name=name.get_text(" ", strip=True),
-                            number=number.get_text(" ", strip=True).strip("()") if number else "",
-                            image=urljoin(BASE, img["src"]),
-                            detail=urljoin(BASE, a["href"]) if a else url,
+                number = box.select_one(".miniInfo2_num")
+                a = img.find_parent("a")
+                minis.append(
+                    dict(
+                        name=name.get_text(" ", strip=True),
+                        number=number.get_text(" ", strip=True).strip("()") if number else "",
+                        image=urljoin(BASE, img["src"]),
+                        detail=urljoin(BASE, a["href"]) if a else url,
+                    )
+                )
+            pages[slug] = dict(
+                url=url, title=soup.title.get_text() if soup.title else slug, minis=minis
+            )
+            for a in soup.select("a[href]"):
+                p = urlparse(urljoin(BASE, a["href"]))
+                q = parse_qs(p.query)
+                target = q.get("id", [""])[0]
+                if p.netloc != "www.minisgallery.com" or q.get("task", [""])[0] not in (
+                    "",
+                    "sets",
+                ):
+                    continue
+                if (
+                    target
+                    and not target.isdigit()
+                    and target.startswith(
+                        (
+                            "dungeons-and-dragons",
+                            "icons-of-the-realms",
+                            "dnd-",
+                            "dungeon-command",
+                            "tanares",
+                            "onslaught",
                         )
                     )
-                pages[slug] = dict(
-                    url=url, title=soup.title.get_text() if soup.title else slug, minis=minis
-                )
-                for a in soup.select("a[href]"):
-                    p = urlparse(urljoin(BASE, a["href"]))
-                    q = parse_qs(p.query)
-                    target = q.get("id", [""])[0]
-                    if p.netloc != "www.minisgallery.com" or q.get("task", [""])[0] not in (
-                        "",
-                        "sets",
-                    ):
-                        continue
-                    if (
-                        target
-                        and not target.isdigit()
-                        and target.startswith(
-                            (
-                                "dungeons-and-dragons",
-                                "icons-of-the-realms",
-                                "dnd-",
-                                "dungeon-command",
-                                "tanares",
-                                "onslaught",
-                            )
-                        )
-                        and target not in seen
-                    ):
-                        pending.add(target)
+                    and target not in seen
+                ):
+                    pending.add(target)
         (CACHE / "gallery.json").write_text(json.dumps(pages, indent=2))
         (CACHE / "crawl-errors.json").write_text(json.dumps(errors, indent=2))
         mini_count = sum(len(page["minis"]) for page in pages.values())
@@ -141,14 +139,12 @@ def reaper():
                 )
         return found
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {pool.submit(read, url): url for url in urls}
-        for f in concurrent.futures.as_completed(futures):
-            try:
-                for r in f.result():
-                    records[r["number"]] = r
-            except Exception as e:
-                errors[futures[f]] = str(e)
+    for url in urls:
+        try:
+            for r in read(url):
+                records[r["number"]] = r
+        except Exception as e:
+            errors[url] = str(e)
     (CACHE / "reaper.json").write_text(json.dumps(records, indent=2))
     (CACHE / "reaper-errors.json").write_text(json.dumps(errors, indent=2))
     print(f"Reaper products={len(records)} errors={len(errors)}", flush=True)

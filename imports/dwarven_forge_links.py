@@ -1,7 +1,7 @@
 """Fill in Dwarven Forge store links and pictures for sets and pieces.
 
-dwarven_forge_links.tsv was built from dwarvenforge.com's public product catalog (its Shopify
-products.json, loaded in a browser because the site rate-limits scripts). Columns, no header:
+dwarven_forge_links.tsv was exported once by hand from Dwarven Forge's public product catalog.
+Columns, no header:
 
     kind (S = set, P = piece), SKU or piece code, how it matched, product handle, image URL
 
