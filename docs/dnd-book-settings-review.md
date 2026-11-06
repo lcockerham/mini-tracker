@@ -4,6 +4,7 @@ Started: 2026-11-05
 All 1,236 books classified: 2026-11-05
 14 duplicate Mystara rows removed, leaving 1,222: 2026-11-06
 2 duplicate 5e starter set rows removed, leaving 1,220: 2026-11-06
+#695 Barrow of the Ogre King removed, leaving 1,219: 2026-11-06
 
 The `books.setting` field holds one campaign setting per book. Blank means
 nobody has classified the book yet. `None` means it was reviewed and has no
@@ -75,8 +76,10 @@ Nothing open as of 2026-11-06.
   - #833 renamed *Starter Set: Lost Mine of Phandelver* and set to Core
     Rulebook; #874 *Starter Set* removed.
 
-  Still open but not a duplicate: #695 *Barrow of the Ogre King* links to the
-  *Forgotten Realms Campaign Guide* DMsGuild page.
+  Not a duplicate, but its link was wrong: #695 *Barrow of the Ogre King*
+  pointed to the *Forgotten Realms Campaign Guide* DMsGuild page. It turned
+  out to be a free RPGA Living Forgotten Realms adventure (ADAP1-1) with no
+  store listing, so it was removed (see `docs/dnd-4e-catalog-exceptions.md`).
 
 - 2026-11-06: **14 duplicate Mystara rows removed.** The setting filter showed
   each Gazetteer twice. The original Wikipedia import listed them in both the

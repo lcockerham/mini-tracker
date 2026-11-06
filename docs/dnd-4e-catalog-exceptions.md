@@ -39,4 +39,13 @@ from `mini_tracker.db` rather than kept open: 696 (Beneath the Dust), 710
 Campaign Companion), 771 (The Kroten Campaign Guide), 772 (The Lendore Isle
 Companion).
 
+## Removed from catalog (2026-11-06)
+
+695 (Barrow of the Ogre King) was ADAP1-1, a free RPGA Living Forgotten
+Realms adventure. It was adapted from the *Forgotten Realms Campaign Guide*,
+which it needs in order to be played. It has no store listing of its own;
+its row had borrowed the Campaign Guide's DMsGuild link and cover. It was
+removed like the other free adventures with no product. Backup:
+`backups/keep/mini_tracker.20261106163256.before-remove-695.db`.
+
 Only unresolved or materially noteworthy exceptions belong in this table.
