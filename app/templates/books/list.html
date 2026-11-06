@@ -36,6 +36,16 @@
         </select>
     </div>
     <div>
+        <label for="setting">Setting</label>
+        <select id="setting" name="setting">
+            <option value="">All</option>
+            {% for value, label in setting_labels.items() %}
+            <option value="{{ value }}" {{ 'selected' if setting == value }}>{{ label }}</option>
+            {% endfor %}
+            <option value="{{ unclassified_setting_filter }}" {{ 'selected' if setting == unclassified_setting_filter }}>Unclassified</option>
+        </select>
+    </div>
+    <div>
         <label>&nbsp;</label>
         <button type="submit">Search</button>
     </div>
@@ -53,6 +63,7 @@
             <th>Game System</th>
             <th>Publisher</th>
             <th>Category</th>
+            <th>Setting</th>
             <th>Availability</th>
             <th>Physical</th>
             <th>Digital</th>
@@ -65,6 +76,7 @@
             <td>{{ book.game_system.name if book.game_system else '' }}</td>
             <td>{{ book.publisher or '' }}</td>
             <td>{{ book.category or '' }}</td>
+            <td>{{ setting_labels.get(book.setting, '') }}</td>
             <td>{{ availability_labels.get(book.format_availability, 'Unknown') }}</td>
             <td>{{ '✓' if book.owns_physical else '' }}</td>
             <td>{{ '✓' if book.owns_digital else '' }}</td>

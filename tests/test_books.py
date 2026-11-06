@@ -174,6 +174,50 @@ class TestBooks:
         assert "PDF-Only Adventure" not in response.text
         assert "availability=physical_only" in response.text
 
+    def test_filter_by_setting(self, client):
+        # Browsing by campaign world is the point of classifying every book.
+        create_book(client, title="Dragons of Despair", setting="dragonlance")
+        create_book(client, title="Keep on the Borderlands", setting="mystara")
+
+        response = client.get("/books", params={"setting": "dragonlance"})
+
+        assert "Dragons of Despair" in response.text
+        assert "Keep on the Borderlands" not in response.text
+        assert "setting=dragonlance" in response.text
+
+    def test_filter_unclassified_finds_books_nobody_has_reviewed(self, client):
+        # New books arrive blank; "Unclassified" is how to find them, and it must
+        # not pick up books deliberately set to None.
+        create_book(client, title="Brand New Module")
+        create_book(client, title="Dungeon Masters Guide", setting="none")
+
+        response = client.get("/books", params={"setting": "unclassified"})
+
+        assert "Brand New Module" in response.text
+        assert "Dungeon Masters Guide" not in response.text
+
+    def test_unknown_setting_filter_is_ignored(self, client):
+        create_book(client, title="Dragons of Despair", setting="dragonlance")
+
+        response = client.get("/books", params={"setting": "atlantis"})
+
+        assert response.status_code == 200
+        assert "Dragons of Despair" in response.text
+
+    def test_detail_navigation_stays_within_setting_filter(self, client):
+        # Paging prev/next from a filtered list should walk only that setting.
+        create_book(client, title="A Greyhawk Module", setting="greyhawk")
+        create_book(client, title="B Realms Module", setting="forgotten_realms")
+        create_book(client, title="C Greyhawk Module", setting="greyhawk")
+        list_text = client.get("/books", params={"setting": "greyhawk"}).text
+        first_id = book_id_for_title(list_text, "A Greyhawk Module")
+        third_id = book_id_for_title(list_text, "C Greyhawk Module")
+
+        detail = client.get(f"/books/{first_id}", params={"setting": "greyhawk"})
+
+        assert f"/books/{third_id}?setting=greyhawk" in detail.text
+        assert "1 of 2" in detail.text
+
     def test_book_detail_shows_fields(self, client):
         create_book(
             client,

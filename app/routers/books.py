@@ -52,6 +52,16 @@ def _setting(value: Optional[str]) -> Optional[str]:
     return value if value in SETTING_VALUES else None
 
 
+# List filter value for books whose setting is blank (not classified yet).
+UNCLASSIFIED_SETTING_FILTER = "unclassified"
+
+
+def _setting_filter(value: Optional[str]) -> Optional[str]:
+    if value == UNCLASSIFIED_SETTING_FILTER:
+        return value
+    return _setting(value)
+
+
 def _format_availability(value: Optional[str]) -> Optional[str]:
     return value if value in FORMAT_AVAILABILITY_VALUES else None
 
@@ -108,6 +118,7 @@ def _filtered_books_query(
     game_system_id: Optional[int],
     ownership: Optional[str],
     availability: Optional[str],
+    setting: Optional[str],
 ):
     query = db.query(Book)
     if search:
@@ -120,6 +131,11 @@ def _filtered_books_query(
         query = query.filter(Book.owns_digital.is_(True))
     if availability in FORMAT_AVAILABILITY_VALUES:
         query = query.filter(Book.format_availability == availability)
+    setting = _setting_filter(setting)
+    if setting == UNCLASSIFIED_SETTING_FILTER:
+        query = query.filter(Book.setting.is_(None))
+    elif setting:
+        query = query.filter(Book.setting == setting)
     return query
 
 
@@ -128,6 +144,7 @@ def _navigation_query(
     game_system_id: Optional[int | str],
     ownership: Optional[str],
     availability: Optional[str],
+    setting: Optional[str],
 ) -> str:
     params = []
     if search:
@@ -138,6 +155,9 @@ def _navigation_query(
         params.append(("ownership", ownership))
     if availability in FORMAT_AVAILABILITY_VALUES:
         params.append(("availability", availability))
+    setting = _setting_filter(setting)
+    if setting:
+        params.append(("setting", setting))
     return urlencode(params)
 
 
@@ -147,6 +167,7 @@ def _navigation_query_from_request(request: Request) -> str:
         request.query_params.get("game_system_id"),
         request.query_params.get("ownership"),
         request.query_params.get("availability"),
+        request.query_params.get("setting"),
     )
 
 
@@ -157,12 +178,13 @@ def list_books(
     game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
     availability: Optional[str] = None,
+    setting: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     game_system_id_int = _game_system_id_filter(game_system_id)
 
     query = _filtered_books_query(
-        db, search, game_system_id_int, ownership, availability
+        db, search, game_system_id_int, ownership, availability, setting
     )
     books = query.order_by(Book.title, Book.id).all()
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
@@ -174,8 +196,11 @@ def list_books(
         "ownership": ownership,
         "availability": availability,
         "availability_labels": FORMAT_AVAILABILITY_VALUES,
+        "setting": _setting_filter(setting),
+        "setting_labels": SETTING_VALUES,
+        "unclassified_setting_filter": UNCLASSIFIED_SETTING_FILTER,
         "navigation_query": _navigation_query(
-            search, game_system_id_int, ownership, availability
+            search, game_system_id_int, ownership, availability, setting
         ),
     })
 
@@ -238,6 +263,7 @@ def get_book(
     game_system_id: Optional[str] = None,
     ownership: Optional[str] = None,
     availability: Optional[str] = None,
+    setting: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
     book = db.query(Book).get(book_id)
@@ -246,7 +272,7 @@ def get_book(
     game_system_id_int = _game_system_id_filter(game_system_id)
     navigation_books = (
         _filtered_books_query(
-            db, search, game_system_id_int, ownership, availability
+            db, search, game_system_id_int, ownership, availability, setting
         )
         .order_by(Book.title, Book.id)
         .all()
@@ -264,7 +290,7 @@ def get_book(
             next_book = navigation_books[current_index + 1]
 
     navigation_query = _navigation_query(
-        search, game_system_id_int, ownership, availability
+        search, game_system_id_int, ownership, availability, setting
     )
     game_systems = db.query(GameSystem).order_by(GameSystem.name).all()
     return templates.TemplateResponse(request, "books/detail.html", {
