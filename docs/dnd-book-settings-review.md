@@ -3,6 +3,7 @@
 Started: 2026-11-05
 All 1,236 books classified: 2026-11-05
 14 duplicate Mystara rows removed, leaving 1,222: 2026-11-06
+2 duplicate 5e starter set rows removed, leaving 1,220: 2026-11-06
 
 The `books.setting` field holds one campaign setting per book. Blank means
 nobody has classified the book yet. `None` means it was reviewed and has no
@@ -39,13 +40,15 @@ Backups:
 - `backups/keep/mini_tracker.20261106160419.before-thunder-rift.db`
 - `backups/keep/mini_tracker.20261106161752.before-mystara-dedupe.db`
   (covers of the removed rows in `backups/keep/covers.20261106161752.mystara-dedupe/`)
+- `backups/keep/mini_tracker.20261106162347.before-starter-set-merge.db`
+  (cover of #820 in `backups/keep/covers.20261106162347.starter-set-merge/`)
 
 ## Result
 
 | Setting | Books | | Setting | Books |
 |---|---|---|---|---|
 | None | 528 | | Eberron | 27 |
-| Forgotten Realms | 185 | | Spelljammer | 21 |
+| Forgotten Realms | 183 | | Spelljammer | 21 |
 | Mystara | 101 | | Al-Qadim | 14 |
 | Greyhawk | 84 | | Kara-Tur | 12 |
 | Ravenloft | 71 | | Lankhmar | 9 |
@@ -59,6 +62,21 @@ Backups:
 Nothing open as of 2026-11-06.
 
 ## Resolved
+
+- 2026-11-06: **Other rows that share a DMsGuild product were checked.** Most
+  are separate products that share a compilation or magazine-issue link:
+  the Monster & Treasure Assortment sets, R1/R3 vs I12, RPGA7 vs C5, 4e
+  Dungeon issues, and the 3.0 vs 3.5 core and psionics books. Those were kept.
+  Two 5e starter sets were listed once as the box and once as the adventure
+  inside it, so each pair was merged into one row (also recorded in
+  `docs/dnd-5e-catalog-exceptions.md`):
+  - #875 *Starter Set: Dragons of Stormwreck Isle* kept; #820 *Dragons of
+    Stormwreck Isle* removed.
+  - #833 renamed *Starter Set: Lost Mine of Phandelver* and set to Core
+    Rulebook; #874 *Starter Set* removed.
+
+  Still open but not a duplicate: #695 *Barrow of the Ogre King* links to the
+  *Forgotten Realms Campaign Guide* DMsGuild page.
 
 - 2026-11-06: **14 duplicate Mystara rows removed.** The setting filter showed
   each Gazetteer twice. The original Wikipedia import listed them in both the

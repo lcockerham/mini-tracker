@@ -12,22 +12,23 @@ edition conflicts, two are components without a standalone product listing,
 and 15 had no matching product in the DMsGuild search results. Three component
 records were removed based on the notes below.
 
-## Open (4)
+## Open (3)
 
 | Book ID | Title | Category | Evidence | Required next action | Status | Notes |
 | ---: | --- | --- | --- | --- | --- | --- |
 | 825 | Hunt for the Thessalhydra | Listing unavailable | The exact-title DMsGuild searches returned no product result. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | digital only
 | 865 | Dungeons & Dragons Core Rules Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
 | 867 | Dungeons & Dragons Rules Expansion Gift Set | Listing unavailable | Exact-title and Roll20 searches returned no matching official gift-set product. | Confirm whether a marketplace listing exists or leave the record without a cover and URL. | Open | |
-| 874 | Starter Set | Listing unavailable | Searches returned products for specific later starter sets, but no exact official listing for this generic Starter Set record. | Confirm the intended boxed set or leave the record without a cover and URL. | Open | |
 
-## Resolved (21)
+## Resolved (23)
 
 | Book ID | Title | Resolution |
 | ---: | --- | --- |
 | 818 | Dragon of Icespire Peak | Removed; part of the Essentials Kit. |
 | 830 | Light of Xaryxis | Removed; part of Spelljammer: Adventures in Space. |
 | 854 | Turn of Fortune's Wheel | Removed; part of Planescape: Adventures in the Multiverse. |
+| 874 | Starter Set | 2026-11-06: removed; it was the 2014 Starter Set, which duplicated *Lost Mine of Phandelver* (833). 833 was renamed *Starter Set: Lost Mine of Phandelver* and set to Core Rulebook. It keeps its DMsGuild URL, cover and ownership. |
+| 820 | Dragons of Stormwreck Isle | 2026-11-06: removed; same product and DMsGuild listing as *Starter Set: Dragons of Stormwreck Isle* (875), which is kept. |
 | 808 | Adventures in Faerun | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/fraif` and cover art (landscape, 1700x1097). |
 | 810 | Baldur's Gate: Descent Into Avernus | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/bgdia`; existing cover kept. |
 | 815 | Curse of Strahd | 2026-09-23: saved D&D Beyond URL `https://www.dndbeyond.com/sources/dnd/cos`; existing cover kept. |
