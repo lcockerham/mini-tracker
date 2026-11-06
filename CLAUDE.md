@@ -4,7 +4,7 @@
 
 - **No version pins or lockfile.** Add a lock or constraints file before relying on this further. The `.venv` was hand-patched on 2026-11-03 for certifi and Pillow CVEs (certifi 2026.10.23, pillow 13.0.0); a fresh `pip install -r requirements.txt` gives no such guarantee.
 - **The FastAPI app has no auth and accepts `.xlsx` uploads** (parsed by openpyxl, which uses Pillow). Never run uvicorn with `--host 0.0.0.0`; keep it on `127.0.0.1`.
-- **CI hardening gap:** all workflows now set `permissions: contents: read`, but actions are still pinned by tag, not SHA.
+- **CI hardening:** all workflows set `permissions: contents: read`, and every action is pinned by commit SHA. Dependabot's `github-actions` config bumps the pins weekly.
 
 ## Database backups
 
