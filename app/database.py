@@ -22,6 +22,7 @@ def get_db():
 # create_all() does not add columns to an existing SQLite database.
 ADDED_COLUMNS = [
     ("books", "format_availability", "VARCHAR(20)"),
+    ("books", "setting", "VARCHAR(50)"),
     ("minis", "source_url", "VARCHAR(500)"),
 ]
 

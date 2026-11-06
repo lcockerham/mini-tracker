@@ -21,6 +21,35 @@ FORMAT_AVAILABILITY_VALUES = {
     "physical_only": "Physical only",
     "digital_only": "Digital only",
 }
+# Campaign settings, stored by key. Blank (NULL) means "not classified yet";
+# "none" means the book was reviewed and has no setting (generic, or too rare to track).
+SETTING_VALUES = {
+    "al_qadim": "Al-Qadim",
+    "birthright": "Birthright",
+    "blackmoor": "Blackmoor",
+    "council_of_wyrms": "Council of Wyrms",
+    "dark_sun": "Dark Sun",
+    "dragonlance": "Dragonlance",
+    "eberron": "Eberron",
+    "feywild": "Feywild",
+    "forgotten_realms": "Forgotten Realms",
+    "greyhawk": "Greyhawk",
+    "historical_reference": "Historical Reference",
+    "jakandor": "Jakandor",
+    "kara_tur": "Kara-Tur",
+    "lankhmar": "Lankhmar",
+    "maztica": "Maztica",
+    "mystara": "Mystara",
+    "planescape": "Planescape",
+    "ravenloft": "Ravenloft",
+    "spelljammer": "Spelljammer",
+    "thunder_rift": "Thunder Rift",
+    "none": "None",
+}
+
+
+def _setting(value: Optional[str]) -> Optional[str]:
+    return value if value in SETTING_VALUES else None
 
 
 def _format_availability(value: Optional[str]) -> Optional[str]:
@@ -157,6 +186,7 @@ def create_book_form(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse(request, "books/create.html", {
         "game_systems": game_systems,
         "availability_labels": FORMAT_AVAILABILITY_VALUES,
+        "setting_labels": SETTING_VALUES,
     })
 
 
@@ -166,6 +196,7 @@ def create_book(
     game_system_id: Optional[str] = Form(None),
     publisher: Optional[str] = Form(None),
     category: Optional[str] = Form(None),
+    setting: Optional[str] = Form(None),
     format_availability: Optional[str] = Form(None),
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
@@ -181,6 +212,7 @@ def create_book(
         game_system_id=_form_game_system_id(game_system_id),
         publisher=publisher or None,
         category=category or None,
+        setting=_setting(setting),
         format_availability=availability,
         owns_physical=_owns_physical(availability, owns_physical),
         owns_digital=_owns_digital(availability, owns_digital),
@@ -239,6 +271,7 @@ def get_book(
         "book": book,
         "game_systems": game_systems,
         "availability_labels": FORMAT_AVAILABILITY_VALUES,
+        "setting_labels": SETTING_VALUES,
         "cover_image_url": _book_cover_url(book_id),
         "alternate_cover_image_url": _book_cover_url(book_id, "-alt"),
         "previous_book": previous_book,
@@ -258,6 +291,7 @@ def update_book(
     game_system_id: Optional[str] = Form(None),
     publisher: Optional[str] = Form(None),
     category: Optional[str] = Form(None),
+    setting: Optional[str] = Form(None),
     format_availability: Optional[str] = Form(None),
     owns_physical: Optional[str] = Form(None),
     owns_digital: Optional[str] = Form(None),
@@ -276,6 +310,7 @@ def update_book(
     book.game_system_id = book_game_system_id
     book.publisher = publisher or None
     book.category = category or None
+    book.setting = _setting(setting)
     availability = _format_availability(format_availability)
     book.format_availability = availability
     book.owns_physical = _owns_physical(availability, owns_physical)

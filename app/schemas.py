@@ -120,6 +120,7 @@ class BookCreate(BaseModel):
     game_system_id: Optional[int] = None
     publisher: Optional[str] = None
     category: Optional[str] = None
+    setting: Optional[str] = None
     format_availability: Optional[str] = None
     owns_physical: bool = False
     owns_digital: bool = False
@@ -134,6 +135,7 @@ class BookUpdate(BaseModel):
     game_system_id: Optional[int] = None
     publisher: Optional[str] = None
     category: Optional[str] = None
+    setting: Optional[str] = None
     format_availability: Optional[str] = None
     owns_physical: Optional[bool] = None
     owns_digital: Optional[bool] = None
@@ -149,6 +151,7 @@ class BookResponse(BaseModel):
     game_system_id: Optional[int]
     publisher: Optional[str]
     category: Optional[str]
+    setting: Optional[str]
     format_availability: Optional[str]
     owns_physical: bool
     owns_digital: bool

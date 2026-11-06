@@ -116,6 +116,44 @@ class TestBooks:
         assert 'name="owns_digital" style="width: auto;" checked' not in detail.text
         assert 'value="https://www.drivethrurpg.com/product/12345"' not in detail.text
 
+    def test_setting_is_saved_and_editable(self, client):
+        create_book(client, title="Dragons of Despair", setting="dragonlance")
+        book_id = book_id_for_title(client.get("/books").text, "Dragons of Despair")
+
+        detail = client.get(f"/books/{book_id}")
+        assert '<option value="dragonlance" selected>Dragonlance</option>' in detail.text
+
+        client.post(
+            f"/books/{book_id}/edit",
+            data={"title": "Dragons of Despair", "setting": "none"},
+        )
+        detail = client.get(f"/books/{book_id}")
+        assert '<option value="none" selected>None</option>' in detail.text
+
+    def test_setting_none_is_distinct_from_unclassified(self, client):
+        # "none" records a reviewed book with no setting; blank means nobody has
+        # classified it yet, so the two must never collapse into each other.
+        create_book(client, title="Dungeon Masters Guide", setting="none")
+        create_book(client, title="Mystery Module")
+        reviewed_id = book_id_for_title(client.get("/books").text, "Dungeon Masters Guide")
+        unreviewed_id = book_id_for_title(client.get("/books").text, "Mystery Module")
+
+        reviewed = client.get(f"/books/{reviewed_id}").text
+        unreviewed = client.get(f"/books/{unreviewed_id}").text
+
+        assert '<option value="none" selected>None</option>' in reviewed
+        assert '<option value="none" >None</option>' in unreviewed
+        assert " selected>" not in unreviewed.split('id="setting"')[1].split("</select>")[0]
+
+    def test_unknown_setting_values_are_discarded(self, client):
+        # Settings come from a fixed list so spellings stay consistent for filtering.
+        create_book(client, title="Homebrew Module", setting="My Homebrew World")
+        book_id = book_id_for_title(client.get("/books").text, "Homebrew Module")
+
+        detail = client.get(f"/books/{book_id}")
+
+        assert "My Homebrew World" not in detail.text
+
     def test_filter_by_format_availability(self, client):
         create_book(
             client,
