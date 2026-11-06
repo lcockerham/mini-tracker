@@ -57,6 +57,15 @@
                 {% endfor %}
             </select>
         </div>
+        <div>
+            <label for="setting">Setting</label>
+            <select id="setting" name="setting">
+                <option value="">Unclassified</option>
+                {% for value, label in setting_labels.items() %}
+                <option value="{{ value }}" {{ 'selected' if book.setting == value }}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
     <div class="form-row">
         <div>
