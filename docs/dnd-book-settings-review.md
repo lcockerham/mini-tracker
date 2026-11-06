@@ -2,6 +2,7 @@
 
 Started: 2026-11-05
 All 1,236 books classified: 2026-11-05
+14 duplicate Mystara rows removed, leaving 1,222: 2026-11-06
 
 The `books.setting` field holds one campaign setting per book. Blank means
 nobody has classified the book yet. `None` means it was reviewed and has no
@@ -36,6 +37,8 @@ Backups:
 - `backups/keep/mini_tracker.20261105220301.before-book-settings-batch1.db`
 - `backups/keep/mini_tracker.20261105222010.before-book-settings-all.db`
 - `backups/keep/mini_tracker.20261106160419.before-thunder-rift.db`
+- `backups/keep/mini_tracker.20261106161752.before-mystara-dedupe.db`
+  (covers of the removed rows in `backups/keep/covers.20261106161752.mystara-dedupe/`)
 
 ## Result
 
@@ -43,7 +46,7 @@ Backups:
 |---|---|---|---|---|
 | None | 528 | | Eberron | 27 |
 | Forgotten Realms | 185 | | Spelljammer | 21 |
-| Mystara | 115 | | Al-Qadim | 14 |
+| Mystara | 101 | | Al-Qadim | 14 |
 | Greyhawk | 84 | | Kara-Tur | 12 |
 | Ravenloft | 71 | | Lankhmar | 9 |
 | Dragonlance | 46 | | Historical Reference, Thunder Rift | 7 each |
@@ -56,6 +59,30 @@ Backups:
 Nothing open as of 2026-11-06.
 
 ## Resolved
+
+- 2026-11-06: **14 duplicate Mystara rows removed.** The setting filter showed
+  each Gazetteer twice. The original Wikipedia import listed them in both the
+  modules list and the 2e rulebooks list. When the 2e copies were moved to
+  D&D Basic on 2026-09-07, each pair became the same book with the same
+  DMsGuild product. Neither copy was marked owned. Kept the rows with TSR
+  numbers in their notes; removed the others:
+
+  | Product | Kept | Removed |
+  |---|---|---|
+  | GAZ1 The Grand Duchy of Karameikos | 426 | 149 |
+  | GAZ2 The Emirates of Ylaruam | 422 | 139 |
+  | GAZ3 The Principalities of Glantri | 431 | 166 |
+  | GAZ4 The Kingdom of Ierendi | 427 | 156 |
+  | GAZ5 The Elves of Alfheim | 421 | 138 |
+  | GAZ6 The Dwarves of Rockhome | 419 | 135 |
+  | GAZ7 The Northern Reaches | 429 | 163 |
+  | GAZ8 The Five Shires | 423 | 142 |
+  | GAZ9 The Minrothad Guilds | 428 | 162 |
+  | GAZ10 The Orcs of Thar | 430 | 165 |
+  | AC11 The Book of Wondrous Inventions | 493 | 133 |
+  | HWR1 Hollow World: Sons of Azca | 406 | 336 |
+  | HWR2 Hollow World: Kingdom of Nithia | 405 | 294 |
+  | HWR3 Hollow World: The Milenian Empire | 407 | 357 |
 
 - 2026-11-06: your answers to the open questions:
   - Thunder Rift added as a setting. All 7 books moved from None to
