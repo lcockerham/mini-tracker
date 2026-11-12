@@ -2,8 +2,8 @@
 
 ## Security: read first (added 2026-11-03)
 
-- **No version pins or lockfile.** Add a lock or constraints file before relying on this further. The `.venv` was hand-patched on 2026-11-03 for certifi and Pillow CVEs (certifi 2026.10.23, pillow 13.0.0); a fresh `pip install -r requirements.txt` gives no such guarantee.
-- **The FastAPI app has no auth and accepts `.xlsx` uploads** (parsed by openpyxl, which uses Pillow). Never run uvicorn with `--host 0.0.0.0`; keep it on `127.0.0.1`.
+- **Install with the lock.** `requirements.lock` is a pip constraints file pinning every package (`pip install -r requirements.txt -r requirements-dev.txt -c requirements.lock`). It keeps the certifi and Pillow CVE floors from the 2026-11-03 hand patch (certifi 2026.10.23, pillow 13.0.0). Never install without `-c requirements.lock`. When adding or bumping a dependency, regenerate the lock (see its header) and keep both floors. CI runs `make check-lock`, which fails if an installed package isn't pinned.
+- **The FastAPI app has no auth and accepts `.xlsx` uploads** (parsed by openpyxl). Pillow isn't installed. openpyxl drops embedded images without it, so don't add Pillow unless something needs it. Never run uvicorn with `--host 0.0.0.0`; keep it on `127.0.0.1`.
 - **CI hardening:** all workflows set `permissions: contents: read`, and every action is pinned by commit SHA. Dependabot's `github-actions` config bumps the pins weekly.
 
 ## Database backups

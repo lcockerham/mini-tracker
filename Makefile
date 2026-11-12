@@ -1,4 +1,4 @@
-.PHONY: lint test import-dwarven-forge link-dwarven-forge sync-minis install-sync-schedule uninstall-sync-schedule
+.PHONY: lint test check-lock import-dwarven-forge link-dwarven-forge sync-minis install-sync-schedule uninstall-sync-schedule
 
 SYNC_LABEL := com.minitracker.minisgallery-sync
 SYNC_PLIST := $(HOME)/Library/LaunchAgents/$(SYNC_LABEL).plist
@@ -8,6 +8,10 @@ lint:
 
 test:
 	pytest
+
+# Fail if any installed package isn't pinned in requirements.lock.
+check-lock:
+	python scripts/check_lock.py
 
 # One-time import of the Dwarven Forge inventory CSV (pass CSV=path to override the default).
 import-dwarven-forge:

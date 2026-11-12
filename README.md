@@ -11,13 +11,15 @@ Requires Python 3.12 (the version CI uses).
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -r requirements.txt -r requirements-dev.txt -c requirements.lock
 uvicorn app.main:app --reload    # binds to 127.0.0.1:8000 by default
 ```
 
 Open http://127.0.0.1:8000. The SQLite database (`mini_tracker.db`) is created in the working directory on first run and is gitignored.
 
 Lint and test with `make lint` and `make test`.
+
+`requirements.lock` pins every package to an exact version (it's a pip constraints file, so it's passed with `-c`). After adding or upgrading a dependency, regenerate it as described in its header; `make check-lock` (also run in CI) fails if anything installed isn't pinned.
 
 ## Catalog sync
 
