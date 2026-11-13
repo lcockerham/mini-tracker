@@ -1,0 +1,57 @@
+# Pinned versions for every package mini-tracker installs (Python 3.12, macOS/Linux).
+# This is a pip constraints file: it fixes versions but doesn't add packages, so
+# install with
+#   pip install -r requirements.txt -r requirements-dev.txt -c requirements.lock
+# `make check-lock` fails if anything installed isn't pinned here.
+#
+# Security floors (hand-patched in .venv on 2026-11-03): certifi >= 2026.10.23,
+# pillow >= 13.0.0. Nothing here requires Pillow (openpyxl only uses it if it's
+# installed), so the pillow pin only applies if something pulls it in later.
+#
+# To regenerate: build a fresh Python 3.12 venv, run
+#   pip install -r requirements.txt -r requirements-dev.txt
+# (add `-c requirements.lock` to keep current versions), then replace the pins
+# below with `pip freeze` output and keep the pillow line.
+
+annotated-doc==0.0.6
+annotated-types==0.8.0
+anyio==4.16.0
+beautifulsoup4==4.15.0
+certifi==2026.10.23
+click==8.5.1
+et_xmlfile==2.0.0
+fastapi==0.162.4
+h11==0.16.0
+httpcore==1.0.9
+httptools==0.9.0
+httpx==0.28.1
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+MarkupSafe==3.0.4
+numpy==2.5.4
+openpyxl==3.1.5
+opentelemetry-api==1.45.2
+packaging==26.3
+pandas==3.1.1
+pillow==13.0.0
+pluggy==1.7.0
+pydantic==2.14.3
+pydantic_core==2.50.4
+Pygments==2.21.0
+pytest==9.2.0
+python-dateutil==4.0.0
+python-dotenv==1.2.4
+python-multipart==0.0.33
+PyYAML==6.0.3
+ruff==0.17.4
+soupsieve==4.1
+SQLAlchemy==2.1.8
+starlette==1.10.0
+typing-inspection==0.4.5
+typing_extensions==4.16.0
+tzdata==2026.6
+uvicorn==0.54.0
+uvloop==0.23.0
+watchfiles==1.3.0
+websockets==17.4
