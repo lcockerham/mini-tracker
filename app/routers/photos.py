@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Photo
+from app.models import Mini, Photo
 
 router = APIRouter()
 
@@ -14,6 +14,9 @@ def add_photo(
     url: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    # SQLite doesn't enforce the foreign key, so check first rather than store an orphan photo.
+    if db.query(Mini).get(mini_id) is None:
+        raise HTTPException(status_code=404, detail="Mini not found")
     photo = Photo(mini_id=mini_id, url=url)
     db.add(photo)
     db.commit()

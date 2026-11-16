@@ -153,6 +153,36 @@ class TestPieces:
         assert 'src="https://cdn.shopify.com/volcano.jpg?width=800"' in page
 
 
+class TestMissingRecords:
+    # A stale link or mistyped URL should say "not found", not crash the server.
+    def test_set_detail_returns_404(self, client):
+        assert client.get("/dwarven-forge/sets/999").status_code == 404
+
+    def test_set_edit_returns_404(self, client):
+        response = client.post(
+            "/dwarven-forge/sets/999/edit", data={"sku": "X-1", "name": "Ghost Set"}
+        )
+        assert response.status_code == 404
+
+    def test_add_piece_to_missing_set_returns_404(self, client, db):
+        response = client.post("/dwarven-forge/sets/999/pieces", data={"code": "GH-001"})
+        assert response.status_code == 404
+        assert db.query(DwarvenForgePiece).filter_by(code="GH-001").first() is None
+
+    def test_set_delete_returns_404(self, client):
+        assert client.post("/dwarven-forge/sets/999/delete").status_code == 404
+
+    def test_piece_detail_returns_404(self, client):
+        assert client.get("/dwarven-forge/pieces/999").status_code == 404
+
+    def test_piece_edit_returns_404(self, client):
+        response = client.post("/dwarven-forge/pieces/999/edit", data={"code": "GH-001"})
+        assert response.status_code == 404
+
+    def test_piece_delete_returns_404(self, client):
+        assert client.post("/dwarven-forge/pieces/999/delete").status_code == 404
+
+
 class TestImageSizes:
     def test_shopify_pictures_are_resized_for_thumbnails(self, client, collection, db):
         walls = db.query(DwarvenForgeSet).filter_by(sku="4-WALLSR-U").one()
