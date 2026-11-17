@@ -1,6 +1,10 @@
 import html
 import re
 
+from app.database import get_db
+from app.main import app
+from app.models import Photo
+
 
 def create_mini(client, name="Beholder", status="Unpainted", **kwargs):
     data = {"name": name, "status": status, "quantity": 1, **kwargs}
@@ -241,6 +245,15 @@ class TestMissingMini:
 
     def test_remove_paint_returns_404(self, client):
         assert client.post("/minis/999/paints/1/remove").status_code == 404
+
+    def test_add_photo_returns_404_and_saves_nothing(self, client):
+        response = client.post("/minis/999/photos", data={"url": "https://example.com/x.jpg"})
+        assert response.status_code == 404
+        db = next(app.dependency_overrides[get_db]())
+        try:
+            assert db.query(Photo).count() == 0
+        finally:
+            db.close()
 
 
 class TestInvalidMiniFormValues:

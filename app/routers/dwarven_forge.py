@@ -2,7 +2,7 @@ from itertools import groupby
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, or_
@@ -26,6 +26,20 @@ def image_at_width(url: Optional[str], width: int) -> Optional[str]:
 
 
 templates.env.filters["at_width"] = image_at_width
+
+
+def _get_set_or_404(db: Session, set_id: int) -> DwarvenForgeSet:
+    df_set = db.query(DwarvenForgeSet).get(set_id)
+    if df_set is None:
+        raise HTTPException(status_code=404, detail="Set not found")
+    return df_set
+
+
+def _get_piece_or_404(db: Session, piece_id: int) -> DwarvenForgePiece:
+    piece = db.query(DwarvenForgePiece).get(piece_id)
+    if piece is None:
+        raise HTTPException(status_code=404, detail="Piece not found")
+    return piece
 
 
 def _get_or_create_piece(db: Session, code: str) -> DwarvenForgePiece:
@@ -91,7 +105,7 @@ def create_set(
 
 @router.get("/dwarven-forge/sets/{set_id}")
 def get_set(request: Request, set_id: int, db: Session = Depends(get_db)):
-    df_set = db.query(DwarvenForgeSet).get(set_id)
+    df_set = _get_set_or_404(db, set_id)
     contents = sorted(df_set.contents, key=lambda entry: entry.piece.code)
     return templates.TemplateResponse(
         request, "dwarven_forge/set_detail.html", {"set": df_set, "contents": contents}
@@ -111,7 +125,7 @@ def update_set(
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
-    df_set = db.query(DwarvenForgeSet).get(set_id)
+    df_set = _get_set_or_404(db, set_id)
     df_set.sku = sku.strip()
     df_set.name = name
     df_set.terrain_line = terrain_line or None
@@ -131,7 +145,7 @@ def add_piece_to_set(
     count: int = Form(1),
     db: Session = Depends(get_db),
 ):
-    df_set = db.query(DwarvenForgeSet).get(set_id)
+    df_set = _get_set_or_404(db, set_id)
     piece = _get_or_create_piece(db, code.strip())
     entry = next((e for e in df_set.contents if e.piece is piece), None)
     if entry:
@@ -153,7 +167,7 @@ def remove_piece_from_set(set_id: int, piece_id: int, db: Session = Depends(get_
 
 @router.post("/dwarven-forge/sets/{set_id}/delete")
 def delete_set(set_id: int, db: Session = Depends(get_db)):
-    db.delete(db.query(DwarvenForgeSet).get(set_id))
+    db.delete(_get_set_or_404(db, set_id))
     db.commit()
     return RedirectResponse(url="/dwarven-forge", status_code=303)
 
@@ -204,7 +218,7 @@ def create_piece(
 
 @router.get("/dwarven-forge/pieces/{piece_id}")
 def get_piece(request: Request, piece_id: int, db: Session = Depends(get_db)):
-    piece = db.query(DwarvenForgePiece).get(piece_id)
+    piece = _get_piece_or_404(db, piece_id)
     entries = sorted(piece.set_entries, key=lambda entry: entry.set.name.lower())
     return templates.TemplateResponse(
         request, "dwarven_forge/piece_detail.html", {"piece": piece, "entries": entries}
@@ -222,7 +236,7 @@ def update_piece(
     notes: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
-    piece = db.query(DwarvenForgePiece).get(piece_id)
+    piece = _get_piece_or_404(db, piece_id)
     piece.code = code.strip()
     piece.name = name or None
     piece.loose_quantity = loose_quantity
@@ -235,6 +249,6 @@ def update_piece(
 
 @router.post("/dwarven-forge/pieces/{piece_id}/delete")
 def delete_piece(piece_id: int, db: Session = Depends(get_db)):
-    db.delete(db.query(DwarvenForgePiece).get(piece_id))
+    db.delete(_get_piece_or_404(db, piece_id))
     db.commit()
     return RedirectResponse(url="/dwarven-forge/pieces", status_code=303)
