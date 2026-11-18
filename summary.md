@@ -207,7 +207,6 @@ https://github.com/lcockerham/mini-tracker
 
 ## Future Enhancements (Not in MVP)
 - Organization via categories/tags/folders
-- Alembic migrations (currently delete DB to reset)
 - Direct Google Drive integration for photo upload
 - Mobile-optimized UI
 - Manual pass over the physical book collection to verify `owns_physical` — replaces the unfinished bookshelf-photo cataloging (unread shelf sections dropped; "Monster Manual Expanded" I/II still need a check to confirm they're official books)

@@ -21,6 +21,12 @@ Lint and test with `make lint` and `make test`.
 
 `requirements.lock` pins every package to an exact version (it's a pip constraints file, so it's passed with `-c`). After adding or upgrading a dependency, regenerate it as described in its header; `make check-lock` (also run in CI) fails if anything installed isn't pinned.
 
+## Schema changes
+
+The schema is versioned by numbered SQL files in `app/migrations/` (`001_add_books_format_availability.sql`, ...). At startup `upgrade_schema()` in `app/database.py` creates any missing tables from the models, then applies each file not yet listed in the database's `schema_migrations` table, in order, one transaction per file. If anything is pending it first copies the database to `backups/`. A brand-new database is built from the models and recorded as having every migration.
+
+To change an existing table, update the model and add the next numbered file (e.g. `004_add_minis_base_size.sql`) with the plain SQLite statements that make the same change, without its own `BEGIN`/`COMMIT`. A new table needs only the model. `tests/test_migrations.py` upgrades a copy of an October 2026 database and checks it ends up with the same tables and columns as a new one, so a model change without a migration fails the tests.
+
 ## Catalog sync
 
 `make sync-minis` (or monthly via launchd, `make install-sync-schedule`) crawls the public Icons of the Realms / Onslaught catalog pages on minisgallery.com and queues WizKids minis that aren't in the collection yet for review at `/minis/review`. Nothing is added until approved. The crawler is polite: it sends an identifying User-Agent (`mini-tracker/1.0 (personal collection sync)`) and waits about a second between requests.
