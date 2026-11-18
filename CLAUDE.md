@@ -23,6 +23,8 @@ Keep at most 3 backups. After creating a new one, delete the oldest until only 3
 
 (Use `/bin/ls`, not the `eza`-aliased `ls` — `ls -1t` isn't valid eza syntax and errors out.)
 
+Schema changes go in a numbered file in `app/migrations/` (see README "Schema changes"), never in startup code; the runner backs up the DB itself before applying one.
+
 Routine single-record edits through the app's normal CRUD routes don't need a backup — this is for anything that could clobber or corrupt a meaningful chunk of the collection in one shot.
 
 ## Security review before PRs

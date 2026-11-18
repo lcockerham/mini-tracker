@@ -10,7 +10,11 @@ KEEP_BACKUPS = 3
 
 def backup_database(db: Session) -> Optional[Path]:
     """Copy the SQLite file to backups/ before a bulk write, keeping only the newest few."""
-    database = db.get_bind().url.database
+    return backup_file(db.get_bind().url.database)
+
+
+def backup_file(database: Optional[str]) -> Optional[Path]:
+    """Copy the SQLite file at `database` to backups/; None for an in-memory database."""
     if not database or database == ":memory:":
         return None
     source = Path(database).resolve()
