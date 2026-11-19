@@ -117,9 +117,13 @@ def test_failed_migration_is_rolled_back_and_not_recorded(tmp_path):
         "ALTER TABLE minis ADD COLUMN sculptor VARCHAR(100);\nSELECT * FROM no_such_table;\n"
     )
     path = tmp_path / "mini_tracker.db"
+    engine = make_engine(path)
+    import app.models  # noqa: F401
+
+    # An existing versioned database, so minis is altered rather than built from the models.
+    Base.metadata.create_all(bind=engine)
     with sqlite3.connect(path) as conn:
         conn.execute("CREATE TABLE schema_migrations (filename VARCHAR(100) PRIMARY KEY)")
-    engine = make_engine(path)
 
     with pytest.raises(RuntimeError, match="002_broken.sql failed and was rolled back"):
         upgrade_schema(engine, migrations_dir)
@@ -128,6 +132,54 @@ def test_failed_migration_is_rolled_back_and_not_recorded(tmp_path):
     minis_columns = columns_by_table(engine)["minis"]
     assert "base_size" in minis_columns
     assert "sculptor" not in minis_columns
+
+
+def test_interrupted_first_upgrade_still_starts(tmp_path):
+    """A first upgrade that stopped after recording only some old ADDED_COLUMNS migrations.
+
+    The old startup code had already added every column, so the unrecorded ones must still be
+    treated as already applied, or the next startup fails on a duplicate column.
+    """
+    path = tmp_path / "mini_tracker.db"
+    engine = make_engine(path)
+    import app.models  # noqa: F401
+
+    Base.metadata.create_all(bind=engine)
+    with sqlite3.connect(path) as conn:
+        conn.execute("CREATE TABLE schema_migrations (filename VARCHAR(100) PRIMARY KEY)")
+        conn.execute(
+            "INSERT INTO schema_migrations VALUES ('001_add_books_format_availability.sql')"
+        )
+
+    upgrade_schema(engine)
+
+    assert ledger(path) == all_migration_names()
+
+
+def test_migration_to_a_table_built_from_current_models_is_recorded_not_run(
+    tmp_path, fresh_columns
+):
+    """An old database without a table, and a later migration that adds a column to that table.
+
+    create_all() builds the missing table from today's models, which already have the column,
+    so running the migration would fail on a duplicate column.
+    """
+    migrations_dir = tmp_path / "migrations"
+    migrations_dir.mkdir()
+    for migration in list_migrations():
+        (migrations_dir / migration.name).write_text(migration.read_text())
+    (migrations_dir / "004_add_df_sets_image_url.sql").write_text(
+        "ALTER TABLE df_sets ADD COLUMN image_url VARCHAR(500);\n"
+    )
+    path = tmp_path / "mini_tracker.db"
+    with sqlite3.connect(path) as conn:
+        conn.executescript(OLD_DB_SQL.read_text())  # predates the df_* tables
+    engine = make_engine(path)
+
+    upgrade_schema(engine, migrations_dir)
+
+    assert ledger(path) == all_migration_names() + ["004_add_df_sets_image_url.sql"]
+    assert columns_by_table(engine) == fresh_columns
 
 
 def test_migration_files_are_numbered_without_gaps():

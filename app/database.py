@@ -17,9 +17,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 MIGRATIONS_DIR = Path(__file__).resolve().parent / "migrations"
 MIGRATION_NAME = re.compile(r"^\d{3}_[a-z0-9_]+\.sql$")
+ALTER_TABLE = re.compile(r'ALTER\s+TABLE\s+[`"\[]?(\w+)', re.IGNORECASE)
 
 # These were the old ADDED_COLUMNS startup patch, which ran without recording anything, so a
-# database from before versioned migrations may already have their column.
+# database from before versioned migrations may already have their column, even if an
+# interrupted first upgrade recorded some of them.
 PRE_VERSIONING_MIGRATIONS = {
     "001_add_books_format_availability.sql",
     "002_add_minis_source_url.sql",
@@ -37,6 +39,14 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def only_alters(sql: str, tables: set[str]) -> bool:
+    """True if every statement in `sql` is an ALTER TABLE on one of `tables`."""
+    lines = [line for line in sql.splitlines() if not line.lstrip().startswith("--")]
+    statements = [s.strip() for s in "\n".join(lines).split(";") if s.strip()]
+    targets = [ALTER_TABLE.match(s) for s in statements]
+    return bool(statements) and all(t and t.group(1) in tables for t in targets)
 
 
 def list_migrations(migrations_dir: Path = MIGRATIONS_DIR) -> list[Path]:
@@ -59,7 +69,9 @@ def upgrade_schema(bind: Engine = engine, migrations_dir: Path = MIGRATIONS_DIR)
 
     migrations = list_migrations(migrations_dir)
     existing_tables = set(inspect(bind).get_table_names())
-    pre_versioning = bool(existing_tables) and "schema_migrations" not in existing_tables
+    # Tables create_all() is about to build from today's models, which already include every
+    # migration's change to them.
+    new_tables = set(Base.metadata.tables) - existing_tables
     applied: set[str] = set()
     if "schema_migrations" in existing_tables:
         with bind.connect() as conn:
@@ -94,6 +106,11 @@ def upgrade_schema(bind: Engine = engine, migrations_dir: Path = MIGRATIONS_DIR)
     try:
         db = raw.driver_connection
         for migration in pending:
+            if only_alters(migration.read_text(), new_tables):
+                db.execute("INSERT INTO schema_migrations (filename) VALUES (?)", (migration.name,))
+                db.commit()
+                logger.info("Recorded %s; its tables were just built from models.", migration.name)
+                continue
             # One transaction per file, so a failed migration leaves no partial change or record.
             # The filename is safe to inline: list_migrations() checked it against MIGRATION_NAME.
             script = (
@@ -104,10 +121,8 @@ def upgrade_schema(bind: Engine = engine, migrations_dir: Path = MIGRATIONS_DIR)
                 db.executescript(script)
             except sqlite3.OperationalError as error:
                 db.rollback()
-                if (
-                    pre_versioning
-                    and migration.name in PRE_VERSIONING_MIGRATIONS
-                    and str(error).startswith("duplicate column name")
+                if migration.name in PRE_VERSIONING_MIGRATIONS and str(error).startswith(
+                    "duplicate column name"
                 ):
                     db.execute(
                         "INSERT INTO schema_migrations (filename) VALUES (?)", (migration.name,)
