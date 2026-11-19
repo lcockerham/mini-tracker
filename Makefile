@@ -9,7 +9,7 @@ lint:
 test:
 	pytest
 
-# Fail if any installed package isn't pinned in requirements.lock.
+# Fail if any installed package isn't pinned in requirements-lock.txt.
 check-lock:
 	python scripts/check_lock.py
 

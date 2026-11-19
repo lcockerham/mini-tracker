@@ -1,4 +1,4 @@
-"""Fail if any installed package is missing from requirements.lock or differs from its pin.
+"""Fail if any installed package is missing from requirements-lock.txt or differs from its pin.
 
 pip's -c only constrains packages it's told about, so a new transitive dependency
 would otherwise install at whatever version is latest. Run via `make check-lock`.
@@ -9,7 +9,7 @@ import sys
 from importlib.metadata import distributions
 from pathlib import Path
 
-LOCK = Path(__file__).resolve().parent.parent / "requirements.lock"
+LOCK = Path(__file__).resolve().parent.parent / "requirements-lock.txt"
 # Installer tooling that lives in every venv and isn't an app dependency.
 IGNORED = {"pip", "setuptools", "wheel"}
 
